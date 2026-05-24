@@ -9,8 +9,8 @@
     
     <style>
         :root {
-            --bg-color: #05070f;
-            --card-bg: rgba(13, 19, 33, 0.75);
+            --bg-color: #03050a;
+            --card-bg: rgba(10, 15, 28, 0.8);
             --accent-gold: #d4af37;
             --gold-glow: rgba(212, 175, 55, 0.3);
             --text-main: #ffffff;
@@ -42,6 +42,17 @@
             position: relative;
         }
 
+        /* ✨ CANLI SƏMA FONU (CANVAS) STİLİ */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
         /* 🔥 EFFEKTLİ VƏ SÜRƏTLİ AÇILIŞ (PRELOADER) */
         #preloader {
             position: fixed;
@@ -49,7 +60,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #05070f;
+            background-color: #03050a;
             z-index: 99999;
             display: flex;
             justify-content: center;
@@ -78,13 +89,15 @@
             background: var(--card-bg);
             padding: 45px 30px;
             border-radius: 24px;
-            border: 1px solid rgba(212, 175, 55, 0.08);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
             text-align: center;
             width: 100%;
             max-width: 410px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            position: relative;
+            z-index: 10;
         }
 
         .logo-area {
@@ -115,7 +128,6 @@
             font-size: 16px;
         }
 
-        /* ❌ NÖMRƏNİ SİLƏN DÜYMƏ */
         .clear-icon {
             position: absolute;
             right: 18px;
@@ -132,7 +144,7 @@
         input {
             width: 100%;
             padding: 16px 40px 16px 48px;
-            background: rgba(5, 7, 15, 0.6);
+            background: rgba(3, 5, 10, 0.6);
             border: 1px solid var(--input-border);
             border-radius: 14px;
             font-size: 15px;
@@ -143,7 +155,7 @@
 
         input:focus { 
             border-color: var(--accent-gold); 
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
         }
 
         button.search-btn {
@@ -168,6 +180,18 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
+
+        /* 💡 MERA STORE MOTİVASİYA YAZISI */
+        .quote-loader {
+            display: none;
+            font-size: 12px;
+            color: var(--accent-gold);
+            margin-top: 15px;
+            font-style: italic;
+            animation: pulseText 1s infinite alternate;
+        }
+
+        @keyframes pulseText { from { opacity: 0.5; } to { opacity: 1; } }
 
         .spinner {
             display: none;
@@ -218,13 +242,80 @@
             gap: 10px;
         }
 
+        /* 📍 SİFARİŞ MƏRHƏLƏLƏRİ (TIMELINE) */
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            right: 5px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            height: 2px;
+            background: var(--accent-gold);
+            z-index: 2;
+            width: 0%;
+            transition: width 0.8s ease-in-out;
+        }
+
+        .step {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: var(--text-muted);
+            width: 25%;
+        }
+
+        .step .dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #111827;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            transition: all 0.4s;
+        }
+
+        .step.active .dot {
+            border-color: var(--accent-gold);
+            background: var(--accent-gold);
+            color: #000000;
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        .step.active span {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
         .result-line {
             margin-bottom: 14px;
             font-size: 13.5px;
             display: flex;
-            justify-space: space-between;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
         }
 
         .result-line strong { color: var(--text-muted); font-weight: 400; }
@@ -240,7 +331,6 @@
             border: 1px solid rgba(212, 175, 55, 0.2);
         }
 
-        /* 📋 KOPYALAMA İKONU STİLİ */
         .copy-btn {
             margin-left: 8px;
             color: var(--text-muted);
@@ -249,7 +339,7 @@
         }
         .copy-btn:hover { color: var(--cyber-blue); }
 
-        /* 💎 YENİ KİBER-FUTURİSTİK AZƏRPOÇT DÜYMƏSİ */
+        /* 💎 PREMIUM NEON AZƏRPOÇT DÜYMƏSİ */
         .post-link {
             display: flex;
             justify-content: center;
@@ -278,7 +368,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: 0.5s;
         }
 
@@ -287,14 +377,11 @@
         .post-link:hover {
             background: var(--accent-gold);
             color: #000000;
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
             transform: scale(1.02);
         }
 
-        .post-link i {
-            font-size: 16px;
-        }
-
+        /* 📲 SOSİAL ŞƏBƏKƏ ANIMASİYALI İKONLARI */
         .social-footer {
             margin-top: 35px;
             display: flex;
@@ -304,8 +391,18 @@
             padding-top: 25px;
         }
 
-        .social-icon { color: var(--text-muted); font-size: 20px; text-decoration: none; }
-        .social-icon:hover { color: var(--accent-gold); }
+        .social-icon { 
+            color: var(--text-muted); 
+            font-size: 22px; 
+            text-decoration: none; 
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover { 
+            color: var(--accent-gold); 
+            transform: translateY(-3px) scale(1.2);
+            text-shadow: 0 0 15px var(--accent-gold);
+        }
 
         .whatsapp-float {
             position: fixed;
@@ -322,10 +419,14 @@
             text-decoration: none;
             box-shadow: 0px 6px 20px rgba(37, 211, 102, 0.3);
             z-index: 9999;
+            transition: transform 0.3s;
         }
+        .whatsapp-float:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
+
+<canvas id="bg-canvas"></canvas>
 
 <div id="preloader">
     <div class="loader-logo">MERA <span>STORE</span></div>
@@ -347,11 +448,22 @@
         <div class="spinner" id="btnSpinner"></div>
     </button>
 
+    <div class="quote-loader" id="quoteLoader">Mera Store ilə parıltınız heç vaxt sönməsin... ✨</div>
+
     <div class="error" id="errorMsg">
         <i class="fa-solid fa-circle-exclamation" style="margin-right: 6px;"></i> Aktiv sifariş tapılmadı.
     </div>
 
     <div class="result-card" id="resultCard">
+        
+        <div class="timeline">
+            <div class="timeline-progress" id="timelineProgress"></div>
+            <div class="step" id="step1"><div class="dot">1</div><span>Hazırlanır</span></div>
+            <div class="step" id="step2"><div class="dot">2</div><span>Yoldadır</span></div>
+            <div class="step" id="step3"><div class="dot">3</div><span>Poçtda</span></div>
+            <div class="step" id="step4"><div class="dot">4</div><span>Çatdı</span></div>
+        </div>
+
         <h3><i class="fa-solid fa-box-open" style="color: var(--accent-gold);"></i> <span id="resName">Müştəri Adı</span></h3>
         
         <div class="result-line">
@@ -384,6 +496,46 @@
 </a>
 
 <script>
+    // 🔊 FUTURİSTİK BİLDİRİŞ SƏSİ (AUDIO DATA URI)
+    const successSound = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAQA");
+    // Qeyd: Yuxarıdakı səs brauzeri yormayan, ultra qısa modern kiber bip effektidir.
+
+    // ✨ CANLI SƏMA FONU (STARFIELD CANVAS EFFECT)
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    for(let i=0; i<60; i++) {
+        stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 1.5,
+            color: Math.random() > 0.5 ? '#d4af37' : '#00f0ff',
+            speed: Math.random() * 0.2 + 0.05
+        });
+    }
+
+    function animateStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        stars.forEach(star => {
+            ctx.fillStyle = star.color;
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.size, 0, Math.PI*2);
+            ctx.fill();
+            star.y += star.speed;
+            if(star.y > canvas.height) star.y = 0;
+        });
+        requestAnimationFrame(animateStars);
+    }
+    animateStars();
+
     // PRELOADER AYARI (1.1 saniyə sonra dərhal itir)
     window.addEventListener('load', () => {
         setTimeout(() => {
@@ -400,18 +552,22 @@
 
     const phoneInput = document.getElementById('phoneInput');
     const clearBtn = document.getElementById('clearBtn');
+    const quoteLoader = document.getElementById('quoteLoader');
+
+    // MERA STORE PREMİUM MESAJLARI
+    const meraQuotes = [
+        "Mera Store ilə parıltınız heç vaxt sönməsin... ✨",
+        "Zəriflik detallarda gizlidir, yüklənir... 💎",
+        "Sizin üçün ən dəyərlisini hazırlayırıq... 📦",
+        "Mera kolleksiyasından sizə özəl bir bağlama... 🌟"
+    ];
 
     phoneInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') checkStatus();
     });
 
-    // "X" İKONUNUN ÇIXIB-İTMƏSİ
     phoneInput.addEventListener('input', function() {
-        if (this.value.trim().length > 0) {
-            clearBtn.style.display = 'block';
-        } else {
-            clearBtn.style.display = 'none';
-        }
+        clearBtn.style.display = this.value.trim().length > 0 ? 'block' : 'none';
     });
 
     function clearInput() {
@@ -425,14 +581,44 @@
         return temiz.length >= 9 ? temiz.slice(-9) : temiz; 
     }
 
-    // 📋 TƏK KLİKLƏ KOPYALAMA FUNKSİYASI
     function copyTrackCode() {
         const code = document.getElementById('resTrackCode').innerText;
         navigator.clipboard.writeText(code).then(() => {
             alert('Poçt kodu kopyalandı: ' + code);
-        }).catch(err => {
-            console.error('Kopyalama xətası:', err);
         });
+    }
+
+    // 📍 TIMELINE (MƏRHƏLƏ) AYARLAYICI FUNKSİYA
+    function updateTimeline(statusText) {
+        const p = document.getElementById('timelineProgress');
+        const s1 = document.getElementById('step1');
+        const s2 = document.getElementById('step2');
+        const s3 = document.getElementById('step3');
+        const s4 = document.getElementById('step4');
+
+        // Bütün mərhələləri sıfırla
+        [s1, s2, s3, s4].forEach(s => s.classList.remove('active'));
+        p.style.width = "0%";
+
+        const txt = statusText.toLowerCase();
+
+        if (txt.includes("hazırlanır") || txt.includes("sifariş alındı")) {
+            s1.classList.add('active');
+            p.style.width = "12.5%";
+        } else if (txt.includes("yolda") || txt.includes("kuryer") || txt.includes("göndərildi")) {
+            s1.classList.add('active'); s2.classList.add('active');
+            p.style.width = "50%";
+        } else if (txt.includes("poçt") || txt.includes("filial") || txt.includes("məntəqə")) {
+            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active');
+            p.style.width = "75%";
+        } else if (txt.includes("çatdı") || txt.includes("təhvil") || txt.includes("çatdırıldı")) {
+            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); s4.classList.add('active');
+            p.style.width = "100%";
+        } else {
+            // Əgər spesifik bir şey yazılmayıbsa, avtomatik 1-ci pilləni aktiv et
+            s1.classList.add('active');
+            p.style.width = "12.5%";
+        }
     }
 
     function checkStatus() {
@@ -449,9 +635,12 @@
 
         if (!inputVal) return;
 
+        // Düyməni kilidlə və təsadüfi bir Mera Store sitatı çıxar
         btnText.style.opacity = '0.5';
         btnIcon.style.display = 'none';
         btnSpinner.style.display = 'block';
+        quoteLoader.innerText = meraQuotes[Math.floor(Math.random() * meraQuotes.length)];
+        quoteLoader.style.display = 'block';
 
         const klaviaturadanYazilan = temizleNo(inputVal);
 
@@ -468,11 +657,17 @@
                     const cedveldekiNo = temizleNo(row.c[0].v);
                     
                     if (cedveldekiNo === klaviaturadanYazilan && klaviaturadanYazilan !== '') {
+                        // Səs effektini çal
+                        try { successSound.play(); } catch(e){}
+
                         document.getElementById('resName').innerText = row.c[1] ? row.c[1].v : 'Hörmətli Müştəri';
                         document.getElementById('resProduct').innerText = row.c[2] ? row.c[2].v : '-';
                         
-                        // Tam stabil Sheets statusu
-                        document.getElementById('resStatus').innerText = row.c[4] ? row.c[4].v : '📦 Hazırlanır';
+                        const cədvəlStatusu = row.c[4] ? row.c[4].v : '📦 Hazırlanır';
+                        document.getElementById('resStatus').innerText = cədvəlStatusu;
+
+                        // Canlı olaraq Sifariş Mərhələ xəttini yenilə
+                        updateTimeline(cədvəlStatusu);
 
                         if (row.c[3] && row.c[3].v) {
                             const trackCode = row.c[3].v.toString().trim();
@@ -480,7 +675,6 @@
                             if (trackTextAlani) trackTextAlani.style.display = 'flex';
                             
                             if (poctAlani) {
-                                // QƏŞƏNG YENİ DÜYMƏNİN STRUKTURU
                                 poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}" target="_blank" class="post-link"><i class="fa-solid fa-truck-fast"></i> AzerPost Canlı İzlə</a>`;
                             }
                         } else {
@@ -508,6 +702,7 @@
                 btnText.style.opacity = '1';
                 btnIcon.style.display = 'block';
                 btnSpinner.style.display = 'none';
+                quoteLoader.style.display = 'none';
             });
     }
 </script>
