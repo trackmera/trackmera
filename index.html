@@ -40,7 +40,7 @@
             position: relative;
         }
 
-        /* 1. Giriş Animasiyası Ekranı (Preloader) */
+        /* Giriş Animasiyası Ekranı (Preloader) */
         #preloader {
             position: fixed;
             top: 0;
@@ -60,9 +60,7 @@
             font-weight: 700;
             letter-spacing: 4px;
             color: var(--text-main);
-            opacity: 0;
-            transform: scale(0.95);
-            animation: logoFade 1.6s forwards ease-in-out;
+            animation: logoFade 1.6s infinite alternate ease-in-out;
         }
 
         .loader-logo span {
@@ -70,13 +68,11 @@
         }
 
         @keyframes logoFade {
-            0% { opacity: 0; transform: scale(0.95); filter: blur(4px); }
-            40% { opacity: 1; transform: scale(1); filter: blur(0); }
-            75% { opacity: 1; transform: scale(1); filter: blur(0); }
-            100% { opacity: 0; transform: scale(1.02); filter: blur(2px); }
+            0% { opacity: 0.3; transform: scale(0.97); filter: blur(2px); }
+            100% { opacity: 1; transform: scale(1.02); filter: blur(0); }
         }
 
-        /* 5. Nəfəs alan arxa fon effektləri */
+        /* Nəfəs alan arxa fon effektləri */
         body::before {
             content: '';
             position: absolute;
@@ -110,7 +106,7 @@
             100% { transform: translateY(-20px) scale(1.1); opacity: 1; }
         }
 
-        /* 4. Şüşə Effekti (Glassmorphism) tətbiq olunmuş əsas qutu */
+        /* Şüşə Effekti (Glassmorphism) */
         .container {
             background: var(--card-bg);
             padding: 50px 35px;
@@ -160,7 +156,6 @@
             transition: all 0.3s ease;
         }
 
-        /* 2. İnput Aktivləşmə Animasiyası */
         input {
             width: 100%;
             padding: 16px 16px 16px 48px;
@@ -212,13 +207,13 @@
             transform: translateY(0);
         }
 
-        /* 3. Düymə üçün Yüklənir fırlanma halqası (Spinner) */
+        /* Düymə üçün Spinner */
         .spinner {
             display: none;
             width: 18px;
             height: 18px;
             border: 2px solid #000000;
-            border-vertical-color: transparent;
+            border-top-color: transparent;
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
         }
@@ -450,14 +445,22 @@
 </a>
 
 <script>
-    // Giriş animasiyasını idarə edən skript
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            const preloader = document.getElementById('preloader');
-            preloader.style.opacity = '0';
-            preloader.style.visibility = 'hidden';
-        }, 1600); // 1.6 saniyə sonra ana səhifə zərifcə açılır
-    });
+    // Mobil telefonlar üçün təkmilləşdirilmiş animasiya skripti
+    function hidePreloader() {
+        const preloader = document.getElementById('preloader');
+        if (preloader && preloader.style.visibility !== 'hidden') {
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+            }, 600); 
+        }
+    }
+
+    // Mobil telefon tam yükləndiyi an animasiyanı dayandırır
+    window.addEventListener('load', hidePreloader);
+
+    // Hər ehtimala qarşı gözləmə limiti (maksimum 3 saniyə)
+    setTimeout(hidePreloader, 3000);
 
     const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
     const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
@@ -481,21 +484,18 @@
         const trackTextAlani = document.getElementById('trackTextAlani');
         const resTrackCode = document.getElementById('resTrackCode');
         
-        // Loader elementləri
         const btnText = document.getElementById('btnText');
         const btnIcon = document.getElementById('btnIcon');
         const btnSpinner = document.getElementById('btnSpinner');
 
         if (!inputVal) return;
 
-        // Düymədə yüklənir animasiyasını başlat
         btnText.style.opacity = '0.5';
         btnIcon.style.display = 'none';
         btnSpinner.style.display = 'block';
 
         const klaviaturadanYazilan = temizleNo(inputVal);
 
-        // Minimalist dizayna uyğun olaraq yüklənmə hissini vermək üçün 400ms süni gecikmə
         setTimeout(() => {
             fetch(BASE_URL)
                 .then(res => res.text())
@@ -526,7 +526,6 @@
                                 poctAlani.innerHTML = '';
                             }
                             
-                            resultCard.style.with = '100%';
                             resultCard.style.display = 'block';
                             errorMsg.style.display = 'none';
                             found = true;
@@ -544,7 +543,6 @@
                     alert('Sistemdə xəta baş verdi.');
                 })
                 .finally(() => {
-                    // Düyməni əvvəlki halına qaytar
                     btnText.style.opacity = '1';
                     btnIcon.style.display = 'block';
                     btnSpinner.style.display = 'none';
