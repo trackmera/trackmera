@@ -63,10 +63,16 @@
             pointer-events: none;
         }
 
-        .theme-toggle {
+        .controls-wrapper {
             position: absolute;
             top: 25px;
             right: 25px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .control-btn {
             background: var(--card-bg);
             border: 1px solid rgba(212, 175, 55, 0.2);
             color: var(--accent-gold);
@@ -79,14 +85,16 @@
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
-            z-index: 100;
         }
-        .theme-toggle:hover {
+        .control-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 0 15px var(--gold-glow);
         }
 
-        /* ⏳ PRELOADER PROBLEMİ TAM HƏLL OLUNDU */
+        #audio-toggle {
+            display: none;
+        }
+
         #preloader {
             position: fixed;
             top: 0;
@@ -280,7 +288,6 @@
             gap: 10px;
         }
 
-        /* 📍 TIMELINE */
         .timeline {
             display: flex;
             justify-content: space-between;
@@ -351,7 +358,20 @@
         .result-line strong { color: var(--text-muted); font-weight: 400; }
         .result-line span { color: var(--text-main); font-weight: 500; }
 
-        /* 🟡🔵🟣🟢 STATUS NEON BADGES */
+        /* ✨ DİNAMİK MƏSLƏHƏT QUTUSU */
+        .mera-tip-box {
+            margin: 15px 0;
+            padding: 12px 15px;
+            background: rgba(212, 175, 55, 0.03);
+            border-left: 3px solid var(--accent-gold);
+            border-radius: 4px 12px 12px 4px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--text-muted);
+            animation: fadeIn 0.5s ease;
+        }
+        .mera-tip-box i { color: var(--accent-gold); margin-right: 6px; }
+
         .status-badge {
             padding: 6px 14px;
             border-radius: 20px;
@@ -360,132 +380,57 @@
             transition: all 0.3s ease;
         }
         .status-preparing {
-            background: rgba(212, 175, 55, 0.1);
-            color: var(--accent-gold);
-            border: 1px solid rgba(212, 175, 55, 0.4);
+            background: rgba(212, 175, 55, 0.1); color: var(--accent-gold); border: 1px solid rgba(212, 175, 55, 0.4);
             box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
         }
         .status-shipped {
-            background: rgba(0, 240, 255, 0.1);
-            color: var(--cyber-blue);
-            border: 1px solid rgba(0, 240, 255, 0.4);
+            background: rgba(0, 240, 255, 0.1); color: var(--cyber-blue); border: 1px solid rgba(0, 240, 255, 0.4);
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
         }
         .status-post {
-            background: rgba(168, 85, 247, 0.1);
-            color: #c084fc;
-            border: 1px solid rgba(168, 85, 247, 0.4);
+            background: rgba(168, 85, 247, 0.1); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4);
             box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
         }
         .status-received {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-green);
-            border: 1px solid rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.1); color: var(--success-green); border: 1px solid rgba(16, 185, 129, 0.4);
             box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
         }
 
-        .copy-btn {
-            margin-left: 8px;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: color 0.2s;
-        }
+        .copy-btn { margin-left: 8px; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
         .copy-btn:hover { color: var(--cyber-blue); }
 
         .post-link {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            margin-top: 25px;
-            padding: 16px;
-            background: transparent;
-            color: var(--text-main);
-            border: 2px solid var(--accent-gold);
-            text-decoration: none;
-            border-radius: 14px;
-            font-size: 13.5px;
-            font-weight: 700;
-            position: relative;
-            overflow: hidden;
+            display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 25px; padding: 16px;
+            background: transparent; color: var(--text-main); border: 2px solid var(--accent-gold); text-decoration: none;
+            border-radius: 14px; font-size: 13.5px; font-weight: 700; position: relative; overflow: hidden;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .post-link:hover {
-            background: var(--accent-gold);
-            color: #000000;
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
-            transform: scale(1.02);
-        }
+        .post-link:hover { background: var(--accent-gold); color: #000000; box-shadow: 0 0 25px rgba(212, 175, 55, 0.5); transform: scale(1.02); }
 
-        /* 🎉 ŞANS ÇARXI (YALNIZ %5 VƏ %10) */
+        /* 🎉 ŞANS ÇARXI */
         .wheel-wrapper {
-            display: none;
-            margin-top: 25px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px dashed rgba(212, 175, 55, 0.3);
-            border-radius: 18px;
-            text-align: center;
-            animation: fadeIn 0.5s ease;
+            display: none; margin-top: 25px; padding: 20px; background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed rgba(212, 175, 55, 0.3); border-radius: 18px; text-align: center; animation: fadeIn 0.5s ease;
         }
-        .wheel-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent-gold);
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
-        .wheel-container {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 15px auto;
-        }
+        .wheel-title { font-size: 14px; font-weight: 600; color: var(--accent-gold); margin-bottom: 15px; letter-spacing: 1px; }
+        .wheel-container { position: relative; width: 200px; height: 200px; margin: 0 auto 15px auto; }
         .wheel-pointer {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 12px solid transparent;
-            border-right: 12px solid transparent;
-            border-top: 20px solid #ef4444;
-            z-index: 10;
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0;
+            border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 20px solid #ef4444; z-index: 10;
         }
         .main-wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 5px solid var(--accent-gold);
+            width: 100%; height: 100%; border-radius: 50%; border: 5px solid var(--accent-gold);
             background: conic-gradient(
-                #101524 0deg 60deg, #1e293b 60deg 120deg,
-                #101524 120deg 180deg, #1e293b 180deg 240deg,
-                #101524 240deg 300deg, #1e293b 300deg 360deg
+                #101524 0deg 60deg, #1e293b 60deg 120deg, #101524 120deg 180deg,
+                #1e293b 180deg 240deg, #101524 240deg 300deg, #1e293b 300deg 360deg
             );
-            position: relative;
-            overflow: hidden;
-            transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
+            position: relative; overflow: hidden; transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
         }
-        .wheel-text {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0; left: 0;
-            font-size: 11px;
-            font-weight: 700;
-            color: #fff;
-        }
+        .wheel-text { position: absolute; width: 100%; height: 100%; top: 0; left: 0; font-size: 11px; font-weight: 700; color: #fff; }
         .wheel-text span {
-            position: absolute;
-            width: 50%;
-            height: 30px;
-            left: 50%; top: 50%;
-            transform-origin: 0% 0%;
-            text-align: right;
-            padding-right: 18px;
-            box-sizing: border-box;
+            position: absolute; width: 50%; height: 30px; left: 50%; top: 50%; transform-origin: 0% 0%;
+            text-align: right; padding-right: 18px; box-sizing: border-box;
         }
         .w1 { transform: rotate(30deg) translate(-10px, -15px); }
         .w2 { transform: rotate(90deg) translate(-10px, -15px); }
@@ -495,63 +440,39 @@
         .w6 { transform: rotate(330deg) translate(-10px, -15px); }
 
         .spin-btn {
-            padding: 10px 25px;
-            background: var(--accent-gold);
-            color: #000;
-            border: none;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
+            padding: 10px 25px; background: var(--accent-gold); color: #000; border: none; border-radius: 20px;
+            font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.3s;
         }
         .spin-btn:hover { transform: scale(1.05); box-shadow: 0 0 12px var(--gold-glow); }
         .spin-btn:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        .wheel-result {
-            margin-top: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--success-green);
-            display: none;
-        }
+        .wheel-result { margin-top: 12px; font-size: 13px; font-weight: 600; color: var(--success-green); display: none; }
 
         .social-footer {
-            margin-top: 35px;
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            padding-top: 25px;
+            margin-top: 35px; display: flex; justify-content: center; gap: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 25px;
         }
         .social-icon { color: var(--text-muted); font-size: 22px; text-decoration: none; transition: all 0.3s ease; }
         .social-icon:hover { color: var(--accent-gold); transform: translateY(-3px) scale(1.2); }
 
         .whatsapp-float {
-            position: fixed;
-            width: 58px;
-            height: 58px;
-            bottom: 30px;
-            right: 30px;
-            background-color: #25d366;
-            color: #ffffff;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            box-shadow: 0px 6px 20px rgba(37, 211, 102, 0.3);
-            z-index: 9999;
-            transition: transform 0.3s;
+            position: fixed; width: 58px; height: 58px; bottom: 30px; right: 30px; background-color: #25d366;
+            color: #ffffff; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            text-decoration: none; box-shadow: 0px 6px 20px rgba(37, 211, 102, 0.3); z-index: 9999; transition: transform 0.3s;
         }
         .whatsapp-float:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
 
-<button class="theme-toggle" onclick="toggleTheme()" title="Rejimi Dəyiş">
-    <i class="fa-solid fa-moon" id="theme-icon"></i>
-</button>
+<div class="controls-wrapper">
+    <button class="control-btn" id="audio-toggle" onclick="toggleAudio()" title="Musiqini Səssiz Et">
+        <i class="fa-solid fa-volume-high" id="audio-icon"></i>
+    </button>
+    <button class="control-btn" onclick="toggleTheme()" title="Rejimi Dəyiş">
+        <i class="fa-solid fa-moon" id="theme-icon"></i>
+    </button>
+</div>
 
 <canvas id="bg-canvas"></canvas>
 <canvas id="confetti-canvas"></canvas>
@@ -602,6 +523,11 @@
             <strong>Statusu:</strong>
             <span id="resStatus">-</span>
         </div>
+
+        <div class="mera-tip-box" id="meraTipBox">
+            <i class="fa-solid fa-sparkles"></i> <span id="meraTipText">Zərifliyiniz bizim üçün dəyərlidir.</span>
+        </div>
+
         <div class="result-line" id="trackTextAlani" style="display: none;">
             <strong>Poçt Kodu:</strong>
             <div>
@@ -641,7 +567,48 @@
     <i class="fa-brands fa-whatsapp"></i>
 </a>
 
+<audio id="bg-music" loop src="https://assets.mixkit.co/music/preview/mixkit-luxury-fashion-show-2947.mp3"></audio>
+
 <script>
+    let audio = document.getElementById('bg-music');
+    let audioBtn = document.getElementById('audio-toggle');
+    let audioIcon = document.getElementById('audio-icon');
+
+    function startPremiumMusic() {
+        audio.volume = 0.25;
+        audio.play().then(() => {
+            audioBtn.style.display = 'flex';
+        }).catch(err => console.log("Musiqi avtomatik başlaya bilmədi."));
+    }
+
+    function toggleAudio() {
+        if (audio.paused) {
+            audio.play();
+            audioIcon.className = "fa-solid fa-volume-high";
+            audioBtn.title = "Musiqini Səssiz Et";
+        } else {
+            audio.pause();
+            audioIcon.className = "fa-solid fa-volume-xmark";
+            audioBtn.title = "Musiqini Aktiv Et";
+        }
+    }
+
+    // 🔔 BRAUZER BİLDİRİŞİ (PUSH NOTIFICATION) MODULU
+    function askNotificationPermission() {
+        if (!("Notification" in window)) return;
+        if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+            Notification.requestPermission();
+        }
+    }
+
+    function sendPushNotification(statusTitle, messageText) {
+        if (!("Notification" in window) || Notification.permission !== "granted") return;
+        new Notification(`Mera Store | Sifariş Statusu`, {
+            body: `${statusTitle}: ${messageText}`,
+            icon: 'https://img.icons8.com/fluency/96/jewelry.png'
+        });
+    }
+
     function toggleTheme() {
         const body = document.body;
         const icon = document.getElementById('theme-icon');
@@ -715,14 +682,10 @@
         setTimeout(() => { clearInterval(confLoop); confCanvas.style.display = 'none'; }, 5000);
     }
 
-    // ⏳ PRELOADER BURADA TAM GIZLƏNİR (QARANLIQ QALMA PROBLEMİ HƏLL OLUNDU)
     window.addEventListener('load', () => {
         setTimeout(() => {
             const preloader = document.getElementById('preloader');
-            if (preloader) { 
-                preloader.style.opacity = '0'; 
-                preloader.style.visibility = 'hidden'; 
-            }
+            if (preloader) { preloader.style.opacity = '0'; preloader.style.visibility = 'hidden'; }
         }, 1200);
     });
 
@@ -746,10 +709,12 @@
     function temizleNo(no) { let temiz = no.toString().replace(/\D/g, ''); return temiz.length >= 9 ? temiz.slice(-9) : temiz; }
     function copyTrackCode() { const code = document.getElementById('resTrackCode').innerText; navigator.clipboard.writeText(code).then(() => { alert('Poçt kodu kopyalandı: ' + code); }); }
 
+    // ✨ DİNAMİK MƏSLƏHƏT VƏ PUSH BİLDİRİŞ INTEQRASIYASI
     function updateTimelineAndBadge(statusText) {
         const p = document.getElementById('timelineProgress');
         const s1 = document.getElementById('step1'); const s2 = document.getElementById('step2'); const s3 = document.getElementById('step3'); const s4 = document.getElementById('step4');
         const badge = document.getElementById('resStatus');
+        const tipText = document.getElementById('meraTipText');
         
         [s1, s2, s3, s4].forEach(s => s.classList.remove('active')); 
         p.style.width = "0%";
@@ -758,28 +723,31 @@
         const txt = statusText.toLowerCase();
 
         if (txt.includes("hazırlanır") || txt.includes("sifariş alındı")) { 
-            s1.classList.add('active'); p.style.width = "12.5%";
-            badge.classList.add('status-preparing');
+            s1.classList.add('active'); p.style.width = "12.5%"; badge.classList.add('status-preparing');
+            tipText.innerText = "Zərif aksessuarlarınız hazırda sizin üçün xüsusi qutusuna səliqə ilə yerləşdirilir. Gözlədiyinizə tam dəyəcək! 💎";
+            sendPushNotification("Hazırlanır", "Sifarişiniz emal mərhələsindədir və qutulanır! ✨");
         } 
         else if (txt.includes("yolda") || txt.includes("kuryer") || txt.includes("göndərildi")) { 
-            s1.classList.add('active'); s2.classList.add('active'); p.style.width = "50%"; 
-            badge.classList.add('status-shipped');
+            s1.classList.add('active'); s2.classList.add('active'); p.style.width = "50%"; badge.classList.add('status-shipped');
+            tipText.innerText = "Bağlamanız artıq kuryerdədir, sizə doğru tələsir! Sifarişinizi təhvil alarkən yoxlamağı unutmayın. 🚀";
+            sendPushNotification("Yoldadır", "Bağlamanız artıq kuryerdədir, sizə doğru gəlir! 🚀");
         } 
         else if (txt.includes("poçt") || txt.includes("filial") || txt.includes("məntəqə")) { 
-            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); p.style.width = "75%"; 
-            badge.classList.add('status-post');
+            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); p.style.width = "75%"; badge.classList.add('status-post');
+            tipText.innerText = "Bağlamanız təhlükəsiz şəkildə təyin olunmuş poçt filialına çatdı. Şəxsiyyət vəsiqənizlə yaxınlaşıb götürə bilərsiniz. 📦";
+            sendPushNotification("Poçtdadır", "Bağlamanız təyin olunmuş poçt məntəqəsinə çatdı! 📦");
         } 
         else if (txt.includes("çatdı") || txt.includes("təhvil") || txt.includes("çatdırıldı") || txt.includes("aldı")) { 
-            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); s4.classList.add('active'); p.style.width = "100%"; 
-            badge.classList.add('status-received');
+            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); s4.classList.add('active'); p.style.width = "100%"; badge.classList.add('status-received');
+            tipText.innerText = "Artıq parıldamaq vaxtıdır! Gümüş və mirvarilərinizin uzunömürlü olması üçün onları parfüm və sudan uzaq tutun. ✨";
+            sendPushNotification("Təhvil Verildi", "Bağlamanız uğurla təhvil alındı. Parıldamaq vaxtıdır! ✨");
             runConfetti(); 
         } else { 
-            s1.classList.add('active'); p.style.width = "12.5%"; 
-            badge.classList.add('status-preparing');
+            s1.classList.add('active'); p.style.width = "12.5%"; badge.classList.add('status-preparing');
+            tipText.innerText = "Sifarişiniz emal mərhələsindədir. Əlavə suallarınız üçün bizimlə hər zaman əlaqə saxlaya bilərsiniz. ✨";
         }
     }
 
-    // 🎁 ÇARX FIRLATMA FUNKSİYASI (YALNIZ %5 VƏ %10)
     function spinTheWheel() {
         const wheel = document.getElementById('mainWheel');
         const spinBtn = document.getElementById('spinBtn');
@@ -794,7 +762,6 @@
             const actualDegrees = randomDegrees % 360;
             let prize = "";
 
-            // Faizlər tam dəqiqliklə bölündü
             if (actualDegrees >= 0 && actualDegrees < 60) prize = "🎟️ %5 Endirim Kuponu! (Kod: MERA5)";
             else if (actualDegrees >= 60 && actualDegrees < 120) prize = "💎 %10 Endirim Kuponu! (Kod: MERA10)";
             else if (actualDegrees >= 120 && actualDegrees < 180) prize = "🎟️ %5 Endirim Kuponu! (Kod: MERA5)";
@@ -807,7 +774,6 @@
             wheelResult.style.display = 'block';
             spinBtn.innerText = "İstifadə Edilib";
 
-            // Nömrə kilidi yaddaşa yazılır
             localStorage.setItem('mera_wheel_spun_' + klaviaturadanYazilan, 'true');
             runConfetti(); 
         }, 4000);
@@ -824,6 +790,9 @@
 
         quoteLoader.innerText = meraQuotes[Math.floor(Math.random() * meraQuotes.length)]; quoteLoader.style.display = 'block';
         const klaviaturadanYazilan = temizleNo(inputVal); const startTime = Date.now();
+
+        startPremiumMusic();
+        askNotificationPermission(); // Bildiriş icazəsi pəncərəsini açır
 
         fetch(BASE_URL)
             .then(res => res.text())
@@ -846,7 +815,6 @@
 
                         updateTimelineAndBadge(cədvəlStatusu);
 
-                        // 🔒 NÖMRƏYƏ GÖRƏ ÇARX YOXLANIŞI
                         const wheelWrapper = document.getElementById('wheelWrapper');
                         const spinBtn = document.getElementById('spinBtn');
                         const wheelResult = document.getElementById('wheelResult');
