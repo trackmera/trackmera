@@ -3,40 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mera Store - Sifariş Statusu</title>
+    <title>Mera Store | Sifariş İzləmə Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; width: 90%; max-width: 400px; }
-        h2 { color: #333; margin-bottom: 5px; }
-        p.subtitle { color: #777; font-size: 14px; margin-bottom: 25px; }
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; text-align: center; margin-bottom: 15px; }
-        button { width: 100%; padding: 12px; background: #000; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #222; }
-        .result-card { display: none; margin-top: 25px; padding: 20px; border-radius: 12px; background: #fafafa; border-left: 5px solid #00c853; text-align: left; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-        .result-card h3 { margin: 0 0 10px 0; color: #222; font-size: 18px; }
-        .result-card p { margin: 5px 0; color: #555; font-size: 15px; }
-        .error { display: none; color: #ff3d00; margin-top: 15px; font-weight: 500; }
-        .post-link { display: inline-block; margin-top: 12px; padding: 10px 14px; background: #0052cc; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center; }
-        .post-link:hover { background: #003d99; }
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #151c2c;
+            --accent-gold: #d4af37;
+            --text-main: #ffffff;
+            --text-muted: #8f9cae;
+            --input-border: #222e45;
+            --button-hover: #b5942e;
+            --success-green: #10b981;
+            --error-red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Arxa fondakı estetik işıq effektləri */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(212, 175, 55, 0.15);
+            border-radius: 50%;
+            blur: 100px;
+            filter: blur(80px);
+            top: 10%;
+            left: 10%;
+            z-index: -1;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 50%;
+            filter: blur(80px);
+            bottom: 10%;
+            right: 10%;
+            z-index: -1;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 100%;
+            max-width: 420px;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-area {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .logo-area span {
+            color: var(--accent-gold);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid var(--input-border);
+            border-radius: 12px;
+            font-size: 16px;
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent-gold);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent-gold);
+            color: #000000;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        button:hover {
+            background: var(--button-hover);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            display: none;
+            color: var(--error-red);
+            margin-top: 20px;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid var(--error-red);
+        }
+
+        .result-card {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 4px solid var(--success-green);
+            text-align: left;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card h3 {
+            margin-bottom: 15px;
+            color: var(--text-main);
+            font-size: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-line {
+            margin-bottom: 12px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-line strong {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .result-line span {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green) !important;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .post-link {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 14px;
+            background: #1e293b;
+            color: #38bdf8;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .post-link:hover {
+            background: rgba(56, 189, 248, 0.1);
+            transform: scale(1.02);
+        }
+
+        /* Sosial Media Düymələri */
+        .social-footer {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 20px;
+        }
+
+        .social-icon {
+            color: var(--text-muted);
+            font-size: 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-icon:hover {
+            color: var(--accent-gold);
+            transform: translateY(-3px);
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Mera Store ✨</h2>
-    <p class="subtitle">Sifariş statusunuzu yoxlamaq üçün telefon nömrənizi daxil edin</p>
+    <div class="logo-area">MERA <span>STORE</span></div>
+    <p class="subtitle">Sifariş statusunuzu canlı izləmək üçün qeydiyyat nömrənizi daxil edin.</p>
     
-    <input type="text" id="phoneInput" placeholder="Nömrənizi yazın (Məs: 099 399 93 38)">
-    <button onclick="checkStatus()">Yoxla</button>
+    <div class="input-group">
+        <i class="fa-solid fa-phone"></i>
+        <input type="text" id="phoneInput" placeholder="Nömrənizi yazın (Məs: 0993999338)">
+    </div>
+    
+    <button onclick="checkStatus()">Sifarişi Tap <i class="fa-solid fa-magnifying-glass" style="margin-left: 5px;"></i></button>
 
-    <div class="error" id="errorMsg">Ooops! Bu nömrə ilə aktiv sifariş tapılmadı.</div>
+    <div class="error" id="errorMsg">
+        <i class="fa-solid fa-circle-exclamation" style="margin-right: 5px;"></i> Aktiv sifariş tapılmadı. Zəhmət olmasa nömrəni düzgün yazdığınızdan əmin olun.
+    </div>
 
     <div class="result-card" id="resultCard">
-        <h3 id="resName">Müştəri Adı</h3>
-        <p><strong>Məhsul:</strong> <span id="resProduct">-</span></p>
-        <p><strong>Status:</strong> <span id="resStatus">-</span></p>
-        <p id="trackTextAlani" style="display: none;"><strong>AzerPost kodu:</strong> <span id="resTrackCode">-</span></p>
+        <h3><i class="fa-solid fa-box-open" style="color: var(--accent-gold);"></i> <span id="resName">Müştəri Adı</span></h3>
+        
+        <div class="result-line">
+            <strong>Məhsul:</strong>
+            <span id="resProduct">-</span>
+        </div>
+        <div class="result-line">
+            <strong>Statusu:</strong>
+            <span id="resStatus" class="status-badge">-</span>
+        </div>
+        <div class="result-line" id="trackTextAlani" style="display: none;">
+            <strong>Poçt Kodu:</strong>
+            <span id="resTrackCode">-</span>
+        </div>
+        
         <div id="poctAlani"></div>
+    </div>
+
+    <div class="social-footer">
+        <a href="https://instagram.com/" target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://tiktok.com/" target="_blank" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
     </div>
 </div>
 
@@ -77,18 +349,14 @@
                     if (cedveldekiNo === klaviaturadanYazilan && klaviaturadanYazilan !== '') {
                         document.getElementById('resName').innerText = row.c[1] ? row.c[1].v : 'Hörmətli Müştəri';
                         document.getElementById('resProduct').innerText = row.c[2] ? row.c[2].v : '-';
-                        
-                        // E sütunu = Status
                         document.getElementById('resStatus').innerText = row.c[4] ? row.c[4].v : 'Yoxlanılır'; 
                         
-                        // D sütunu = Poçt Kodu
                         if (row.c[3] && row.c[3].v) {
                             const trackCode = row.c[3].v.toString().trim();
                             resTrackCode.innerText = trackCode;
-                            trackTextAlani.style.display = 'block';
+                            trackTextAlani.style.display = 'flex';
                             
-                            // Tam olaraq sənin istədiyin o uzun xidmətlər linki:
-                            poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}#packageFollow" target="_blank" class="post-link">Azərpoçt ilə Canlı İzlə 📦</a>`;
+                            poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}#packageFollow" target="_blank" class="post-link"><i class="fa-solid fa-truck-ramp-box"></i> Azərpoçt ilə Canlı İzlə</a>`;
                         } else {
                             trackTextAlani.style.display = 'none';
                             poctAlani.innerHTML = '';
