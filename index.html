@@ -87,8 +87,8 @@
                             resTrackCode.innerText = trackCode;
                             trackTextAlani.style.display = 'block';
                             
-                            // Sənin göndərdiyin düzgün link strukturuna bağladıq
-                            poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}#packageFollow" target="_blank" class="post-link">Azərpoçt ilə Canlı İzlə 📦</a>`;
+                            // Avtomatik axtarış edən birbaşa keçid linki
+                            poctAlani.innerHTML = `<a href="https://azerpost.az/az/tracking?trackID=${trackCode}" target="_blank" class="post-link">Azərpoçt ilə Canlı İzlə 📦</a>`;
                         } else {
                             trackTextAlani.style.display = 'none';
                             poctAlani.innerHTML = '';
