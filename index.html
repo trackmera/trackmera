@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mera Store | Sifariş İzləmə Paneli</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -246,27 +246,35 @@
         }
         #liveMap { width: 100%; height: 100%; }
 
-        /* Leaflet xəritə daxili düzəlişlər */
-        .leaflet-vml-shape { width: 1px; height: 1px; }
-        .leaflet-layer, .leaflet-control-zoom { filter: hue-rotate(0deg) saturate(1.1); }
-        body.light-theme .map-container { border-color: rgba(0, 0, 0, 0.15); }
-
         /* Custom Map Neon Markers */
-        .neon-marker-mera {
-            background: #d4af37; border: 2px solid #fff; border-radius: 50%;
-            box-shadow: 0 0 12px #d4af37; width: 12px !important; height: 12px !important;
-        }
-        .neon-marker-client {
-            background: #10b981; border: 2px solid #fff; border-radius: 50%;
-            box-shadow: 0 0 12px #10b981; width: 12px !important; height: 12px !important;
-        }
-        .neon-marker-courier {
-            background: #00f0ff; border: 2px solid #fff; border-radius: 50%;
-            box-shadow: 0 0 15px #00f0ff; width: 14px !important; height: 14px !important;
-            animation: pulseGlow 1s infinite alternate;
-        }
+        .neon-marker-mera { background: #d4af37; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 12px #d4af37; width: 12px !important; height: 12px !important; }
+        .neon-marker-client { background: #10b981; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 12px #10b981; width: 12px !important; height: 12px !important; }
+        .neon-marker-courier { background: #00f0ff; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 15px #00f0ff; width: 14px !important; height: 14px !important; animation: pulseGlow 1s infinite alternate; }
 
         @keyframes pulseGlow { from { transform: scale(0.9); box-shadow: 0 0 8px #00f0ff; } to { transform: scale(1.1); box-shadow: 0 0 18px #00f0ff; } }
+
+        /* ✍️ IDEA 5: ZƏRİF TƏŞƏKKÜR QEYDİ VƏ CANLI İMZA CSS */
+        .signature-container {
+            margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.06);
+            body.light-theme & { border-top-color: rgba(0,0,0,0.06); }
+            text-align: center; display: none; animation: fadeIn 0.8s ease;
+        }
+        .signature-text {
+            font-family: 'Pinyon Script', cursive; font-size: 24px; color: var(--accent-gold);
+            margin-bottom: 5px; opacity: 0.95; letter-spacing: 1px;
+        }
+        .signature-sub {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); font-weight: 500;
+        }
+        .signature-svg { width: 130px; height: auto; margin-top: 5px; }
+        .signature-path {
+            stroke: var(--accent-gold); stroke-width: 2; fill: none;
+            stroke-dasharray: 1000; stroke-dashoffset: 1000;
+        }
+        .result-card.animated-signature .signature-path {
+            animation: drawSignature 3.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+        }
+        @keyframes drawSignature { to { stroke-dashoffset: 0; } }
 
         .social-footer { margin-top: 35px; display: flex; justify-content: center; gap: 25px; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 25px; }
         .social-icon { color: var(--text-muted); font-size: 22px; text-decoration: none; transition: all 0.3s ease; }
@@ -362,6 +370,14 @@
             <div class="map-container">
                 <div id="liveMap"></div>
             </div>
+        </div>
+
+        <div class="signature-container" id="sigContainer">
+            <div class="signature-text">Thank you for choosing us</div>
+            <div class="signature-sub">Mera Store Team</div>
+            <svg class="signature-svg" viewBox="0 0 200 80">
+                <path class="signature-path" d="M 20,45 C 40,15 55,20 65,45 C 75,70 30,85 50,50 C 70,15 95,30 105,45 C 115,60 130,25 140,40 C 150,55 160,35 175,45 M 80,35 C 110,35 140,30 170,25" />
+            </svg>
         </div>
 
     </div>
@@ -473,85 +489,40 @@
         const mapContainer = document.getElementById('liveMap');
         if(!mapContainer) return;
 
-        // Əgər köhnə xəritə obyekti qalıbsa, təmizlə ki xəta verməsin
-        if (myMap !== null) {
-            myMap.remove();
-            myMap = null;
-        }
+        if (myMap !== null) { myMap.remove(); myMap = null; }
         if(mapTimer) clearInterval(mapTimer);
 
-        // Həqiqi Bakı Mərkəzi Koordinatları (Nizami k. / Tarqovı tərəflər)
         const storeCoords = [40.3725, 49.8432]; 
-        // Bakıda ixtiyari müştəri nöqtəsi (Məs: Gənclik metrosu ətrafı)
         const clientCoords = [40.4002, 49.8519]; 
 
-        // Xəritəni yaradırıq və Bakıya fokuslayırıq
-        myMap = L.map('liveMap', {
-            zoomControl: false,
-            attributionControl: false
-        }).setView([40.3860, 49.8460], 13);
+        myMap = L.map('liveMap', { zoomControl: false, attributionControl: false }).setView([40.3860, 49.8460], 13);
 
-        // Premium Real Qara/Neon Neon Küçə Dizaynı (CartoDB DarkMatter)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            maxZoom: 19
-        }).addTo(myMap);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(myMap);
 
-        // Neon Div marker ikonları
         const meraIcon = L.divIcon({ className: 'neon-marker-mera' });
         const clientIcon = L.divIcon({ className: 'neon-marker-client' });
         const courierIcon = L.divIcon({ className: 'neon-marker-courier' });
 
-        // Nöqtələri xəritəyə taxırıq
         L.marker(storeCoords, {icon: meraIcon}).addTo(myMap).bindPopup('Mera Mərkəz Store').openPopup();
         L.marker(clientCoords, {icon: clientIcon}).addTo(myMap).bindPopup('Sizin Ünvanınız');
 
-        // Kuryer başlanğıcda mağazadadır
         courierMarker = L.marker(storeCoords, {icon: courierIcon}).addTo(myMap);
 
-        // Real Küçə Yol İzi (Neon Göy Rəngdə Polyline)
-        const routePoints = [
-            storeCoords,
-            [40.3750, 49.8440],
-            [40.3820, 49.8415],
-            [40.3880, 49.8480],
-            [40.3950, 49.8475],
-            clientCoords
-        ];
+        const routePoints = [ storeCoords, [40.3750, 49.8440], [40.3820, 49.8415], [40.3880, 49.8480], [40.3950, 49.8475], clientCoords ];
 
-        const neonPolyline = L.polyline(routePoints, {
-            color: '#00f0ff',
-            weight: 4,
-            opacity: 0.7,
-            lineJoin: 'round'
-        }).addTo(myMap);
+        const neonPolyline = L.polyline(routePoints, { color: '#00f0ff', weight: 4, opacity: 0.7, lineJoin: 'round' }).addTo(myMap);
 
-        // Kuryerin Bakı daxilində canlı addım-addım animasiyası
-        let step = 0;
-        const totalSteps = 150;
-
+        let step = 0; const totalSteps = 150;
         mapTimer = setInterval(() => {
-            step++;
-            if(step > totalSteps) step = 0; // Başa dönsün
-
-            let currentPercent = step / totalSteps;
-            let totalSegments = routePoints.length - 1;
-            let segIndex = Math.floor(currentPercent * totalSegments);
-            if(segIndex >= totalSegments) segIndex = totalSegments - 1;
-
+            step++; if(step > totalSteps) step = 0;
+            let currentPercent = step / totalSteps; let totalSegments = routePoints.length - 1;
+            let segIndex = Math.floor(currentPercent * totalSegments); if(segIndex >= totalSegments) segIndex = totalSegments - 1;
             let segPercent = (currentPercent * totalSegments) - segIndex;
-            let p1 = routePoints[segIndex];
-            let p2 = routePoints[segIndex + 1];
-
-            // Real koordinat interpolyasiyası
-            let lat = p1[0] + (p2[0] - p1[0]) * segPercent;
-            let lng = p1[1] + (p2[1] - p1[1]) * segPercent;
-
-            if(courierMarker) {
-                courierMarker.setLatLng([lat, lng]);
-            }
+            let p1 = routePoints[segIndex]; let p2 = routePoints[segIndex + 1];
+            let lat = p1[0] + (p2[0] - p1[0]) * segPercent; let lng = p1[1] + (p2[1] - p1[1]) * segPercent;
+            if(courierMarker) courierMarker.setLatLng([lat, lng]);
         }, 50);
 
-        // Leaflet xəritəsini qutunun ölçülərinə görə yenidən hesabla (Bilinməyən donmaların qarşısını alır)
         setTimeout(() => { if(myMap) myMap.invalidateSize(); }, 300);
     }
 
@@ -560,9 +531,12 @@
         const s1 = document.getElementById('step1'); const s2 = document.getElementById('step2'); const s3 = document.getElementById('step3'); const s4 = document.getElementById('step4');
         const badge = document.getElementById('resStatus'); const tipText = document.getElementById('meraTipText');
         const mapWrapper = document.getElementById('mapWrapper');
+        const sigContainer = document.getElementById('sigContainer');
+        const rCard = document.getElementById('resultCard');
         
         [s1, s2, s3, s4].forEach(s => s.classList.remove('active')); p.style.width = "0%"; badge.className = "status-badge"; 
-        mapWrapper.style.display = 'none'; if(mapTimer) clearInterval(mapTimer);
+        mapWrapper.style.display = 'none'; sigContainer.style.display = 'none'; rCard.classList.remove('animated-signature');
+        if(mapTimer) clearInterval(mapTimer);
 
         const txt = statusText.toLowerCase();
 
@@ -574,7 +548,7 @@
             s1.classList.add('active'); s2.classList.add('active'); p.style.width = "50%"; badge.classList.add('status-shipped');
             tipText.innerText = "Bağlamanız artıq kuryerdədir, sizə doğru tələsir! Sifarişinizi təhvil alarkən yoxlamağı unutmayın. 🚀";
             mapWrapper.style.display = 'block'; 
-            setTimeout(initRealBakuMap, 150); // REAL BAKU XƏRİTƏSİNİ İŞƏ SAL
+            setTimeout(initRealBakuMap, 150); 
         } 
         else if (txt.includes("poçt") || txt.includes("filial") || txt.includes("məntəqə")) { 
             s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); p.style.width = "75%"; badge.classList.add('status-post');
@@ -588,6 +562,12 @@
             s1.classList.add('active'); p.style.width = "12.5%"; badge.classList.add('status-preparing');
             tipText.innerText = "Sifarişiniz emal mərhələsindədir. Əlavə suallarınız üçün bizimlə hər zaman əlaqə saxlaya bilərsiniz. ✨";
         }
+
+        // Kart açıldıqdan dərhal sonra təşəkkür qeydini göstər və imza animasiyasını başlat
+        setTimeout(() => {
+            sigContainer.style.display = 'block';
+            rCard.classList.add('animated-signature');
+        }, 400);
     }
 
     function checkStatus() {
