@@ -9,16 +9,17 @@
     
     <style>
         :root {
-            --bg-color: #070a13;
-            --card-bg: rgba(21, 28, 44, 0.6);
+            --bg-color: #05070f;
+            --card-bg: rgba(13, 19, 33, 0.75);
             --accent-gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.3);
             --text-main: #ffffff;
-            --text-muted: #8f9cae;
+            --text-muted: #8a99ad;
             --input-border: #1e293b;
             --button-hover: #b5942e;
             --success-green: #10b981;
             --error-red: #ef4444;
-            --poct-blue: #38bdf8;
+            --cyber-blue: #00f0ff;
         }
 
         * {
@@ -41,46 +42,49 @@
             position: relative;
         }
 
+        /* 🔥 EFFEKTLİ VƏ SÜRƏTLİ AÇILIŞ (PRELOADER) */
         #preloader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #070a13;
+            background-color: #05070f;
             z-index: 99999;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.6s;
+            transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
         }
 
         .loader-logo {
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: 4px;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 6px;
             color: var(--text-main);
-            animation: logoFade 1.6s infinite alternate ease-in-out;
+            text-shadow: 0 0 20px var(--gold-glow);
+            animation: logoIntro 1.2s ease-in-out forwards;
         }
 
         .loader-logo span { color: var(--accent-gold); }
 
-        @keyframes logoFade {
-            0% { opacity: 0.3; transform: scale(0.97); filter: blur(2px); }
-            100% { opacity: 1; transform: scale(1.02); filter: blur(0); }
+        @keyframes logoIntro {
+            0% { opacity: 0; transform: scale(0.8); filter: blur(10px); letter-spacing: 12px; }
+            50% { opacity: 1; filter: blur(0); letter-spacing: 6px; }
+            100% { opacity: 0; transform: scale(1.1); filter: blur(4px); }
         }
 
         .container {
             background: var(--card-bg);
-            padding: 50px 35px;
-            border-radius: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 45px 30px;
+            border-radius: 24px;
+            border: 1px solid rgba(212, 175, 55, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
             text-align: center;
             width: 100%;
             max-width: 410px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
         .logo-area {
@@ -100,9 +104,9 @@
             line-height: 1.6;
         }
 
-        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group { position: relative; margin-bottom: 25px; }
 
-        .input-group i {
+        .input-group i.phone-icon {
             position: absolute;
             left: 18px;
             top: 50%;
@@ -111,23 +115,41 @@
             font-size: 16px;
         }
 
+        /* ❌ NÖMRƏNİ SİLƏN DÜYMƏ */
+        .clear-icon {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            display: none;
+            transition: color 0.2s;
+        }
+        .clear-icon:hover { color: var(--error-red); }
+
         input {
             width: 100%;
-            padding: 16px 16px 16px 48px;
-            background: rgba(7, 10, 19, 0.4);
+            padding: 16px 40px 16px 48px;
+            background: rgba(5, 7, 15, 0.6);
             border: 1px solid var(--input-border);
             border-radius: 14px;
             font-size: 15px;
             color: var(--text-main);
             outline: none;
+            transition: all 0.3s;
         }
 
-        input:focus { border-color: rgba(212, 175, 55, 0.5); }
+        input:focus { 
+            border-color: var(--accent-gold); 
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+        }
 
-        button {
+        button.search-btn {
             width: 100%;
             padding: 16px;
-            background: var(--accent-gold);
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #b5942e 100%);
             color: #000000;
             border: none;
             border-radius: 14px;
@@ -138,10 +160,14 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+            transition: all 0.3s;
         }
 
-        button:hover { background: var(--button-hover); }
+        button.search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
 
         .spinner {
             display: none;
@@ -164,6 +190,7 @@
             border-radius: 12px;
             border: 1px solid rgba(239, 68, 68, 0.15);
             text-align: left;
+            font-size: 13px;
         }
 
         .result-card {
@@ -171,11 +198,14 @@
             margin-top: 35px;
             padding: 25px;
             border-radius: 18px;
-            background: rgba(255, 255, 255, 0.01);
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-top: 3px solid var(--accent-gold);
             text-align: left;
+            animation: fadeIn 0.4s ease-out;
         }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .result-card h3 {
             margin-bottom: 20px;
@@ -190,10 +220,11 @@
 
         .result-line {
             margin-bottom: 14px;
-            font-size: 13px;
+            font-size: 13.5px;
             display: flex;
-            justify-content: space-between;
+            justify-space: space-between;
             align-items: center;
+            justify-content: space-between;
         }
 
         .result-line strong { color: var(--text-muted); font-weight: 400; }
@@ -206,43 +237,62 @@
             border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            display: inline-block;
+            border: 1px solid rgba(212, 175, 55, 0.2);
         }
 
-        /* 💎 YENİ PREMİUM AZƏRPOÇT DÜYMƏSİ */
+        /* 📋 KOPYALAMA İKONU STİLİ */
+        .copy-btn {
+            margin-left: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .copy-btn:hover { color: var(--cyber-blue); }
+
+        /* 💎 YENİ KİBER-FUTURİSTİK AZƏRPOÇT DÜYMƏSİ */
         .post-link {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
-            margin-top: 24px;
-            padding: 15px;
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0.03) 100%);
-            color: var(--poct-blue);
+            gap: 12px;
+            margin-top: 25px;
+            padding: 16px;
+            background: transparent;
+            color: #ffffff;
             text-decoration: none;
             border-radius: 14px;
             font-size: 13.5px;
-            font-weight: 600;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.03);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border: 2px solid var(--accent-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
+        .post-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: 0.5s;
+        }
+
+        .post-link:hover::before { left: 100%; }
+
         .post-link:hover {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(56, 189, 248, 0.06) 100%);
-            border-color: rgba(56, 189, 248, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.08);
+            background: var(--accent-gold);
+            color: #000000;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+            transform: scale(1.02);
         }
 
         .post-link i {
-            font-size: 15px;
-            transition: transform 0.3s ease;
-        }
-
-        .post-link:hover i {
-            transform: translateX(3px);
+            font-size: 16px;
         }
 
         .social-footer {
@@ -283,14 +333,15 @@
 
 <div class="container">
     <div class="logo-area">MERA <span>STORE</span></div>
-    <p class="subtitle">Sifariş statusunuzu canlı izləmək üçün qeydiyyat nömrənizi daxil edin.</p>
+    <p class="subtitle">Sifariş statusunuzu görmək üçün qeydiyyat nömrənizi daxil edin.</p>
     
     <div class="input-group">
         <input type="text" id="phoneInput" placeholder="Nömrənizi yazın (Məs: 0993999338)">
-        <i class="fa-solid fa-phone"></i>
+        <i class="fa-solid fa-phone phone-icon"></i>
+        <i class="fa-solid fa-xmark clear-icon" id="clearBtn" onclick="clearInput()"></i>
     </div>
     
-    <button onclick="checkStatus()" id="searchBtn">
+    <button onclick="checkStatus()" id="searchBtn" class="search-btn">
         <span id="btnText">Sifarişi Tap</span>
         <i class="fa-solid fa-magnifying-glass" id="btnIcon"></i>
         <div class="spinner" id="btnSpinner"></div>
@@ -313,7 +364,10 @@
         </div>
         <div class="result-line" id="trackTextAlani" style="display: none;">
             <strong>Poçt Kodu:</strong>
-            <span id="resTrackCode">-</span>
+            <div>
+                <span id="resTrackCode">-</span>
+                <i class="fa-regular fa-copy copy-btn" onclick="copyTrackCode()" title="Kopyala"></i>
+            </div>
         </div>
         
         <div id="poctAlani"></div>
@@ -330,30 +384,59 @@
 </a>
 
 <script>
-    function hidePreloader() {
-        const preloader = document.getElementById('preloader');
-        if (preloader) {
-            preloader.style.opacity = '0';
-            preloader.style.visibility = 'hidden';
-        }
-    }
-    window.addEventListener('load', hidePreloader);
-    setTimeout(hidePreloader, 2000);
+    // PRELOADER AYARI (1.1 saniyə sonra dərhal itir)
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+            }
+        }, 1100);
+    });
 
     const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
     const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
 
-    document.getElementById('phoneInput').addEventListener('keypress', function(e) {
+    const phoneInput = document.getElementById('phoneInput');
+    const clearBtn = document.getElementById('clearBtn');
+
+    phoneInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') checkStatus();
     });
+
+    // "X" İKONUNUN ÇIXIB-İTMƏSİ
+    phoneInput.addEventListener('input', function() {
+        if (this.value.trim().length > 0) {
+            clearBtn.style.display = 'block';
+        } else {
+            clearBtn.style.display = 'none';
+        }
+    });
+
+    function clearInput() {
+        phoneInput.value = '';
+        clearBtn.style.display = 'none';
+        phoneInput.focus();
+    }
 
     function temizleNo(no) {
         let temiz = no.toString().replace(/\D/g, ''); 
         return temiz.length >= 9 ? temiz.slice(-9) : temiz; 
     }
 
+    // 📋 TƏK KLİKLƏ KOPYALAMA FUNKSİYASI
+    function copyTrackCode() {
+        const code = document.getElementById('resTrackCode').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+            alert('Poçt kodu kopyalandı: ' + code);
+        }).catch(err => {
+            console.error('Kopyalama xətası:', err);
+        });
+    }
+
     function checkStatus() {
-        const inputVal = document.getElementById('phoneInput').value.trim();
+        const inputVal = phoneInput.value.trim();
         const errorMsg = document.getElementById('errorMsg');
         const resultCard = document.getElementById('resultCard');
         const poctAlani = document.getElementById('poctAlani');
@@ -388,18 +471,17 @@
                         document.getElementById('resName').innerText = row.c[1] ? row.c[1].v : 'Hörmətli Müştəri';
                         document.getElementById('resProduct').innerText = row.c[2] ? row.c[2].v : '-';
                         
-                        // 🔥 BİRBAŞA GOOGLE SHEETS-DƏ NƏ YAZILIBSA O STATUS GÖSTƏRİLİR
-                        const cədvəlStatusu = row.c[4] ? row.c[4].v : '📦 Sistemdə / Hazırlanır';
-                        document.getElementById('resStatus').innerText = cədvəlStatusu;
+                        // Tam stabil Sheets statusu
+                        document.getElementById('resStatus').innerText = row.c[4] ? row.c[4].v : '📦 Hazırlanır';
 
-                        // Əgər Poçt Kodu (Axtarış kodu) varsa göy düyməni çıxarırıq
                         if (row.c[3] && row.c[3].v) {
                             const trackCode = row.c[3].v.toString().trim();
                             if (resTrackCode) resTrackCode.innerText = trackCode;
                             if (trackTextAlani) trackTextAlani.style.display = 'flex';
                             
                             if (poctAlani) {
-                                poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}" target="_blank" class="post-link">Azərpoçt Saytında Canlı İzlə <i class="fa-solid fa-arrow-right"></i></a>`;
+                                // QƏŞƏNG YENİ DÜYMƏNİN STRUKTURU
+                                poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}" target="_blank" class="post-link"><i class="fa-solid fa-truck-fast"></i> Saytda Canlı İzlə</a>`;
                             }
                         } else {
                             if (trackTextAlani) trackTextAlani.style.display = 'none';
