@@ -327,61 +327,74 @@
         return temiz.length >= 9 ? temiz.slice(-9) : temiz; 
     }
 
-    // 🚀 BLOKLANMAYAN GÜCLÜ PARÇALAYICI MOTOR (CORS NO-LIMIT)
-    function azerpostCanliFetch(poctKodu) {
-        const statusBadge = document.getElementById('resStatus');
-        
-        // Azərpoçt rəsmi səhifəsinin daxili API və izləmə linki
-        const realUrl = "https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=" + poctKodu;
-        
-        // Bloklanmanı aşmaq üçün tam açıq proxy xətti
-        const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(realUrl);
+function azerpostCanliFetch(poctKodu) {
+    const statusBadge = document.getElementById('resStatus');
+    const poctAlani = document.getElementById('poctAlani');
+    
+    statusBadge.innerHTML = "🔄 Canlı status oxunur...";
+    statusBadge.style.color = "var(--accent-gold)";
+    statusBadge.style.background = "rgba(212, 175, 55, 0.08)";
+    statusBadge.style.borderColor = "rgba(212, 175, 55, 0.2)";
 
-        fetch(proxyUrl)
-            .then(res => res.json())
-            .then(data => {
-                const html = data.contents;
-                
-                // Gələn HTML kodunun içərisində status cədvəlini axtarırıq
-                if (html && html.includes('</td>')) {
-                    const rows = html.split('<tr>');
-                    let sonSatir = "";
+    const realUrl = "https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=" + poctKodu;
+    
+    // Əsas proxy olaraq AllOrigins istifadə edirik
+    const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(realUrl);
 
-                    // Səhifənin ən altındakı (ən son) status sətirini tapırıq
-                    for (let j = rows.length - 1; j >= 0; j--) {
-                        if (rows[j].includes('<td>') && (rows[j].includes('Çatdırılıb') || rows[j].includes('şöbəsinə') || rows[j].includes('olunub') || rows[j].includes('mərkəzinə') || rows[j].includes('mübadilə'))) {
-                            sonSatir = rows[j];
-                            break;
-                        }
-                    }
+    fetch(proxyUrl)
+        .then(res => {
+            if (res.ok) return res.json();
+            throw new Error('AllOrigins xətası');
+        })
+        .then(data => {
+            const html = data.contents;
+            if (html && html.includes('</td>')) {
+                const rows = html.split('<tr>');
+                let sonSatir = "";
 
-                    if (sonSatir !== "") {
-                        const columns = sonSatir.split('<td>');
-                        if (columns.length >= 4) {
-                            let statusMetni = columns[3].split('</td>')[0].replace(/<[^>]*>/g, '').trim();
-                            let menteqeMetni = columns[4] ? columns[4].split('</td>')[0].replace(/<[^>]*>/g, '').trim() : "";
-
-                            if (statusMetni.toLowerCase().includes("çatdırılıb") || statusMetni.toLowerCase().includes("catdirilib")) {
-                                statusBadge.innerText = "🎉 Çatdırılıb (Təhvil verildi)";
-                                statusBadge.style.color = "var(--success-green)";
-                                statusBadge.style.background = "rgba(16, 185, 129, 0.08)";
-                                statusBadge.style.borderColor = "rgba(16, 185, 129, 0.15)";
-                            } else {
-                                statusBadge.innerText = menteqeMetni ? `${statusMetni} (${menteqeMetni})` : statusMetni;
-                                statusBadge.style.color = "var(--text-main)";
-                                statusBadge.style.background = "rgba(255, 255, 255, 0.05)";
-                                statusBadge.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                            }
-                            return;
-                        }
+                for (let j = rows.length - 1; j >= 0; j--) {
+                    if (rows[j].includes('<td>') && (rows[j].includes('Çatdırılıb') || rows[j].includes('şöbəsinə') || rows[j].includes('olunub') || rows[j].includes('mərkəzinə') || rows[j].includes('mübadilə'))) {
+                        sonSatir = rows[j];
+                        break;
                     }
                 }
-                statusBadge.innerText = "📦 Hazırlanır / Poçta veriləcək";
-            })
-            .catch(() => {
-                statusBadge.innerText = "📦 Sistemdə / Hazırlanır";
-            });
-    }
+
+                if (sonSatir !== "") {
+                    const columns = sonSatir.split('<td>');
+                    if (columns.length >= 4) {
+                        let statusMetni = columns[3].split('</td>')[0].replace(/<[^>]*>/g, '').trim();
+                        let menteqeMetni = columns[4] ? columns[4].split('</td>')[0].replace(/<[^>]*>/g, '').trim() : "";
+
+                        if (statusMetni.toLowerCase().includes("çatdırılıb") || statusMetni.toLowerCase().includes("catdirilib")) {
+                            statusBadge.innerText = "🎉 Çatdırılıb (Təhvil verildi)";
+                            statusBadge.style.color = "var(--success-green)";
+                            statusBadge.style.background = "rgba(16, 185, 129, 0.08)";
+                            statusBadge.style.borderColor = "rgba(16, 185, 129, 0.15)";
+                        } else {
+                            statusBadge.innerText = menteqeMetni ? `${statusMetni} (${menteqeMetni})` : statusMetni;
+                            statusBadge.style.color = "var(--text-main)";
+                            statusBadge.style.background = "rgba(255, 255, 255, 0.05)";
+                            statusBadge.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                        }
+                        return; // Hər şey uğurludursa, funksiyanı bitir
+                    }
+                }
+            }
+            // Əgər səhifə gəldi amma içində cədvəl yoxdursa (yəni poçta hələ təzə verilibsə)
+            statusBadge.innerText = "📦 Hazırlanır / Poçta veriləcək";
+        })
+        .catch(err => {
+            console.error("Canlı izləmə gecikir:", err);
+            // 🚨 BURA ÇOX VACİB: Əgər proxy donarsa, köhnə yazı qalmasın!
+            // Müştəriyə canlı linki göstəririk ki, klikləyib birbaşa baxsın.
+            statusBadge.innerHTML = "⚠️ Məlumat yenilənir...";
+            statusBadge.style.color = "var(--accent-gold)";
+            
+            if (poctAlani) {
+                poctAlani.innerHTML = `<a href="${realUrl}#packageFollow" target="_blank" class="post-link" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.2);"><i class="fa-solid fa-arrow-up-right-from-square"></i> Status Tapılmadı? Birbaşa Bura Klikləyin</a>`;
+            }
+        });
+}
 
     function checkStatus() {
         const inputVal = document.getElementById('phoneInput').value.trim();
