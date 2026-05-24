@@ -198,7 +198,6 @@
             width: 100%;
             padding: 16px 40px 16px 48px;
             background: rgba(0, 0, 0, 0.05);
-            body:not(.light-theme) & { background: rgba(3, 5, 10, 0.6); }
             border: 1px solid var(--input-border);
             border-radius: 14px;
             font-size: 15px;
@@ -206,6 +205,7 @@
             outline: none;
             transition: all 0.3s;
         }
+        body:not(.light-theme) input { background: rgba(3, 5, 10, 0.6); }
         input:focus { 
             border-color: var(--accent-gold); 
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
@@ -265,7 +265,6 @@
             font-size: 13px;
         }
 
-        /* 📦 3D UNBOXING ANIMASYASI */
         .box-unboxing-container {
             display: none;
             margin: 30px 0;
@@ -352,9 +351,10 @@
             position: absolute;
             top: 10px; left: 5px; right: 5px; height: 2px;
             background: rgba(255, 255, 255, 0.15);
-            body.light-theme & { background: rgba(0, 0, 0, 0.1); }
             z-index: 1;
         }
+        body.light-theme .timeline::before { background: rgba(0, 0, 0, 0.1); }
+        
         .timeline-progress {
             position: absolute;
             top: 10px; left: 5px; height: 2px;
@@ -372,11 +372,12 @@
             width: 20px; height: 20px; border-radius: 50%;
             background: var(--timeline-bg);
             border: 2px solid rgba(255, 255, 255, 0.2);
-            body.light-theme & { border-color: rgba(0,0,0,0.15); }
             margin-bottom: 6px;
             display: flex; justify-content: center; align-items: center;
             font-size: 9px; transition: all 0.4s;
         }
+        body.light-theme .step .dot { border-color: rgba(0,0,0,0.15); }
+        
         .step.active .dot {
             border-color: var(--accent-gold);
             background: var(--accent-gold);
@@ -419,6 +420,28 @@
         }
         .post-link:hover { background: var(--accent-gold); color: #000000; box-shadow: 0 0 25px rgba(212, 175, 55, 0.5); transform: scale(1.02); }
 
+        /* 🚗 CANLI İZLƏMƏ MODULU */
+        .live-tracking-box {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px dashed var(--success-green);
+            padding: 15px;
+            border-radius: 14px;
+            text-align: center;
+            margin: 15px 0;
+            animation: fadeIn 0.5s ease;
+        }
+        .live-car-icon {
+            font-size: 26px;
+            display: inline-block;
+            animation: driveCar 2.5s linear infinite;
+        }
+        @keyframes driveCar {
+            0% { transform: translateX(-30px); opacity: 0; }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
+            100% { transform: translateX(30px); opacity: 0; }
+        }
+
         /* 🎟️ POZ-QAZAN (SCRATCH CARD) MODULU */
         .scratch-wrapper {
             display: none; margin-top: 25px; padding: 20px;
@@ -438,42 +461,6 @@
         }
         .scratch-prize span { font-size: 10px; color: var(--text-muted); margin-top: 4px; font-weight: 400; }
         .scratch-canvas { position: absolute; top: 0; left: 0; cursor: crosshair; z-index: 2; }
-
-        /* 🔮 BÜRC POP-UP MODULU */
-        .horoscope-trigger-btn {
-            display: none; width: 100%; margin-top: 15px; padding: 12px;
-            background: rgba(168, 85, 247, 0.1); color: #c084fc;
-            border: 1px dashed rgba(168, 85, 247, 0.4); border-radius: 12px;
-            font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.3s;
-        }
-        .horoscope-trigger-btn:hover { background: rgba(168, 85, 247, 0.2); box-shadow: 0 0 15px rgba(168, 85, 247, 0.2); }
-        
-        .h-popup-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 10000;
-            justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease;
-        }
-        .h-popup {
-            background: #0a0f1c; border: 1px solid rgba(168, 85, 247, 0.3);
-            width: 90%; max-width: 360px; padding: 25px; border-radius: 20px;
-            text-align: center; box-shadow: 0 10px 40px rgba(168, 85, 247, 0.15);
-            transform: scale(0.9); transition: transform 0.3s ease;
-        }
-        .h-popup-overlay.show { opacity: 1; display: flex; }
-        .h-popup-overlay.show .h-popup { transform: scale(1); }
-        .h-popup h4 { color: #c084fc; font-size: 16px; margin-bottom: 15px; }
-        .horoscope-select {
-            width: 100%; padding: 12px; background: #111827; border: 1px solid rgba(168, 85, 247, 0.3);
-            border-radius: 10px; color: #fff; outline: none; margin-bottom: 15px; font-size: 14px;
-        }
-        .horoscope-result { display: none; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; }
-        .horoscope-result strong { color: var(--accent-gold); font-size: 13px; display: block; margin-bottom: 5px; }
-        .horoscope-result p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-        .h-close-btn {
-            padding: 8px 20px; background: #1e293b; color: #fff; border: none; border-radius: 20px;
-            font-size: 12px; cursor: pointer; transition: background 0.2s;
-        }
-        .h-close-btn:hover { background: #334155; }
 
         .social-footer {
             margin-top: 35px; display: flex; justify-content: center; gap: 25px;
@@ -558,14 +545,6 @@
             <strong>Məhsul:</strong>
             <span id="resProduct">-</span>
         </div>
-        <div class="result-line">
-            <strong>Statusu:</strong>
-            <span id="resStatus">-</span>
-        </div>
-
-        <div class="mera-tip-box" id="meraTipBox">
-            <i class="fa-solid fa-sparkles"></i> <span id="meraTipText">Zərifliyiniz bizim üçün dəyərlidir.</span>
-        </div>
 
         <div class="result-line" id="trackTextAlani" style="display: none;">
             <strong>Poçt Kodu:</strong>
@@ -574,12 +553,19 @@
                 <i class="fa-regular fa-copy copy-btn" onclick="copyTrackCode()" title="Kopyala"></i>
             </div>
         </div>
+
+        <div class="result-line">
+            <strong>Statusu:</strong>
+            <span id="resStatus">-</span>
+        </div>
+
+        <div id="liveTrackingArea"></div>
         
         <div id="poctAlani"></div>
 
-        <button class="horoscope-trigger-btn" id="horoscopeBtn" onclick="openHoroscopePopup()">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> Öz Parıltını Tap (Bürclər)
-        </button>
+        <div class="mera-tip-box" id="meraTipBox">
+            <i class="fa-solid fa-sparkles"></i> <span id="meraTipText">Zərifliyiniz bizim üçün dəyərlidir.</span>
+        </div>
 
         <div class="scratch-wrapper" id="scratchWrapper">
             <div class="scratch-title"><i class="fa-solid fa-ticket"></i> Sürpriz Endirimini Poz və Qazan!</div>
@@ -597,33 +583,6 @@
     <div class="social-footer">
         <a href="https://instagram.com/merastore.az" target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
         <a href="https://tiktok.com/@merastore.az" target="_blank" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
-    </div>
-</div>
-
-<div class="h-popup-overlay" id="horoscopeOverlay" onclick="closeHoroscopePopup(event)">
-    <div class="h-popup">
-        <h4><i class="fa-solid fa-moon"></i> Kozmik Enerji Paneli</h4>
-        <p class="subtitle" style="margin-bottom:15px;">Bürcünüzü seçin və energetik məhsulunuzu kəşf edin.</p>
-        <select class="horoscope-select" id="hSelect" onchange="calculateHoroscope()">
-            <option value="">Bürcünüzü seçin...</option>
-            <option value="qoc">Qoç (Aries)</option>
-            <option value="buqa">Buğa (Taurus)</option>
-            <option value="ekizler">Əkizlər (Gemini)</option>
-            <option value="xerçeng">Xərçəng (Cancer)</option>
-            <option value="sir">Şir (Leo)</option>
-            <option value="qiz">Qız (Virgo)</option>
-            <option value="terezi">Tərəzi (Libra)</option>
-            <option value="eqreb">Əqrəb (Scorpio)</option>
-            <option value="oxatan">Oxatan (Sagittarius)</option>
-            <option value="oqlak">Oğlaq (Capricorn)</option>
-            <option value="dolca">Dolça (Aquarius)</option>
-            <option value="baliq">Balıq (Pisces)</option>
-        </select>
-        <div class="horoscope-result" id="hResult">
-            <strong id="hResultTitle">Aura Daşınız:</strong>
-            <p id="hResultText">Ulduz xəritəniz yüklənir...</p>
-        </div>
-        <button class="h-close-btn" onclick="document.getElementById('horoscopeOverlay').classList.remove('show')">Bağla</button>
     </div>
 </div>
 
@@ -657,21 +616,6 @@
         }
     }
 
-    function askNotificationPermission() {
-        if (!("Notification" in window)) return;
-        if (Notification.permission !== "granted" && Notification.permission !== "denied") {
-            Notification.requestPermission();
-        }
-    }
-
-    function sendPushNotification(statusTitle, messageText) {
-        if (!("Notification" in window) || Notification.permission !== "granted") return;
-        new Notification(`Mera Store | Sifariş Statusu`, {
-            body: `${statusTitle}: ${messageText}`,
-            icon: 'https://img.icons8.com/fluency/96/jewelry.png'
-        });
-    }
-
     function toggleTheme() {
         const body = document.body;
         const icon = document.getElementById('theme-icon');
@@ -686,7 +630,7 @@
     }
     if(localStorage.getItem('theme') === 'light') toggleTheme();
 
-    // 🌌 PARALLAKS STARS CANVAS (GIROSKOP & MOUSE)
+    // 🌌 PARALLAKS STARS CANVAS
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let stars = [];
@@ -701,17 +645,15 @@
             size: Math.random() * 1.6 + 0.4,
             color: Math.random() > 0.4 ? '#d4af37' : '#00f0ff',
             speed: Math.random() * 0.15 + 0.05,
-            depth: Math.random() * 15 + 5 // Parallaks dərinlik katsayısı
+            depth: Math.random() * 15 + 5
         });
     }
 
-    // Siçan hərəkətinə görə parallaks
     window.addEventListener('mousemove', (e) => {
         offsetX = (e.clientX - window.innerWidth / 2) * 0.05;
         offsetY = (e.clientY - window.innerHeight / 2) * 0.05;
     });
 
-    // Mobil telefon giroskobuna görə parallaks (Hərəkət sensoru)
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', (e) => {
             if(e.beta && e.gamma) {
@@ -729,7 +671,6 @@
             stars.forEach(star => {
                 ctx.fillStyle = star.color;
                 ctx.beginPath();
-                // Parallaks ofsetini ulduzun dərinliyinə görə tətbiq edirik
                 let finalX = star.x + (offsetX * (star.depth * 0.1));
                 let finalY = star.y + (offsetY * (star.depth * 0.1));
 
@@ -786,196 +727,197 @@
         }, 1200);
     });
 
+    // 🌐 SIFARIŞ DETALLARI VƏ MƏNTİQ
     const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
-    const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
+    const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
+    let globalData = null; 
     const phoneInput = document.getElementById('phoneInput');
     const clearBtn = document.getElementById('clearBtn');
-    const quoteLoader = document.getElementById('quoteLoader');
 
-    phoneInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') checkStatus(); });
-    phoneInput.addEventListener('input', function() { clearBtn.style.display = this.value.trim().length > 0 ? 'block' : 'none'; });
-    function clearInput() { phoneInput.value = ''; clearBtn.style.display = 'none'; phoneInput.focus(); }
-    function temizleNo(no) { let temiz = no.toString().replace(/\D/g, ''); return temiz.length >= 9 ? temiz.slice(-9) : temiz; }
-    function copyTrackCode() { const code = document.getElementById('resTrackCode').innerText; navigator.clipboard.writeText(code).then(() => { alert('Poçt kodu kopyalandı: ' + code); }); }
+    phoneInput.addEventListener('input', () => {
+        clearBtn.style.display = phoneInput.value ? 'block' : 'none';
+    });
 
-    let globalStatusText = "";
-    let activeData = null;
-
-    // SIFARIŞİ YOXLA
-    function checkStatus() {
-        const val = phoneInput.value.trim();
-        if(!val) return;
-        
-        document.getElementById('errorMsg').style.display = 'none';
+    function clearInput() {
+        phoneInput.value = '';
+        clearBtn.style.display = 'none';
         document.getElementById('resultCard').style.display = 'none';
-        document.getElementById('boxUnboxing').style.display = 'none';
-        document.getElementById('giftBox').classList.remove('open');
+        document.getElementById('errorMsg').style.display = 'none';
+    }
 
-        document.getElementById('btnText').style.display = 'none';
-        document.getElementById('btnIcon').style.display = 'none';
-        document.getElementById('btnSpinner').style.display = 'block';
+    function checkStatus() {
+        const phone = phoneInput.value.trim();
+        if(!phone) return;
+
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const quoteLoader = document.getElementById('quoteLoader');
+        const errorMsg = document.getElementById('errorMsg');
+        const resultCard = document.getElementById('resultCard');
+        const boxUnboxing = document.getElementById('boxUnboxing');
+
+        btnText.style.opacity = '0.5';
+        btnIcon.style.display = 'none';
+        btnSpinner.style.display = 'block';
         quoteLoader.style.display = 'block';
+        errorMsg.style.display = 'none';
+        resultCard.style.display = 'none';
+        boxUnboxing.style.display = 'none';
+
         startPremiumMusic();
-        askNotificationPermission();
 
         fetch(BASE_URL)
         .then(res => res.text())
         .then(data => {
-            const json = JSON.parse(data.substr(47).slice(0, -2));
+            const temp = data.substring(47, data.length - 2);
+            const json = JSON.parse(temp);
             const rows = json.table.rows;
-            const arananNo = temizleNo(val);
-            let buldu = false;
-
+            
+            let foundRow = null;
             for(let r of rows) {
-                if(!r.c[0]) continue;
-                let tNo = temizleNo(r.c[0].v);
-                if(tNo === arananNo) {
-                    activeData = {
-                        name: r.c[1] ? r.c[1].v : 'Dəyərli Müştərimiz',
-                        product: r.c[2] ? r.c[2].v : '-',
-                        status: r.c[3] ? r.c[3].v : 'Hazırlanır',
-                        trackCode: r.c[4] ? r.c[4].v : ''
-                    };
-                    buldu = true;
+                if(r.c[0] && String(r.c[0].v).trim() === phone) {
+                    foundRow = r;
                     break;
                 }
             }
 
-            setTimeout(() => {
-                document.getElementById('btnSpinner').style.display = 'none';
-                document.getElementById('btnText').style.display = 'block';
-                document.getElementById('btnIcon').style.display = 'block';
-                quoteLoader.style.display = 'none';
+            btnText.style.opacity = '1';
+            btnIcon.style.display = 'block';
+            btnSpinner.style.display = 'none';
+            quoteLoader.style.display = 'none';
 
-                if(buldu) {
-                    // Öncə 3D Unboxing qutusunu ekrana veririk
-                    document.getElementById('boxUnboxing').style.display = 'block';
-                } else {
-                    document.getElementById('errorMsg').style.display = 'block';
-                }
-            }, 1000);
+            if(foundRow) {
+                globalData = {
+                    name: foundRow.c[1] ? foundRow.c[1].v : 'Hörmətli Müştəri',
+                    product: foundRow.c[2] ? foundRow.c[2].v : '-',
+                    status: foundRow.c[3] ? foundRow.c[3].v : '1',
+                    track: foundRow.c[4] ? foundRow.c[4].v : '',
+                    tip: foundRow.c[5] ? foundRow.c[5].v : 'Zərifliyiniz bizim üçün dəyərlidir.'
+                };
+                
+                boxUnboxing.style.display = 'block';
+                document.getElementById('giftBox').classList.remove('open');
+            } else {
+                errorMsg.style.display = 'block';
+            }
         })
         .catch(err => {
             console.error(err);
-            document.getElementById('btnSpinner').style.display = 'none';
-            document.getElementById('btnText').style.display = 'block';
-            document.getElementById('btnIcon').style.display = 'block';
+            btnText.style.opacity = '1';
+            btnIcon.style.display = 'block';
+            btnSpinner.style.display = 'none';
             quoteLoader.style.display = 'none';
-            document.getElementById('errorMsg').style.display = 'block';
+            errorMsg.style.display = 'block';
         });
     }
 
-    // 📦 3D QUTUNU AÇ VƏ MƏLUMATLARI GÖSTƏR
     function openBoxAndReveal() {
-        const box = document.getElementById('giftBox');
-        box.classList.add('open');
+        const giftBox = document.getElementById('giftBox');
+        giftBox.classList.add('open');
+        runConfetti();
 
         setTimeout(() => {
             document.getElementById('boxUnboxing').style.display = 'none';
-            
-            // Kart datalarını doldur
-            document.getElementById('resName').innerText = activeData.name;
-            document.getElementById('resProduct').innerText = activeData.product;
-            document.getElementById('resStatus').innerText = activeData.status;
-
-            if(activeData.trackCode) {
-                document.getElementById('resTrackCode').innerText = activeData.trackCode;
-                document.getElementById('trackTextAlani').style.display = 'flex';
-                document.getElementById('poctAlani').innerHTML = `
-                    <a href="https://azerpost.az/az/tracking?trackID=${activeData.trackCode}" class="post-link" target="_blank">
-                        <i class="fa-solid fa-truck-ramp-box"></i> Azərpoçt ilə İzlə
-                    </a>`;
-            } else {
-                document.getElementById('trackTextAlani').style.display = 'none';
-                document.getElementById('poctAlani').innerHTML = '';
-            }
-
-            document.getElementById('resultCard').style.display = 'block';
-            updateTimelineAndBadge(activeData.status);
-
-            // 🎟️ POZ-QAZAN LOGİKASI (Eyni nömrə yoxlaması)
-            const inputNo = temizleNo(phoneInput.value.trim());
-            const hasScratched = localStorage.getItem('scratched_' + inputNo);
-
-            if (!hasScratched) {
-                document.getElementById('scratchWrapper').style.display = 'block';
-                initScratchCard(inputNo);
-            } else {
-                document.getElementById('scratchWrapper').style.display = 'none';
-            }
-
-            // Bürclər düyməsini aktiv et
-            document.getElementById('horoscopeBtn').style.display = 'block';
-
+            revealResultCard();
         }, 600);
     }
 
-    function updateTimelineAndBadge(statusText) {
-        const p = document.getElementById('timelineProgress');
-        const s1 = document.getElementById('step1'); const s2 = document.getElementById('step2'); const s3 = document.getElementById('step3'); const s4 = document.getElementById('step4');
-        const badge = document.getElementById('resStatus');
-        const tipText = document.getElementById('meraTipText');
-        
-        [s1, s2, s3, s4].forEach(s => s.classList.remove('active')); 
-        p.style.width = "0%";
-        badge.className = "status-badge"; 
+    function revealResultCard() {
+        const card = document.getElementById('resultCard');
+        card.style.display = 'block';
 
-        const txt = statusText.toLowerCase();
+        document.getElementById('resName').innerText = globalData.name;
+        document.getElementById('resProduct').innerText = globalData.product;
+        document.getElementById('meraTipText').innerText = globalData.tip;
 
-        if (txt.includes("hazırlanır") || txt.includes("sifariş alındı")) { 
-            s1.classList.add('active'); p.style.width = "12.5%"; badge.classList.add('status-preparing');
-            tipText.innerText = "Zərif aksessuarlarınız hazırda sizin üçün xüsusi qutusuna səliqə ilə yerləşdirilir. Gözlədiyinizə tam dəyəcək! 💎";
-            sendPushNotification("Hazırlanır", "Sifarişiniz emal mərhələsindədir və qutulanır! ✨");
-        } 
-        else if (txt.includes("yolda") || txt.includes("kuryer") || txt.includes("göndərildi")) { 
-            s1.classList.add('active'); s2.classList.add('active'); p.style.width = "50%"; badge.classList.add('status-shipped');
-            tipText.innerText = "Bağlamanız artıq kuryerdədir, sizə doğru tələsir! Sifarişinizi təhvil alarkən yoxlamağı unutmayın. 🚀";
-            sendPushNotification("Yoldadır", "Bağlamanız artıq kuryerdədir! 🚀");
-        } 
-        else if (txt.includes("poçt") || txt.includes("filial") || txt.includes("məntəqə")) { 
-            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); p.style.width = "75%"; badge.classList.add('status-post');
-            tipText.innerText = "Bağlamanız təhlükəsiz şəkildə təyin olunmuş poçt filialına çatdı. Şəxsiyyət vəsiqənizlə yaxınlaşıb götürə bilərsiniz. 📦";
-            sendPushNotification("Poçtdadır", "Bağlamanız təyin olunmuş poçt məntəqəsinə çatdı! 📦");
-        } 
-        else if (txt.includes("çatdı") || txt.includes("təhvil") || txt.includes("çatdırıldı") || txt.includes("aldı")) { 
-            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); s4.classList.add('active'); p.style.width = "100%"; badge.classList.add('status-received');
-            tipText.innerText = "Artıq parıldamaq vaxtıdır! Aksesuarlarınızın uzunömürlü olması üçün onları parfüm və sudan uzaq tutun. ✨";
-            sendPushNotification("Təhvil Verildi", "Bağlamanız uğurla təhvil alındı. Parıldamaq vaxtıdır! ✨");
-            runConfetti(); 
-        } else { 
-            s1.classList.add('active'); p.style.width = "12.5%"; badge.classList.add('status-preparing');
-            tipText.innerText = "Sifarişiniz emal mərhələsindədir. Əlavə suallarınız üçün bizimlə hər zaman əlaqə saxlaya bilərsiniz. ✨";
+        // Reset timeline
+        for(let i=1; i<=4; i++) document.getElementById('step' + i).classList.remove('active');
+
+        const statusVal = parseInt(globalData.status) || 1;
+        const progressMapping = [0, 0, 33.3, 66.6, 100];
+        document.getElementById('timelineProgress').style.width = (progressMapping[statusVal] || 0) + '%';
+
+        for(let i=1; i<=statusVal; i++) {
+            document.getElementById('step' + i).classList.add('active');
         }
+
+        const statusLabel = document.getElementById('resStatus');
+        const trackAlani = document.getElementById('trackTextAlani');
+        const poctAlani = document.getElementById('poctAlani');
+        const liveTrackingArea = document.getElementById('liveTrackingArea');
+
+        trackAlani.style.display = 'none';
+        poctAlani.innerHTML = '';
+        liveTrackingArea.innerHTML = '';
+
+        if(statusVal === 1) {
+            statusLabel.innerHTML = '<span class="status-badge status-preparing">Hazırlanır</span>';
+        } else if(statusVal === 2) {
+            statusLabel.innerHTML = '<span class="status-badge status-shipped">Kuryerdə / Yoldadır</span>';
+        } else if(statusVal === 3) {
+            statusLabel.innerHTML = '<span class="status-badge status-post">Poçt filialındadır</span>';
+            if(globalData.track) {
+                document.getElementById('resTrackCode').innerText = globalData.track;
+                trackAlani.style.display = 'flex';
+                
+                // Canlı İzləmə (Maşın İkonu) Bölməsi İnteqrasiyası
+                liveTrackingArea.innerHTML = `
+                    <div class="live-tracking-box">
+                        <div style="font-weight: 700; font-size: 13px; color: var(--success-green); margin-bottom: 5px;">Canlı İzləmə Aktivdir</div>
+                        <div class="live-car-icon">🚗💨</div>
+                        <p style="font-size: 11px; color: var(--text-muted); margin: 2px 0 0 0;">Kuryer bağlamanı poçta çatdırır...</p>
+                    </div>
+                `;
+
+                poctAlani.innerHTML = `
+                    <a href="https://azerpost.az/az/tracking?trackID=${encodeURIComponent(globalData.track)}" target="_blank" class="post-link">
+                        <i class="fa-solid fa-map-location-dot"></i> Azərpoçt Canlı İzlə
+                    </a>
+                `;
+            }
+        } else if(statusVal === 4) {
+            statusLabel.innerHTML = '<span class="status-badge status-received">Müştəri təhvil aldı</span>';
+        }
+
+        // Poz-Qazan (Scratch Card) Aktivləşdirilməsi
+        initScratchCard();
     }
 
-    // 🎟️ POZ-QAZAN (SCRATCH CARD) SİSTEMİ
-    function initScratchCard(userPhone) {
+    function copyTrackCode() {
+        const code = document.getElementById('resTrackCode').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+            alert('Poçt kodu kopyalandı: ' + code);
+        });
+    }
+
+    // 🎟️ POZ-QAZAN İNİTİALİZASYASI
+    function initScratchCard() {
+        const wrapper = document.getElementById('scratchWrapper');
+        wrapper.style.display = 'block';
+
+        // Təsadüfi olaraq 5% və ya 10% kupon müəyyənləşdirilir
+        const discounts = [5, 10];
+        const randomDiscount = discounts[Math.floor(Math.random() * discounts.length)];
+        
+        document.getElementById('prizeText').innerText = `%${randomDiscount} Endirim Kuponu!`;
+        document.getElementById('prizeCode').innerText = `Kod: MERA${randomDiscount}`;
+
         const canvas = document.getElementById('scratchCanvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
 
-        // Təsadüfi hədiyyə təyin edək
-        const prizes = [
-            { text: "🎟️ %5 Endirim Kuponu!", code: "Kod: MERA5" },
-            { text: "💎 %10 Endirim Kuponu!", code: "Kod: MERA10" },
-            { text: "✨ Sürpriz Hədiyyə Seti!", code: "Kod: MERAGIFT" }
-        ];
-        const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
-        document.getElementById('prizeText').innerText = randomPrize.text;
-        document.getElementById('prizeCode').innerText = randomPrize.code;
-
-        // Canvas üzərini qızılı rənglə boyayırıq (Üst örtük)
-        ctx.fillStyle = '#d4af37';
+        // Köhnə təsviri təmizləyib yenidən örtük çəkirik
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = '#1e293b';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // Üstünə zərif lüks naxış/mətn qoyaq
-        ctx.fillStyle = '#000';
-        ctx.font = 'bold 11px Plus Jakarta Sans';
-        ctx.textAlign = 'center';
-        ctx.fillText('BURANI PARMAĞINLA POZ 🌟', canvas.width / 2, canvas.height / 2 + 4);
 
-        // Pozma funksiyaları
+        ctx.fillStyle = '#d4af37';
+        ctx.font = 'bold 12px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText('Buradan pozun ✨', canvas.width / 2, canvas.height / 2 + 4);
+
         function scratch(e) {
             if (!isDrawing) return;
             const rect = canvas.getBoundingClientRect();
@@ -984,78 +926,18 @@
 
             ctx.globalCompositeOperation = 'destination-out';
             ctx.beginPath();
-            ctx.arc(x, y, 16, 0, Math.PI * 2);
+            ctx.arc(x, y, 14, 0, Math.PI * 2);
             ctx.fill();
-
-            checkScratchPercentage();
         }
 
         canvas.addEventListener('mousedown', () => isDrawing = true);
-        canvas.addEventListener('mousemove', scratch);
-        window.addEventListener('mouseup', () => isDrawing = false);
-
         canvas.addEventListener('touchstart', () => isDrawing = true);
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('touchend', () => isDrawing = false);
+        canvas.addEventListener('mousemove', scratch);
         canvas.addEventListener('touchmove', scratch);
-        window.addEventListener('touchend', () => isDrawing = false);
-
-        // Nə qədər pozulduğunu yoxla (70% pozulubsa tam aç və nömrəni qeyd et)
-        function checkScratchPercentage() {
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            let transparentPixels = 0;
-            for (let i = 3; i < imgData.data.length; i += 4) {
-                if (imgData.data[i] === 0) transparentPixels++;
-            }
-            if (transparentPixels / (canvas.width * canvas.height) > 0.65) {
-                canvas.style.pointerEvents = 'none';
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // Tamamilə təmizlə
-                // LocalStorage ilə nömrəni birdəfəlik kilidlə
-                localStorage.setItem('scratched_' + userPhone, 'true');
-                runConfetti();
-            }
-        }
-    }
-
-    // 🔮 BÜRC POP-UP LOGİKASI
-    function openHoroscopePopup() {
-        document.getElementById('hSelect').value = "";
-        document.getElementById('hResult').style.display = 'none';
-        document.getElementById('horoscopeOverlay').classList.add('show');
-    }
-
-    function closeHoroscopePopup(e) {
-        if(e.target.id === 'horoscopeOverlay') {
-            document.getElementById('horoscopeOverlay').classList.remove('show');
-        }
-    }
-
-    function calculateHoroscope() {
-        const select = document.getElementById('hSelect');
-        const resultDiv = document.getElementById('hResult');
-        const title = document.getElementById('hResultTitle');
-        const text = document.getElementById('hResultText');
-
-        if(!select.value) { resultDiv.style.display = 'none'; return; }
-
-        const data = {
-            qoc: { stone: "Qırmızı Aqat (Aura Gücləndirici)", desc: "Bu ay enerjiniz zirvədədir. Gümüş qolbaqlar Qoç bürcünün ehtiraslı təbiətini və zərifliyini mükəmməl tamamlayır. ✨" },
-            buqa: { stone: "Zümrüd Yaşılı və Kvars", desc: "Sakitlik və zəriflik sizin kodunuzdur. Mirvari detallı minimalist boyunbağılar bu ay sizə uğur və daxili hüzur gətirəcək. 💎" },
-            ekizler: { stone: "Sitrin (Uğur və Bol ruzi)", desc: "Dinamik və enerjili Əkizlər üçün parıldayan sirkon daşlı sırğalar ideal seçimdir. Diqqət mərkəzində olacaqsınız! 🌟" },
-            xerçeng: { stone: "Ay Daşı (Hissiyyat və Sevgi)", desc: "Həssas auranızı qorumaq üçün gümüş üzüklər ən yaxşı seçimdir. Bu ay zəriflik sizə çox yaraşır. 💜" },
-            sir: { stone: "Qızılı Topaz (Lüks və Əzəmət)", desc: "Siz hər zaman parıldamağı sevirsiniz! Qızıl örtüklü iri gümüş boyunbağılar Şir bürcünün lider xarakterini ortaya çıxarır. 👑" },
-            qiz: { stone: "Yəşəm Daşı (Saf və Minimalist)", desc: "Detallara önəm verən zərif təbiətiniz var. Sadə, amma premium incə zəncirlər unikal tərzinizi tamamlayacaq. 🌿" },
-            terezi: { stone: "Lapis Lazuli (Balans və Estetika)", desc: "Harmoniya və gözəllik axtarışındasınız. Simmetrik sirkon daşlı aksessuarlar bu ay enerjinizi tam tarazlayacaq. ⚖️" },
-            eqreb: { stone: "Obsidian və Qara Mirvari", desc: "Mizantropik və sirli auranız var. Qara mirvari və ya tünd detallı lüks gümüşlər sizin maqnit effektinizi ikiqat artıracaq. 🖤" },
-            oxatan: { stone: "Firuzə (Səyahət və Şans)", desc: "Azad ruhlu Oxatanlar üçün rəngli daşlarla bəzədilmiş gümüş xalxallar və ya qolbaqlar bu ay yeni qapılar açacaq. 🏹" },
-            oqlak: { stone: "Dumanlı Kvars (Karyera və Güc)", desc: "Güclü və dayanıqlı duruşunuzu premium, ağır gümüş üzüklərlə taclandırın. Enerjiniz olduqca ciddidir və heyranedicidir. ♟️" },
-            dolca: { stone: "Ametist (Yaradıcılıq və Azadlıq)", desc: "Fərqli olmağı sevirsiniz. Heç kimdə olmayan unikal həndəsi kəsimli lüks boyunbağılar tam sizin energetikanıza uyğundur. ⚡" },
-            baliq: { stone: "Akvamarin (Xəyalpərəst və Romantik)", desc: "Dənizin zərifliyi ruhunuzda var. Saf gümüş sirkon sırğalar və zərif mirvarilər sizin daxili parıltınızı tam əks etdirir. 🌊" }
-        };
-
-        const current = data[select.value];
-        title.innerText = `Aura Daşınız: ${current.stone}`;
-        text.innerText = current.desc;
-        resultDiv.style.display = 'block';
     }
 </script>
+
 </body>
 </html>
