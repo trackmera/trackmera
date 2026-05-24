@@ -40,7 +40,6 @@
             position: relative;
         }
 
-        /* Giriş Animasiyası Ekranı (Preloader) */
         #preloader {
             position: fixed;
             top: 0;
@@ -63,46 +62,11 @@
             animation: logoFade 1.6s infinite alternate ease-in-out;
         }
 
-        .loader-logo span {
-            color: var(--accent-gold);
-        }
+        .loader-logo span { color: var(--accent-gold); }
 
         @keyframes logoFade {
             0% { opacity: 0.3; transform: scale(0.97); filter: blur(2px); }
             100% { opacity: 1; transform: scale(1.02); filter: blur(0); }
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            width: 350px;
-            height: 350px;
-            background: rgba(212, 175, 55, 0.12);
-            border-radius: 50%;
-            filter: blur(100px);
-            top: 10%;
-            left: 10%;
-            z-index: -1;
-            animation: floatLight 8s infinite alternate ease-in-out;
-        }
-
-        body::after {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(16, 185, 129, 0.07);
-            border-radius: 50%;
-            filter: blur(100px);
-            bottom: 10%;
-            right: 10%;
-            z-index: -1;
-            animation: floatLight 10s infinite alternate-reverse ease-in-out;
-        }
-
-        @keyframes floatLight {
-            0% { transform: translateY(0) scale(1); opacity: 0.8; }
-            100% { transform: translateY(-20px) scale(1.1); opacity: 1; }
         }
 
         .container {
@@ -116,7 +80,6 @@
             max-width: 410px;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            transition: all 0.4s ease;
         }
 
         .logo-area {
@@ -127,22 +90,16 @@
             margin-bottom: 10px;
         }
 
-        .logo-area span {
-            color: var(--accent-gold);
-        }
+        .logo-area span { color: var(--accent-gold); }
 
         .subtitle {
             color: var(--text-muted);
             font-size: 13px;
             margin-bottom: 35px;
             line-height: 1.6;
-            font-weight: 400;
         }
 
-        .input-group {
-            position: relative;
-            margin-bottom: 20px;
-        }
+        .input-group { position: relative; margin-bottom: 20px; }
 
         .input-group i {
             position: absolute;
@@ -151,7 +108,6 @@
             transform: translateY(-50%);
             color: var(--text-muted);
             font-size: 16px;
-            transition: all 0.3s ease;
         }
 
         input {
@@ -162,21 +118,10 @@
             border-radius: 14px;
             font-size: 15px;
             color: var(--text-main);
-            transition: all 0.3s ease;
             outline: none;
-            letter-spacing: 0.5px;
         }
 
-        input:focus {
-            border-color: rgba(212, 175, 55, 0.5);
-            background: rgba(7, 10, 19, 0.7);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
-        }
-
-        input:focus + i {
-            color: var(--accent-gold);
-            transform: translateY(-50%) scale(1.1);
-        }
+        input:focus { border-color: rgba(212, 175, 55, 0.5); }
 
         button {
             width: 100%;
@@ -188,21 +133,10 @@
             font-size: 15px;
             cursor: pointer;
             font-weight: 700;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
-        }
-
-        button:hover {
-            background: var(--button-hover);
-            transform: translateY(-2px);
-        }
-
-        button:active {
-            transform: translateY(0);
         }
 
         .spinner {
@@ -215,22 +149,17 @@
             animation: spin 0.6s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .error {
             display: none;
             color: var(--error-red);
             margin-top: 25px;
-            font-weight: 500;
-            font-size: 13px;
             padding: 14px;
             background: rgba(239, 68, 68, 0.06);
             border-radius: 12px;
             border: 1px solid rgba(239, 68, 68, 0.15);
             text-align: left;
-            animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .result-card {
@@ -242,20 +171,12 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-top: 3px solid var(--accent-gold);
             text-align: left;
-            animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-12px); filter: blur(4px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
         .result-card h3 {
             margin-bottom: 20px;
             color: var(--text-main);
             font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding-bottom: 12px;
             display: flex;
@@ -271,23 +192,16 @@
             align-items: center;
         }
 
-        .result-line strong {
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .result-line span {
-            color: var(--text-main);
-            font-weight: 500;
-        }
+        .result-line strong { color: var(--text-muted); font-weight: 400; }
+        .result-line span { color: var(--text-main); font-weight: 500; }
 
         .status-badge {
-            background: rgba(16, 185, 129, 0.08);
-            color: var(--success-green) !important;
+            background: rgba(212, 175, 55, 0.08);
+            color: var(--accent-gold);
             padding: 5px 12px;
             border-radius: 20px;
             font-size: 12px;
-            border: 1px solid rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.15);
         }
 
         .post-link {
@@ -303,13 +217,7 @@
             border-radius: 12px;
             font-size: 13px;
             font-weight: 600;
-            transition: all 0.3s ease;
             border: 1px solid rgba(56, 189, 248, 0.15);
-        }
-
-        .post-link:hover {
-            background: rgba(56, 189, 248, 0.1);
-            transform: scale(1.01);
         }
 
         .social-footer {
@@ -321,17 +229,8 @@
             padding-top: 25px;
         }
 
-        .social-icon {
-            color: var(--text-muted);
-            font-size: 20px;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .social-icon:hover {
-            color: var(--accent-gold);
-            transform: translateY(-2px);
-        }
+        .social-icon { color: var(--text-muted); font-size: 20px; text-decoration: none; }
+        .social-icon:hover { color: var(--accent-gold); }
 
         .whatsapp-float {
             position: fixed;
@@ -342,46 +241,12 @@
             background-color: #25d366;
             color: #ffffff;
             border-radius: 50%;
-            text-align: center;
-            z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
             text-decoration: none;
             box-shadow: 0px 6px 20px rgba(37, 211, 102, 0.3);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: pulse 2s infinite;
-        }
-
-        .whatsapp-float i {
-            font-size: 30px;
-            color: #ffffff !important;
-        }
-
-        .whatsapp-float:hover {
-            transform: scale(1.08) rotate(8deg);
-            background-color: #20ba5a;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-        }
-
-        @media screen and (max-width: 768px) {
-            .whatsapp-float {
-                bottom: 20px;
-                right: 20px;
-                width: 52px;
-                height: 52px;
-            }
-            .whatsapp-float i {
-                font-size: 26px;
-            }
-            .container {
-                padding: 40px 24px;
-            }
+            z-index: 9999;
         }
     </style>
 </head>
@@ -407,7 +272,7 @@
     </button>
 
     <div class="error" id="errorMsg">
-        <i class="fa-solid fa-circle-exclamation" style="margin-right: 6px;"></i> Aktiv sifariş tapılmadı. Zəhmət olmasa nömrəni düzgün yoxlayın.
+        <i class="fa-solid fa-circle-exclamation" style="margin-right: 6px;"></i> Aktiv sifariş tapılmadı.
     </div>
 
     <div class="result-card" id="resultCard">
@@ -419,7 +284,7 @@
         </div>
         <div class="result-line">
             <strong>Statusu:</strong>
-            <span id="resStatus" class="status-badge">-</span>
+            <span id="resStatus" class="status-badge">🔄 Canlı status oxunur...</span>
         </div>
         <div class="result-line" id="trackTextAlani" style="display: none;">
             <strong>Poçt Kodu:</strong>
@@ -442,24 +307,19 @@
 <script>
     function hidePreloader() {
         const preloader = document.getElementById('preloader');
-        if (preloader && preloader.style.visibility !== 'hidden') {
-            setTimeout(() => {
-                preloader.style.opacity = '0';
-                preloader.style.visibility = 'hidden';
-            }, 600); 
+        if (preloader) {
+            preloader.style.opacity = '0';
+            preloader.style.visibility = 'hidden';
         }
     }
-
     window.addEventListener('load', hidePreloader);
-    setTimeout(hidePreloader, 3000);
+    setTimeout(hidePreloader, 2000);
 
     const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
     const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
 
     document.getElementById('phoneInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            checkStatus();
-        }
+        if (e.key === 'Enter') checkStatus();
     });
 
     function temizleNo(no) {
@@ -467,30 +327,29 @@
         return temiz.length >= 9 ? temiz.slice(-9) : temiz; 
     }
 
-    // ADAM KİMİ HƏLL: Müştərinin brauzerindən canlı statusu oxuyan gizli motor
+    // 🚀 BLOKLANMAYAN GÜCLÜ PARÇALAYICI MOTOR (CORS NO-LIMIT)
     function azerpostCanliFetch(poctKodu) {
         const statusBadge = document.getElementById('resStatus');
-        statusBadge.innerHTML = "🔄 Canlı status oxunur...";
-        statusBadge.style.color = "var(--accent-gold)";
-        statusBadge.style.background = "rgba(212, 175, 55, 0.08)";
-        statusBadge.style.borderColor = "rgba(212, 175, 55, 0.2)";
-
+        
+        // Azərpoçt rəsmi səhifəsinin daxili API və izləmə linki
         const realUrl = "https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=" + poctKodu;
-        const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(realUrl);
+        
+        // Bloklanmanı aşmaq üçün tam açıq proxy xətti
+        const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(realUrl);
 
         fetch(proxyUrl)
-            .then(res => {
-                if (res.ok) return res.text();
-                throw new Error('Bağlantı kəsildi');
-            })
-            .then(html => {
-                if (html && html.includes('package-history')) {
-                    const tableHtml = html.split('package-history')[1].split('</table>')[0];
-                    const rows = tableHtml.split('<tr>');
+            .then(res => res.json())
+            .then(data => {
+                const html = data.contents;
+                
+                // Gələn HTML kodunun içərisində status cədvəlini axtarırıq
+                if (html && html.includes('</td>')) {
+                    const rows = html.split('<tr>');
                     let sonSatir = "";
 
-                    for (let j = rows.length - 1; j >= 2; j--) {
-                        if (rows[j].includes('<td>')) {
+                    // Səhifənin ən altındakı (ən son) status sətirini tapırıq
+                    for (let j = rows.length - 1; j >= 0; j--) {
+                        if (rows[j].includes('<td>') && (rows[j].includes('Çatdırılıb') || rows[j].includes('şöbəsinə') || rows[j].includes('olunub') || rows[j].includes('mərkəzinə') || rows[j].includes('mübadilə'))) {
                             sonSatir = rows[j];
                             break;
                         }
@@ -498,33 +357,28 @@
 
                     if (sonSatir !== "") {
                         const columns = sonSatir.split('<td>');
-                        if (columns.length > 3) {
-                            let azerpostStatus = columns[3].split('</td>')[0].replace(/<[^>]*>/g, '').trim();
-                            let menteqe = columns[4] ? columns[4].split('</td>')[0].replace(/<[^>]*>/g, '').trim() : "";
+                        if (columns.length >= 4) {
+                            let statusMetni = columns[3].split('</td>')[0].replace(/<[^>]*>/g, '').trim();
+                            let menteqeMetni = columns[4] ? columns[4].split('</td>')[0].replace(/<[^>]*>/g, '').trim() : "";
 
-                            if (azerpostStatus.includes("Çatdırılıb")) {
-                                azerpostStatus = "🎉 Çatdırılıb (Təhvil verildi)";
+                            if (statusMetni.toLowerCase().includes("çatdırılıb") || statusMetni.toLowerCase().includes("catdirilib")) {
+                                statusBadge.innerText = "🎉 Çatdırılıb (Təhvil verildi)";
                                 statusBadge.style.color = "var(--success-green)";
                                 statusBadge.style.background = "rgba(16, 185, 129, 0.08)";
                                 statusBadge.style.borderColor = "rgba(16, 185, 129, 0.15)";
-                            } else if (menteqe !== "") {
-                                azerpostStatus = azerpostStatus + " (" + menteqe + ")";
+                            } else {
+                                statusBadge.innerText = menteqeMetni ? `${statusMetni} (${menteqeMetni})` : statusMetni;
                                 statusBadge.style.color = "var(--text-main)";
                                 statusBadge.style.background = "rgba(255, 255, 255, 0.05)";
                                 statusBadge.style.borderColor = "rgba(255, 255, 255, 0.1)";
                             }
-                            statusBadge.innerText = azerpostStatus;
+                            return;
                         }
                     }
-                } else if (html && (html.includes('Məlumat tapılmadı') || html.includes('tapılmadı'))) {
-                    statusBadge.innerText = "📦 Hazırlanır / Poçta veriləcək";
-                } else {
-                    statusBadge.innerText = "⚠️ Zəhmət olmasa yenidən yoxlayın";
                 }
+                statusBadge.innerText = "📦 Hazırlanır / Poçta veriləcək";
             })
-            .catch(err => {
-                console.error(err);
-                // AllOrigins-də anlıq donma olarsa, Sheets-də olan köhnə statusu saxlayır
+            .catch(() => {
                 statusBadge.innerText = "📦 Sistemdə / Hazırlanır";
             });
     }
@@ -549,63 +403,57 @@
 
         const klaviaturadanYazilan = temizleNo(inputVal);
 
-        setTimeout(() => {
-            fetch(BASE_URL)
-                .then(res => res.text())
-                .then(data => {
-                    const json = JSON.parse(data.substr(47).slice(0, -2));
-                    const rows = json.table.rows;
+        fetch(BASE_URL)
+            .then(res => res.text())
+            .then(data => {
+                const json = JSON.parse(data.substr(47).slice(0, -2));
+                const rows = json.table.rows;
+                let found = false;
+
+                for (let row of rows) {
+                    if (!row.c[0]) continue;
                     
-                    let found = false;
+                    const cedveldekiNo = temizleNo(row.c[0].v);
+                    
+                    if (cedveldekiNo === klaviaturadanYazilan && klaviaturadanYazilan !== '') {
+                        document.getElementById('resName').innerText = row.c[1] ? row.c[1].v : 'Hörmətli Müştəri';
+                        document.getElementById('resProduct').innerText = row.c[2] ? row.c[2].v : '-';
+                        
+                        // Default olaraq Sheets-dəki statusu yazırıq
+                        document.getElementById('resStatus').innerText = row.c[4] ? row.c[4].v : '🔄 Canlı status oxunur...';
+                        document.getElementById('resStatus').style.color = "var(--accent-gold)";
 
-                    for (let row of rows) {
-                        if (!row.c[0]) continue;
-                        
-                        const cedveldekiNo = temizleNo(row.c[0].v);
-                        
-                        if (cedveldekiNo === klaviaturadanYazilan && klaviaturadanYazilan !== '') {
-                            document.getElementById('resName').innerText = row.c[1] ? row.c[1].v : 'Hörmətli Müştəri';
-                            document.getElementById('resProduct').innerText = row.c[2] ? row.c[2].v : '-';
+                        if (row.c[3] && row.c[3].v) {
+                            const trackCode = row.c[3].v.toString().trim();
+                            resTrackCode.innerText = trackCode;
+                            trackTextAlani.style.display = 'flex';
+                            poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}#packageFollow" target="_blank" class="post-link"><i class="fa-solid fa-truck-ramp-box"></i> Azərpoçt ilə Canlı İzlə</a>`;
                             
-                            // İlkin olaraq Sheets-dəki statusu yazırıq (Azərpoçtdan cavab gələnə qədər)
-                            document.getElementById('resStatus').innerText = row.c[4] ? row.c[4].v : 'Yoxlanılır'; 
-                            
-                            if (row.c[3] && row.c[3].v) {
-                                const trackCode = row.c[3].v.toString().trim();
-                                resTrackCode.innerText = trackCode;
-                                trackTextAlani.style.display = 'flex';
-                                
-                                poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}#packageFollow" target="_blank" class="post-link"><i class="fa-solid fa-truck-ramp-box"></i> Azərpoçt ilə Canlı İzlə</a>`;
-                                
-                                // 🔥 CANLI UPDATE: Əgər poçt kodu varsa, arxa planda Azərpoçtu anında partladırıq!
-                                azerpostCanliFetch(trackCode);
-                            } else {
-                                trackTextAlani.style.display = 'none';
-                                poctAlani.innerHTML = '';
-                            }
-                            
-                            resultCard.style.display = 'block';
-                            errorMsg.style.display = 'none';
-                            found = true;
-                            break;
+                            // CANLI METRIKA İŞƏ DÜŞDÜ
+                            azerpostCanliFetch(trackCode);
+                        } else {
+                            trackTextAlani.style.display = 'none';
+                            poctAlani.innerHTML = '';
                         }
+                        
+                        resultCard.style.display = 'block';
+                        errorMsg.style.display = 'none';
+                        found = true;
+                        break;
                     }
+                }
 
-                    if (!found) {
-                        resultCard.style.display = 'none';
-                        errorMsg.style.display = 'block';
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert('Sistemdə xəta baş verdi.');
-                })
-                .finally(() => {
-                    btnText.style.opacity = '1';
-                    btnIcon.style.display = 'block';
-                    btnSpinner.style.display = 'none';
-                });
-        }, 400);
+                if (!found) {
+                    resultCard.style.display = 'none';
+                    errorMsg.style.display = 'block';
+                }
+            })
+            .catch(() => alert('Sistemdə xəta baş verdi.'))
+            .finally(() => {
+                btnText.style.opacity = '1';
+                btnIcon.style.display = 'block';
+                btnSpinner.style.display = 'none';
+            });
     }
 </script>
 
