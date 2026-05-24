@@ -78,6 +78,7 @@
             max-width: 420px;
             backdrop-filter: blur(10px);
             animation: fadeIn 0.6s ease-out;
+            z-index: 2;
         }
 
         @keyframes fadeIn {
@@ -269,7 +270,7 @@
             transform: translateY(-3px);
         }
 
-        /* WhatsApp Düyməsinin Dizaynı */
+        /* WhatsApp Düyməsinin Düzgün Mövqeyi */
         .whatsapp-float {
             position: fixed;
             width: 60px;
@@ -277,24 +278,27 @@
             bottom: 30px;
             right: 30px;
             background-color: #25d366;
-            color: #fff;
-            border-radius: 50px;
+            color: #ffffff;
+            border-radius: 50%;
             text-align: center;
-            font-size: 35px;
-            box-shadow: 0px 4px 15px rgba(37, 211, 102, 0.4);
-            z-index: 100;
+            z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
             text-decoration: none;
+            box-shadow: 0px 4px 15px rgba(37, 211, 102, 0.4);
             transition: all 0.3s ease;
             animation: pulse 2s infinite;
+        }
+
+        .whatsapp-float i {
+            font-size: 32px;
+            color: #ffffff !important;
         }
 
         .whatsapp-float:hover {
             transform: scale(1.1) rotate(10deg);
             background-color: #20ba5a;
-            color: #fff;
         }
 
         @keyframes pulse {
@@ -309,7 +313,9 @@
                 right: 20px;
                 width: 55px;
                 height: 55px;
-                font-size: 30px;
+            }
+            .whatsapp-float i {
+                font-size: 28px;
             }
         }
     </style>
@@ -364,7 +370,6 @@
     const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
     const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
 
-    // Enter düyməsinə basanda avtomatik axtarış funksiyası
     document.getElementById('phoneInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             checkStatus();
