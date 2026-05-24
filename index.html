@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mera Store | Sifariş İzləmə Paneli</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
@@ -42,7 +40,7 @@
             position: relative;
         }
 
-        /* İldırım sürətli preloader */
+        /* Giriş Animasiyası Ekranı (Preloader) */
         #preloader {
             position: fixed;
             top: 0;
@@ -54,67 +52,73 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.25s ease, visibility 0.25s;
+            transition: opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.6s;
         }
 
         .loader-logo {
-            font-size: 26px;
+            font-size: 32px;
             font-weight: 700;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             color: var(--text-main);
-            text-align: center;
-            animation: logoPulse 1.2s infinite ease-in-out;
+            animation: logoFade 1.6s infinite alternate ease-in-out;
         }
 
         .loader-logo span {
             color: var(--accent-gold);
         }
 
-        @keyframes logoPulse {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
+        @keyframes logoFade {
+            0% { opacity: 0.3; transform: scale(0.97); filter: blur(2px); }
+            100% { opacity: 1; transform: scale(1.02); filter: blur(0); }
         }
 
-        /* Arxa fon effektləri */
+        /* Nəfəs alan arxa fon effektləri */
         body::before {
             content: '';
             position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(212, 175, 55, 0.1);
+            width: 350px;
+            height: 350px;
+            background: rgba(212, 175, 55, 0.12);
             border-radius: 50%;
-            filter: blur(90px);
+            filter: blur(100px);
             top: 10%;
-            left: 5%;
+            left: 10%;
             z-index: -1;
+            animation: floatLight 8s infinite alternate ease-in-out;
         }
 
         body::after {
             content: '';
             position: absolute;
-            width: 250px;
-            height: 250px;
-            background: rgba(16, 185, 129, 0.05);
+            width: 300px;
+            height: 300px;
+            background: rgba(16, 185, 129, 0.07);
             border-radius: 50%;
-            filter: blur(90px);
+            filter: blur(100px);
             bottom: 10%;
-            right: 5%;
+            right: 10%;
             z-index: -1;
+            animation: floatLight 10s infinite alternate-reverse ease-in-out;
         }
 
-        /* Şüşə qutu - Mobil üçün optimizasiya edildi */
+        @keyframes floatLight {
+            0% { transform: translateY(0) scale(1); opacity: 0.8; }
+            100% { transform: translateY(-20px) scale(1.1); opacity: 1; }
+        }
+
+        /* Şüşə Effekti (Glassmorphism) */
         .container {
             background: var(--card-bg);
-            padding: 45px 30px;
-            border-radius: 24px;
+            padding: 50px 35px;
+            border-radius: 28px;
             border: 1px solid rgba(255, 255, 255, 0.04);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             text-align: center;
             width: 100%;
-            max-width: 400px;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            max-width: 410px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: all 0.4s ease;
         }
 
         .logo-area {
@@ -132,8 +136,9 @@
         .subtitle {
             color: var(--text-muted);
             font-size: 13px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             line-height: 1.6;
+            font-weight: 400;
         }
 
         .input-group {
@@ -148,28 +153,31 @@
             transform: translateY(-50%);
             color: var(--text-muted);
             font-size: 16px;
-            transition: color 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         input {
             width: 100%;
             padding: 16px 16px 16px 48px;
-            background: rgba(7, 10, 19, 0.5);
+            background: rgba(7, 10, 19, 0.4);
             border: 1px solid var(--input-border);
             border-radius: 14px;
             font-size: 15px;
             color: var(--text-main);
+            transition: all 0.3s ease;
             outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            letter-spacing: 0.5px;
         }
 
         input:focus {
-            border-color: rgba(212, 175, 55, 0.4);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.5);
+            background: rgba(7, 10, 19, 0.7);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
         }
 
         input:focus + i {
             color: var(--accent-gold);
+            transform: translateY(-50%) scale(1.1);
         }
 
         button {
@@ -182,7 +190,8 @@
             font-size: 15px;
             cursor: pointer;
             font-weight: 700;
-            transition: background 0.2s ease, transform 0.1s ease;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -191,12 +200,14 @@
 
         button:hover {
             background: var(--button-hover);
+            transform: translateY(-2px);
         }
 
         button:active {
-            transform: scale(0.99);
+            transform: translateY(0);
         }
 
+        /* Düymə üçün Spinner */
         .spinner {
             display: none;
             width: 18px;
@@ -222,30 +233,33 @@
             border-radius: 12px;
             border: 1px solid rgba(239, 68, 68, 0.15);
             text-align: left;
+            animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
+        /* Premium Şüşə Nəticə Kartı */
         .result-card {
             display: none;
-            margin-top: 30px;
-            padding: 22px;
-            border-radius: 16px;
+            margin-top: 35px;
+            padding: 25px;
+            border-radius: 18px;
             background: rgba(255, 255, 255, 0.01);
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-top: 3px solid var(--accent-gold);
             text-align: left;
-            animation: slideDown 0.3s ease-out;
+            animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(-12px); filter: blur(4px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
         .result-card h3 {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             color: var(--text-main);
             font-size: 16px;
             font-weight: 600;
+            letter-spacing: 0.5px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding-bottom: 12px;
             display: flex;
@@ -254,7 +268,7 @@
         }
 
         .result-line {
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             font-size: 13px;
             display: flex;
             justify-content: space-between;
@@ -266,10 +280,15 @@
             font-weight: 400;
         }
 
+        .result-line span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
         .status-badge {
             background: rgba(16, 185, 129, 0.08);
             color: var(--success-green) !important;
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 12px;
             border: 1px solid rgba(16, 185, 129, 0.15);
@@ -280,7 +299,7 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
-            margin-top: 20px;
+            margin-top: 22px;
             padding: 14px;
             background: rgba(56, 189, 248, 0.05);
             color: #38bdf8;
@@ -288,61 +307,85 @@
             border-radius: 12px;
             font-size: 13px;
             font-weight: 600;
+            transition: all 0.3s ease;
             border: 1px solid rgba(56, 189, 248, 0.15);
         }
 
+        .post-link:hover {
+            background: rgba(56, 189, 248, 0.1);
+            transform: scale(1.01);
+        }
+
         .social-footer {
-            margin-top: 30px;
+            margin-top: 35px;
             display: flex;
             justify-content: center;
             gap: 25px;
             border-top: 1px solid rgba(255, 255, 255, 0.04);
-            padding-top: 20px;
+            padding-top: 25px;
         }
 
         .social-icon {
             color: var(--text-muted);
             font-size: 20px;
-            transition: color 0.2s ease;
+            transition: all 0.3s ease;
             text-decoration: none;
         }
 
         .social-icon:hover {
             color: var(--accent-gold);
+            transform: translateY(-2px);
         }
 
+        /* Sabit Üzən WhatsApp Düyməsi */
         .whatsapp-float {
             position: fixed;
-            width: 54px;
-            height: 54px;
-            bottom: 25px;
-            right: 25px;
+            width: 58px;
+            height: 58px;
+            bottom: 30px;
+            right: 30px;
             background-color: #25d366;
             color: #ffffff;
             border-radius: 50%;
+            text-align: center;
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
             text-decoration: none;
-            box-shadow: 0px 4px 15px rgba(37, 211, 102, 0.3);
+            box-shadow: 0px 6px 20px rgba(37, 211, 102, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: pulse 2s infinite;
         }
 
         .whatsapp-float i {
-            font-size: 28px;
+            font-size: 30px;
             color: #ffffff !important;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.08) rotate(8deg);
+            background-color: #20ba5a;
         }
 
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
-            70% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
             100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
         @media screen and (max-width: 768px) {
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                width: 52px;
+                height: 52px;
+            }
+            .whatsapp-float i {
+                font-size: 26px;
+            }
             .container {
-                padding: 35px 20px;
+                padding: 40px 24px;
             }
         }
     </style>
@@ -369,14 +412,25 @@
     </button>
 
     <div class="error" id="errorMsg">
-        <i class="fa-solid fa-circle-exclamation" style="margin-right: 6px;"></i> Aktiv sifariş tapılmadı. Zəhmət olmasa nömrəni düzgün yoxlayyn.
+        <i class="fa-solid fa-circle-exclamation" style="margin-right: 6px;"></i> Aktiv sifariş tapılmadı. Zəhmət olmasa nömrəni düzgün yoxlayın.
     </div>
 
     <div class="result-card" id="resultCard">
         <h3><i class="fa-solid fa-box-open" style="color: var(--accent-gold);"></i> <span id="resName">Müştəri Adı</span></h3>
-        <div class="result-line"><strong>Məhsul:</strong> <span id="resProduct">-</span></div>
-        <div class="result-line"><strong>Statusu:</strong> <span id="resStatus" class="status-badge">-</span></div>
-        <div class="result-line" id="trackTextAlani" style="display: none;"><strong>Poçt Kodu:</strong> <span id="resTrackCode">-</span></div>
+        
+        <div class="result-line">
+            <strong>Məhsul:</strong>
+            <span id="resProduct">-</span>
+        </div>
+        <div class="result-line">
+            <strong>Statusu:</strong>
+            <span id="resStatus" class="status-badge">-</span>
+        </div>
+        <div class="result-line" id="trackTextAlani" style="display: none;">
+            <strong>Poçt Kodu:</strong>
+            <span id="resTrackCode">-</span>
+        </div>
+        
         <div id="poctAlani"></div>
     </div>
 
@@ -386,30 +440,35 @@
     </div>
 </div>
 
-<a href="https://wa.me/994705849113" class="whatsapp-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+<a href="https://wa.me/994705849113" class="whatsapp-float" target="_blank">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
 
 <script>
-    // İldırım sürətli idarəetmə skripti
+    // Mobil telefonlar üçün təkmilləşdirilmiş animasiya skripti
     function hidePreloader() {
         const preloader = document.getElementById('preloader');
         if (preloader && preloader.style.visibility !== 'hidden') {
-            preloader.style.opacity = '0';
-            preloader.style.visibility = 'hidden';
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+            }, 600); 
         }
     }
 
-    // Səhifə oxunan kimi dərhal bağla
-    window.addEventListener('DOMContentLoaded', hidePreloader);
+    // Mobil telefon tam yükləndiyi an animasiyanı dayandırır
     window.addEventListener('load', hidePreloader);
 
-    // Maksimum gözləmə limiti cəmi 1 saniyə
-    setTimeout(hidePreloader, 1000);
+    // Hər ehtimala qarşı gözləmə limiti (maksimum 3 saniyə)
+    setTimeout(hidePreloader, 3000);
 
     const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
     const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
 
     document.getElementById('phoneInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') checkStatus();
+        if (e.key === 'Enter') {
+            checkStatus();
+        }
     });
 
     function temizleNo(no) {
@@ -437,17 +496,18 @@
 
         const klaviaturadanYazilan = temizleNo(inputVal);
 
-        // Düymə animasiyasının hiss olunması üçün cəmi 200ms minimalist gecikmə
         setTimeout(() => {
             fetch(BASE_URL)
                 .then(res => res.text())
                 .then(data => {
                     const json = JSON.parse(data.substr(47).slice(0, -2));
                     const rows = json.table.rows;
+                    
                     let found = false;
 
                     for (let row of rows) {
                         if (!row.c[0]) continue;
+                        
                         const cedveldekiNo = temizleNo(row.c[0].v);
                         
                         if (cedveldekiNo === klaviaturadanYazilan && klaviaturadanYazilan !== '') {
@@ -459,17 +519,20 @@
                                 const trackCode = row.c[3].v.toString().trim();
                                 resTrackCode.innerText = trackCode;
                                 trackTextAlani.style.display = 'flex';
+                                
                                 poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}#packageFollow" target="_blank" class="post-link"><i class="fa-solid fa-truck-ramp-box"></i> Azərpoçt ilə Canlı İzlə</a>`;
                             } else {
                                 trackTextAlani.style.display = 'none';
                                 poctAlani.innerHTML = '';
                             }
+                            
                             resultCard.style.display = 'block';
                             errorMsg.style.display = 'none';
                             found = true;
                             break;
                         }
                     }
+
                     if (!found) {
                         resultCard.style.display = 'none';
                         errorMsg.style.display = 'block';
@@ -477,14 +540,16 @@
                 })
                 .catch(err => {
                     console.error(err);
+                    alert('Sistemdə xəta baş verdi.');
                 })
                 .finally(() => {
                     btnText.style.opacity = '1';
                     btnIcon.style.display = 'block';
                     btnSpinner.style.display = 'none';
                 });
-        }, 200);
+        }, 400);
     }
 </script>
+
 </body>
 </html>
