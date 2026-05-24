@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mera Store - Sifariş Statusu</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; width: 90%; max-width: 400px; }
+        h2 { color: #333; margin-bottom: 5px; }
+        p.subtitle { color: #777; font-size: 14px; margin-bottom: 25px; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; text-align: center; margin-bottom: 15px; }
+        button { width: 100%; padding: 12px; background: #000; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #222; }
+        .result-card { display: none; margin-top: 25px; padding: 20px; border-radius: 12px; background: #fafafa; border-left: 5px solid #00c853; text-align: left; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .result-card h3 { margin: 0 0 10px 0; color: #222; font-size: 18px; }
+        .result-card p { margin: 5px 0; color: #555; font-size: 15px; }
+        .error { display: none; color: #ff3d00; margin-top: 15px; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Mera Store ✨</h2>
+    <p class="subtitle">Sifariş statusunuzu yoxlamaq üçün telefon nömrənizi daxil edin</p>
+    
+    <input type="number" id="phoneInput" placeholder="Nömrənizi yazın (Məs: 993999338)">
+    <button onclick="checkStatus()">Yoxla</button>
+
+    <div class="error" id="errorMsg">Ooops! Bu nömrə ilə aktiv sifariş tapılmadı.</div>
+
+    <div class="result-card" id="resultCard">
+        <h3 id="resName">Müştəri Adı</h3>
+        <p><strong>Məhsul:</strong> <span id="resProduct">-</span></p>
+        <p><strong>Status:</strong> <span id="resStatus">-</span></p>
+    </div>
+</div>
+
+<script>
+    const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; // Bura öz Google Sheets ID-ni yapışdır
+    const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+    function checkStatus() {
+        const inputVal = document.getElementById('phoneInput').value.trim();
+        const errorMsg = document.getElementById('errorMsg');
+        const resultCard = document.getElementById('resultCard');
+
+        if (!inputVal) return;
+
+        fetch(BASE_URL)
+            .then(res => res.text())
+            .then(data => {
+                const json = JSON.parse(data.substr(47).slice(0, -2));
+                const rows = json.table.rows;
+                
+                let found = false;
+
+                for (let row of rows) {
+                    // Cədvəldə: A sütunu = Nömrə, B sütunu = Ad, C sütunu = Məhsul (Əgər status D-dədirsə aşağıda row.c[3] elə)
+                    const phoneInSheet = row.c[0] ? row.c[0].v.toString().trim() : '';
+                    
+                    if (phoneInSheet === inputVal) {
+                        document.getElementById('resName').innerText = row.c[1] ? row.c[1].v : 'Hörmətli Müştəri';
+                        document.getElementById('resProduct').innerText = row.c[2] ? row.c[2].v : '-';
+                        document.getElementById('resStatus').innerText = row.c[3] ? row.c[3].v : 'Yoxlanılır'; // Status hansı sütundadırsa onun nömrəsi (C=2, D=3)
+                        
+                        resultCard.style.display = 'block';
+                        errorMsg.style.display = 'none';
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    resultCard.style.display = 'none';
+                    errorMsg.style.display = 'block';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Sistemdə xəta baş verdi, cədvəl linkinizi yoxlayın.');
+            });
+    }
+</script>
+
+</body>
+</html>
