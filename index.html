@@ -730,7 +730,7 @@
         else if (txt.includes("yolda") || txt.includes("kuryer") || txt.includes("göndərildi")) { 
             s1.classList.add('active'); s2.classList.add('active'); p.style.width = "50%"; badge.classList.add('status-shipped');
             tipText.innerText = "Bağlamanız artıq kuryerdədir, sizə doğru tələsir! Sifarişinizi təhvil alarkən yoxlamağı unutmayın. 🚀";
-            sendPushNotification("Yoldadır", "Bağlamanız artıq kuryerdədir, sizə doğru gəlir! 🚀");
+            sendPushNotification("Yoldadır", "Bağlamanız artıq poçtdadır, sizə doğru gəlir! 🚀");
         } 
         else if (txt.includes("poçt") || txt.includes("filial") || txt.includes("məntəqə")) { 
             s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); p.style.width = "75%"; badge.classList.add('status-post');
@@ -739,7 +739,7 @@
         } 
         else if (txt.includes("çatdı") || txt.includes("təhvil") || txt.includes("çatdırıldı") || txt.includes("aldı")) { 
             s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); s4.classList.add('active'); p.style.width = "100%"; badge.classList.add('status-received');
-            tipText.innerText = "Artıq parıldamaq vaxtıdır! Gümüş və mirvarilərinizin uzunömürlü olması üçün onları parfüm və sudan uzaq tutun. ✨";
+            tipText.innerText = "Artıq parıldamaq vaxtıdır! Aksesuarlarınızın uzunömürlü olması üçün onları parfüm və sudan uzaq tutun. ✨";
             sendPushNotification("Təhvil Verildi", "Bağlamanız uğurla təhvil alındı. Parıldamaq vaxtıdır! ✨");
             runConfetti(); 
         } else { 
