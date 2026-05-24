@@ -35,14 +35,15 @@
         <h3 id="resName">Müştəri Adı</h3>
         <p><strong>Məhsul:</strong> <span id="resProduct">-</span></p>
         <p><strong>Status:</strong> <span id="resStatus">-</span></p>
-        <p id="trackTextAlani" style="display: none;"><strong>Kuryer/Poçt kodu:</strong> <span id="resTrackCode">-</span></p>
+        <p id="trackTextAlani" style="display: none;"><strong>AzerPost kodu:</strong> <span id="resTrackCode">-</span></p>
         <div id="poctAlani"></div>
     </div>
 </div>
 
 <script>
+    // GitHub keşini qırmaq və canlı yeniləmək üçün versiya: v1.0.3
     const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
-    const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+    const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
 
     function temizleNo(no) {
         let temiz = no.toString().replace(/\D/g, ''); 
@@ -87,7 +88,7 @@
                             resTrackCode.innerText = trackCode;
                             trackTextAlani.style.display = 'block';
                             
-                            // Avtomatik axtarış edən birbaşa keçid linki
+                            // Birbaşa avtomatik işləyən rəsmi Azərpoçt linki
                             poctAlani.innerHTML = `<a href="https://azerpost.az/az/tracking?trackID=${trackCode}" target="_blank" class="post-link">Azərpoçt ilə Canlı İzlə 📦</a>`;
                         } else {
                             trackTextAlani.style.display = 'none';
