@@ -18,6 +18,7 @@
             --button-hover: #b5942e;
             --success-green: #10b981;
             --error-red: #ef4444;
+            --poct-blue: #38bdf8;
         }
 
         * {
@@ -137,7 +138,10 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
+            transition: all 0.2s ease;
         }
+
+        button:hover { background: var(--button-hover); }
 
         .spinner {
             display: none;
@@ -196,29 +200,49 @@
         .result-line span { color: var(--text-main); font-weight: 500; }
 
         .status-badge {
-            background: rgba(212, 175, 55, 0.08);
+            background: rgba(212, 175, 55, 0.06);
             color: var(--accent-gold);
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 600;
             border: 1px solid rgba(212, 175, 55, 0.15);
-            transition: all 0.3s ease;
+            display: inline-block;
         }
 
+        /* 💎 YENİ PREMİUM AZƏRPOÇT DÜYMƏSİ */
         .post-link {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
-            margin-top: 22px;
-            padding: 14px;
-            background: rgba(56, 189, 248, 0.05);
-            color: #38bdf8;
+            gap: 10px;
+            margin-top: 24px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0.03) 100%);
+            color: var(--poct-blue);
             text-decoration: none;
-            border-radius: 12px;
-            font-size: 13px;
+            border-radius: 14px;
+            font-size: 13.5px;
             font-weight: 600;
-            border: 1px solid rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.03);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .post-link:hover {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(56, 189, 248, 0.06) 100%);
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.08);
+        }
+
+        .post-link i {
+            font-size: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .post-link:hover i {
+            transform: translateX(3px);
         }
 
         .social-footer {
@@ -285,7 +309,7 @@
         </div>
         <div class="result-line">
             <strong>Statusu:</strong>
-            <span id="resStatus" class="status-badge">📦 Məlumat Alınır...</span>
+            <span id="resStatus" class="status-badge">-</span>
         </div>
         <div class="result-line" id="trackTextAlani" style="display: none;">
             <strong>Poçt Kodu:</strong>
@@ -319,9 +343,6 @@
     const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
     const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
 
-    // 🚀 BURA ARTIQ SƏNİN APPS SCRIPT LİNKİNDİR - YAXŞICA Yoxlanıldı və Yerləşdirildi!
-    const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyZz9y6_BMxXapHkJufyQw1GapAoVjI-2uUCAVSxC9N-oKwyTAibDCGB771lT2iPR0Jbw/exec";
-
     document.getElementById('phoneInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') checkStatus();
     });
@@ -329,37 +350,6 @@
     function temizleNo(no) {
         let temiz = no.toString().replace(/\D/g, ''); 
         return temiz.length >= 9 ? temiz.slice(-9) : temiz; 
-    }
-
-    function azerpostCanliFetch(poctKodu) {
-        const statusBadge = document.getElementById('resStatus');
-        
-        if (!GOOGLE_WEB_APP_URL || GOOGLE_WEB_APP_URL.includes("BURADA_SƏNİN")) {
-            return;
-        }
-
-        const sorguUrl = `${GOOGLE_WEB_APP_URL}?poctKodu=${encodeURIComponent(poctKodu)}`;
-
-        fetch(sorguUrl)
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.status) {
-                    statusBadge.innerText = data.status;
-                    
-                    if (data.status.includes("Çatdırılıb") || data.status.includes("Təhvil")) {
-                        statusBadge.style.color = "var(--success-green)";
-                        statusBadge.style.background = "rgba(16, 185, 129, 0.08)";
-                        statusBadge.style.borderColor = "rgba(16, 185, 129, 0.15)";
-                    } else {
-                        statusBadge.style.color = "var(--accent-gold)";
-                        statusBadge.style.background = "rgba(212, 175, 55, 0.08)";
-                        statusBadge.style.borderColor = "rgba(212, 175, 55, 0.2)";
-                    }
-                }
-            })
-            .catch(err => {
-                console.error("Canlı poçt xətası:", err);
-            });
     }
 
     function checkStatus() {
@@ -398,23 +388,20 @@
                         document.getElementById('resName').innerText = row.c[1] ? row.c[1].v : 'Hörmətli Müştəri';
                         document.getElementById('resProduct').innerText = row.c[2] ? row.c[2].v : '-';
                         
-                        document.getElementById('resStatus').innerText = "🔄 Canlı oxunur...";
-                        document.getElementById('resStatus').style.color = "var(--accent-gold)";
-                        document.getElementById('resStatus').style.background = "rgba(212, 175, 55, 0.08)";
-                        document.getElementById('resStatus').style.borderColor = "rgba(212, 175, 55, 0.2)";
+                        // 🔥 BİRBAŞA GOOGLE SHEETS-DƏ NƏ YAZILIBSA O STATUS GÖSTƏRİLİR
+                        const cədvəlStatusu = row.c[4] ? row.c[4].v : '📦 Sistemdə / Hazırlanır';
+                        document.getElementById('resStatus').innerText = cədvəlStatusu;
 
+                        // Əgər Poçt Kodu (Axtarış kodu) varsa göy düyməni çıxarırıq
                         if (row.c[3] && row.c[3].v) {
                             const trackCode = row.c[3].v.toString().trim();
                             if (resTrackCode) resTrackCode.innerText = trackCode;
                             if (trackTextAlani) trackTextAlani.style.display = 'flex';
                             
                             if (poctAlani) {
-                                poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}" target="_blank" class="post-link"><i class="fa-solid fa-truck-ramp-box"></i> Azərpoçt Saytında Aç</a>`;
+                                poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}" target="_blank" class="post-link">Azərpoçt Saytında Canlı İzlə <i class="fa-solid fa-arrow-right"></i></a>`;
                             }
-                            
-                            azerpostCanliFetch(trackCode);
                         } else {
-                            document.getElementById('resStatus').innerText = row.c[4] ? row.c[4].v : '📦 Hazırlanır';
                             if (trackTextAlani) trackTextAlani.style.display = 'none';
                             if (poctAlani) poctAlani.innerHTML = '';
                         }
