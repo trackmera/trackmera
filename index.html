@@ -37,6 +37,7 @@
             min-height: 100vh;
             padding: 20px;
             overflow-x: hidden;
+            position: relative;
         }
 
         /* Arxa fondakı estetik işıq effektləri */
@@ -47,7 +48,6 @@
             height: 300px;
             background: rgba(212, 175, 55, 0.15);
             border-radius: 50%;
-            blur: 100px;
             filter: blur(80px);
             top: 10%;
             left: 10%;
@@ -252,14 +252,14 @@
             margin-top: 30px;
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             padding-top: 20px;
         }
 
         .social-icon {
             color: var(--text-muted);
-            font-size: 20px;
+            font-size: 22px;
             transition: all 0.3s ease;
             text-decoration: none;
         }
@@ -294,16 +294,15 @@
         .whatsapp-float:hover {
             transform: scale(1.1) rotate(10deg);
             background-color: #20ba5a;
+            color: #fff;
         }
 
-        /* Diqqət çəkmək üçün yüngül dalğalanma animasiyası */
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
             70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
             100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
-        /* Telefonlarda bir az daha yuxarıda qalsın ki, brauzer paneli örtməsin */
         @media screen and (max-width: 768px) {
             .whatsapp-float {
                 bottom: 20px;
@@ -354,13 +353,23 @@
     <div class="social-footer">
         <a href="https://instagram.com/merastore.az" target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
         <a href="https://tiktok.com/@merastore.az" target="_blank" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
-        <a href="https://wa.me/994705849113" class="whatsapp-float" target="_blank"><i class="fa-brands fa-whatsapp-square"></i>
     </div>
 </div>
+
+<a href="https://wa.me/994705849113" class="whatsapp-float" target="_blank">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
 
 <script>
     const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
     const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
+
+    // Enter düyməsinə basanda avtomatik axtarış funksiyası
+    document.getElementById('phoneInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            checkStatus();
+        }
+    });
 
     function temizleNo(no) {
         let temiz = no.toString().replace(/\D/g, ''); 
