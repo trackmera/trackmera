@@ -72,7 +72,6 @@
             100% { opacity: 1; transform: scale(1.02); filter: blur(0); }
         }
 
-        /* Nəfəs alan arxa fon effektləri */
         body::before {
             content: '';
             position: absolute;
@@ -106,7 +105,6 @@
             100% { transform: translateY(-20px) scale(1.1); opacity: 1; }
         }
 
-        /* Şüşə Effekti (Glassmorphism) */
         .container {
             background: var(--card-bg);
             padding: 50px 35px;
@@ -207,7 +205,6 @@
             transform: translateY(0);
         }
 
-        /* Düymə üçün Spinner */
         .spinner {
             display: none;
             width: 18px;
@@ -236,7 +233,6 @@
             animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Premium Şüşə Nəticə Kartı */
         .result-card {
             display: none;
             margin-top: 35px;
@@ -337,7 +333,6 @@
             transform: translateY(-2px);
         }
 
-        /* Sabit Üzən WhatsApp Düyməsi */
         .whatsapp-float {
             position: fixed;
             width: 58px;
@@ -445,7 +440,6 @@
 </a>
 
 <script>
-    // Mobil telefonlar üçün təkmilləşdirilmiş animasiya skripti
     function hidePreloader() {
         const preloader = document.getElementById('preloader');
         if (preloader && preloader.style.visibility !== 'hidden') {
@@ -456,10 +450,7 @@
         }
     }
 
-    // Mobil telefon tam yükləndiyi an animasiyanı dayandırır
     window.addEventListener('load', hidePreloader);
-
-    // Hər ehtimala qarşı gözləmə limiti (maksimum 3 saniyə)
     setTimeout(hidePreloader, 3000);
 
     const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
@@ -474,6 +465,68 @@
     function temizleNo(no) {
         let temiz = no.toString().replace(/\D/g, ''); 
         return temiz.length >= 9 ? temiz.slice(-9) : temiz; 
+    }
+
+    // ADAM KİMİ HƏLL: Müştərinin brauzerindən canlı statusu oxuyan gizli motor
+    function azerpostCanliFetch(poctKodu) {
+        const statusBadge = document.getElementById('resStatus');
+        statusBadge.innerHTML = "🔄 Canlı status oxunur...";
+        statusBadge.style.color = "var(--accent-gold)";
+        statusBadge.style.background = "rgba(212, 175, 55, 0.08)";
+        statusBadge.style.borderColor = "rgba(212, 175, 55, 0.2)";
+
+        const realUrl = "https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=" + poctKodu;
+        const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(realUrl);
+
+        fetch(proxyUrl)
+            .then(res => {
+                if (res.ok) return res.text();
+                throw new Error('Bağlantı kəsildi');
+            })
+            .then(html => {
+                if (html && html.includes('package-history')) {
+                    const tableHtml = html.split('package-history')[1].split('</table>')[0];
+                    const rows = tableHtml.split('<tr>');
+                    let sonSatir = "";
+
+                    for (let j = rows.length - 1; j >= 2; j--) {
+                        if (rows[j].includes('<td>')) {
+                            sonSatir = rows[j];
+                            break;
+                        }
+                    }
+
+                    if (sonSatir !== "") {
+                        const columns = sonSatir.split('<td>');
+                        if (columns.length > 3) {
+                            let azerpostStatus = columns[3].split('</td>')[0].replace(/<[^>]*>/g, '').trim();
+                            let menteqe = columns[4] ? columns[4].split('</td>')[0].replace(/<[^>]*>/g, '').trim() : "";
+
+                            if (azerpostStatus.includes("Çatdırılıb")) {
+                                azerpostStatus = "🎉 Çatdırılıb (Təhvil verildi)";
+                                statusBadge.style.color = "var(--success-green)";
+                                statusBadge.style.background = "rgba(16, 185, 129, 0.08)";
+                                statusBadge.style.borderColor = "rgba(16, 185, 129, 0.15)";
+                            } else if (menteqe !== "") {
+                                azerpostStatus = azerpostStatus + " (" + menteqe + ")";
+                                statusBadge.style.color = "var(--text-main)";
+                                statusBadge.style.background = "rgba(255, 255, 255, 0.05)";
+                                statusBadge.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                            }
+                            statusBadge.innerText = azerpostStatus;
+                        }
+                    }
+                } else if (html && (html.includes('Məlumat tapılmadı') || html.includes('tapılmadı'))) {
+                    statusBadge.innerText = "📦 Hazırlanır / Poçta veriləcək";
+                } else {
+                    statusBadge.innerText = "⚠️ Zəhmət olmasa yenidən yoxlayın";
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                // AllOrigins-də anlıq donma olarsa, Sheets-də olan köhnə statusu saxlayır
+                statusBadge.innerText = "📦 Sistemdə / Hazırlanır";
+            });
     }
 
     function checkStatus() {
@@ -513,6 +566,8 @@
                         if (cedveldekiNo === klaviaturadanYazilan && klaviaturadanYazilan !== '') {
                             document.getElementById('resName').innerText = row.c[1] ? row.c[1].v : 'Hörmətli Müştəri';
                             document.getElementById('resProduct').innerText = row.c[2] ? row.c[2].v : '-';
+                            
+                            // İlkin olaraq Sheets-dəki statusu yazırıq (Azərpoçtdan cavab gələnə qədər)
                             document.getElementById('resStatus').innerText = row.c[4] ? row.c[4].v : 'Yoxlanılır'; 
                             
                             if (row.c[3] && row.c[3].v) {
@@ -521,6 +576,9 @@
                                 trackTextAlani.style.display = 'flex';
                                 
                                 poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}#packageFollow" target="_blank" class="post-link"><i class="fa-solid fa-truck-ramp-box"></i> Azərpoçt ilə Canlı İzlə</a>`;
+                                
+                                // 🔥 CANLI UPDATE: Əgər poçt kodu varsa, arxa planda Azərpoçtu anında partladırıq!
+                                azerpostCanliFetch(trackCode);
                             } else {
                                 trackTextAlani.style.display = 'none';
                                 poctAlani.innerHTML = '';
