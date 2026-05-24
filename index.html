@@ -220,10 +220,6 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
-        button.search-btn:hover i {
-            transform: rotate(15deg) scale(1.1);
-            transition: transform 0.2s ease;
-        }
 
         .quote-loader {
             display: none;
@@ -352,7 +348,7 @@
         .result-line strong { color: var(--text-muted); font-weight: 400; }
         .result-line span { color: var(--text-main); font-weight: 500; }
 
-        /* 🟡🔵🟣🟢 DİNAMİK NEON STATUS KLASLARI */
+        /* 🟡🔵🟣🟢 STATUS NEON PARILTILARI (TAM TƏMİZLƏNDİ) */
         .status-badge {
             padding: 6px 14px;
             border-radius: 20px;
@@ -392,14 +388,6 @@
             transition: color 0.2s;
         }
         .copy-btn:hover { color: var(--cyber-blue); }
-        
-        .whatsapp-share-btn {
-            margin-left: 8px;
-            color: #25d366;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .whatsapp-share-btn:hover { transform: scale(1.2); }
 
         .post-link {
             display: flex;
@@ -424,6 +412,105 @@
             color: #000000;
             box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
             transform: scale(1.02);
+        }
+
+        /* 🎉 ŞANS ÇARXI STİLLƏRİ */
+        .wheel-wrapper {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed rgba(212, 175, 55, 0.3);
+            border-radius: 18px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        .wheel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        .wheel-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 15px auto;
+        }
+        .wheel-pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 20px solid #ef4444;
+            z-index: 10;
+        }
+        .main-wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid var(--accent-gold);
+            background: conic-gradient(
+                #101524 0deg 60deg, #1e293b 60deg 120deg,
+                #101524 120deg 180deg, #1e293b 180deg 240deg,
+                #101524 240deg 300deg, #1e293b 300deg 360deg
+            );
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+        .wheel-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .wheel-text span {
+            position: absolute;
+            width: 50%;
+            height: 30px;
+            left: 50%; top: 50%;
+            transform-origin: 0% 0%;
+            text-align: right;
+            padding-right: 15px;
+            box-sizing: border-box;
+        }
+        .w1 { transform: rotate(30deg) translate(-10px, -15px); }
+        .w2 { transform: rotate(90deg) translate(-10px, -15px); }
+        .w3 { transform: rotate(150deg) translate(-10px, -15px); }
+        .w4 { transform: rotate(210deg) translate(-10px, -15px); }
+        .w5 { transform: rotate(270deg) translate(-10px, -15px); }
+        .w6 { transform: rotate(330deg) translate(-10px, -15px); }
+
+        .spin-btn {
+            padding: 10px 25px;
+            background: var(--accent-gold);
+            color: #000;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .spin-btn:hover { transform: scale(1.05); box-shadow: 0 0 12px var(--gold-glow); }
+        .spin-btn:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .wheel-result {
+            margin-top: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--success-green);
+            display: none;
         }
 
         .social-footer {
@@ -517,11 +604,28 @@
             <div>
                 <span id="resTrackCode">-</span>
                 <i class="fa-regular fa-copy copy-btn" onclick="copyTrackCode()" title="Kopyala"></i>
-                <i class="fa-brands fa-whatsapp whatsapp-share-btn" onclick="shareTrackCodeWhatsApp()" title="WhatsApp ilə özünə göndər"></i>
             </div>
         </div>
         
         <div id="poctAlani"></div>
+
+        <div class="wheel-wrapper" id="wheelWrapper">
+            <div class="wheel-title"><i class="fa-solid fa-gift"></i> Mera Sürpriz Çarxı!</div>
+            <div class="wheel-container">
+                <div class="wheel-pointer"></div>
+                <div class="main-wheel" id="mainWheel">
+                    <div class="wheel-text w1"><span>%5 Endirim</span></div>
+                    <div class="wheel-text w2"><span>%10 Endirim</span></div>
+                    <div class="wheel-text w3"><span>%5 Endirim</span></div>
+                    <div class="wheel-text w4"><span>%10 Endirim</span></div>
+                    <div class="wheel-text w5"><span>%5 Endirim</span></div>
+                    <div class="wheel-text w6"><span>%10 Endirim</span></div>
+                </div>
+            </div>
+            <button class="spin-btn" id="spinBtn" onclick="spinTheWheel()">Çarxı Fırlat</button>
+            <div class="wheel-result" id="wheelResult"></div>
+        </div>
+
     </div>
 
     <div class="social-footer">
@@ -597,143 +701,4 @@
             confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
             let alive = false;
             confetis.forEach(c => {
-                c.tiltAngle += c.tiltAngleIncremental; c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2; c.x += Math.sin(c.tiltAngle);
-                confCtx.beginPath(); confCtx.lineWidth = c.r; confCtx.strokeStyle = c.color;
-                confCtx.moveTo(c.x + c.tilt + c.r/2, c.y); confCtx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r/2);
-                confCtx.stroke();
-                if (c.y <= confCanvas.height) alive = true;
-            });
-            if(!alive) { clearInterval(confLoop); confCanvas.style.display = 'none'; }
-        }, 20);
-        setTimeout(() => { clearInterval(confLoop); confCanvas.style.display = 'none'; }, 5000);
-    }
-
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            const preloader = document.getElementById('preloader');
-            if (preloader) { preloader.style.opacity = '0'; preloader.style.visibility = 'hidden'; }
-        }, 1100);
-    });
-
-    const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
-    const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
-
-    const phoneInput = document.getElementById('phoneInput');
-    const clearBtn = document.getElementById('clearBtn');
-    const quoteLoader = document.getElementById('quoteLoader');
-
-    const meraQuotes = [
-        "Mera Store ilə parıltınız heç vaxt sönməsin... ✨",
-        "Zəriflik detallarda gizlidir, yüklənir... 💎",
-        "Sizin üçün ən dəyərlisini hazırlayırıq... 📦",
-        "Mera kolleksiyasından sizə özəl bir bağlama... 🌟"
-    ];
-
-    phoneInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') checkStatus(); });
-    phoneInput.addEventListener('input', function() { clearBtn.style.display = this.value.trim().length > 0 ? 'block' : 'none'; });
-    function clearInput() { phoneInput.value = ''; clearBtn.style.display = 'none'; phoneInput.focus(); }
-    function temizleNo(no) { let temiz = no.toString().replace(/\D/g, ''); return temiz.length >= 9 ? temiz.slice(-9) : temiz; }
-    
-    function copyTrackCode() { 
-        const code = document.getElementById('resTrackCode').innerText; 
-        navigator.clipboard.writeText(code).then(() => { alert('Poçt kodu kopyalandı: ' + code); }); 
-    }
-
-    function shareTrackCodeWhatsApp() {
-        const code = document.getElementById('resTrackCode').innerText;
-        const text = encodeURIComponent(`Mera Store Poçt Kodum: ${code}`);
-        window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-    }
-
-    // 🌟 DİNAMİK STATUS VƏ RENGLƏNDİRMƏ SİSTEMİ
-    function updateTimelineAndBadge(statusText) {
-        const p = document.getElementById('timelineProgress');
-        const s1 = document.getElementById('step1'); const s2 = document.getElementById('step2'); const s3 = document.getElementById('step3'); const s4 = document.getElementById('step4');
-        const badge = document.getElementById('resStatus');
-        
-        [s1, s2, s3, s4].forEach(s => s.classList.remove('active')); 
-        p.style.width = "0%";
-        
-        // Klasları tam təmizləyirik ki, köhnə rəng qalmasın
-        badge.className = "status-badge"; 
-
-        const txt = statusText.toLowerCase();
-
-        if (txt.includes("hazırlanır") || txt.includes("sifariş alındı")) { 
-            s1.classList.add('active'); 
-            p.style.width = "12.5%";
-            badge.classList.add('status-preparing');
-        } 
-        else if (txt.includes("yolda") || txt.includes("kuryer") || txt.includes("göndərildi")) { 
-            s1.classList.add('active'); s2.classList.add('active'); 
-            p.style.width = "50%"; 
-            badge.classList.add('status-shipped');
-        } 
-        else if (txt.includes("poçt") || txt.includes("filial") || txt.includes("məntəqə")) { 
-            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); 
-            p.style.width = "75%"; 
-            badge.classList.add('status-post');
-        } 
-        else if (txt.includes("çatdı") || txt.includes("təhvil") || txt.includes("çatdırıldı") || txt.includes("aldı")) { 
-            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); s4.classList.add('active'); 
-            p.style.width = "100%"; 
-            badge.classList.add('status-received');
-            runConfetti(); 
-        } else { 
-            s1.classList.add('active'); 
-            p.style.width = "12.5%"; 
-            badge.classList.add('status-preparing');
-        }
-    }
-
-    function checkStatus() {
-        const inputVal = phoneInput.value.trim();
-        const errorMsg = document.getElementById('errorMsg'); const resultCard = document.getElementById('resultCard'); const poctAlani = document.getElementById('poctAlani'); const trackTextAlani = document.getElementById('trackTextAlani'); const resTrackCode = document.getElementById('resTrackCode');
-        const btnText = document.getElementById('btnText'); const btnIcon = document.getElementById('btnIcon'); const btnSpinner = document.getElementById('btnSpinner');
-
-        if (!inputVal) return;
-        btnText.style.opacity = '0.5'; btnIcon.style.display = 'none'; btnSpinner.style.display = 'block';
-        resultCard.style.display = 'none'; errorMsg.style.display = 'none';
-
-        quoteLoader.innerText = meraQuotes[Math.floor(Math.random() * meraQuotes.length)]; quoteLoader.style.display = 'block';
-        const klaviaturadanYazilan = temizleNo(inputVal); const startTime = Date.now();
-
-        fetch(BASE_URL)
-            .then(res => res.text())
-            .then(data => {
-                const json = JSON.parse(data.substr(47).slice(0, -2)); const rows = json.table.rows;
-                let found = false; let targetRow = null;
-                for (let row of rows) {
-                    if (!row.c[0]) continue;
-                    if (temizleNo(row.c[0].v) === klaviaturadanYazilan && klaviaturadanYazilan !== '') { found = true; targetRow = row; break; }
-                }
-                const remainingTime = Math.max(1500 - (Date.now() - startTime), 0);
-                setTimeout(() => {
-                    btnText.style.opacity = '1'; btnIcon.style.display = 'block'; btnSpinner.style.display = 'none'; quoteLoader.style.display = 'none';
-                    if (found && targetRow) {
-                        document.getElementById('resName').innerText = targetRow.c[1] ? targetRow.c[1].v : 'Hörmətli Müştəri';
-                        document.getElementById('resProduct').innerText = targetRow.c[2] ? targetRow.c[2].v : '-';
-                        
-                        const cədvəlStatusu = targetRow.c[4] ? targetRow.c[4].v : '📦 Hazırlanır';
-                        document.getElementById('resStatus').innerText = cədvəlStatusu;
-
-                        // Həm timeline, həm də dinamik klas rəngləri eyni anda yenilənir
-                        updateTimelineAndBadge(cədvəlStatusu);
-
-                        if (targetRow.c[3] && targetRow.c[3].v) {
-                            const trackCode = targetRow.c[3].v.toString().trim();
-                            if (resTrackCode) resTrackCode.innerText = trackCode; if (trackTextAlani) trackTextAlani.style.display = 'flex';
-                            if (poctAlani) poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}" target="_blank" class="post-link"><i class="fa-solid fa-truck-fast"></i> Saytda Canlı İzlə</a>`;
-                        } else { if (trackTextAlani) trackTextAlani.style.display = 'none'; if (poctAlani) poctAlani.innerHTML = ''; }
-                        resultCard.style.display = 'block';
-                    } else { errorMsg.style.display = 'block'; }
-                }, remainingTime);
-            })
-            .catch((err) => {
-                console.error(err); alert('Sistemdə xəta baş verdi.');
-                btnText.style.opacity = '1'; btnIcon.style.display = 'block'; btnSpinner.style.display = 'none'; quoteLoader.style.display = 'none';
-            });
-    }
-</script>
-</body>
-</html>
+                c.tilt
