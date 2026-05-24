@@ -23,7 +23,6 @@
             --timeline-bg: #111827;
         }
 
-        /* ☀️ İŞIQLI REJİM (LIGHT MODE) STİLLƏRİ */
         body.light-theme {
             --bg-color: #f8f9fa;
             --card-bg: rgba(255, 255, 255, 0.9);
@@ -64,7 +63,6 @@
             pointer-events: none;
         }
 
-        /* 🌙/☀️ REJİM DÜYMƏSİ */
         .theme-toggle {
             position: absolute;
             top: 25px;
@@ -118,7 +116,6 @@
             100% { opacity: 0; transform: scale(1.1); filter: blur(4px); }
         }
 
-        /* 🎉 ATƏŞFƏŞANLIQ CANVAS-I */
         #confetti-canvas {
             position: fixed;
             top: 0;
@@ -223,6 +220,10 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
+        button.search-btn:hover i {
+            transform: rotate(15deg) scale(1.1);
+            transition: transform 0.2s ease;
+        }
 
         .quote-loader {
             display: none;
@@ -233,7 +234,6 @@
             line-height: 1.4;
             animation: pulseText 1.2s infinite alternate ease-in-out;
         }
-        @keyframes pulseText { from { opacity: 0.4; transform: scale(0.99); } to { opacity: 1; transform: scale(1.01); } }
 
         .spinner {
             display: none;
@@ -269,7 +269,6 @@
             text-align: left;
             animation: fadeIn 0.4s ease-out;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .result-card h3 {
             margin-bottom: 20px;
@@ -343,24 +342,6 @@
         }
         .step.active span { color: var(--text-main); font-weight: 600; }
 
-        /* ⏳ ÇATDIRILMA SAYĞACI STİLİ */
-        .countdown-box {
-            display: none;
-            background: rgba(212, 175, 55, 0.05);
-            border: 1px dashed rgba(212, 175, 55, 0.3);
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 18px;
-            text-align: center;
-            font-size: 13px;
-        }
-        .countdown-timer {
-            font-weight: 700;
-            color: var(--accent-gold);
-            letter-spacing: 1px;
-            margin-top: 4px;
-        }
-
         .result-line {
             margin-bottom: 14px;
             font-size: 13.5px;
@@ -371,14 +352,37 @@
         .result-line strong { color: var(--text-muted); font-weight: 400; }
         .result-line span { color: var(--text-main); font-weight: 500; }
 
+        /* 🟡🔵🟣🟢 DİNAMİK NEON STATUS KLASLARI */
         .status-badge {
-            background: rgba(212, 175, 55, 0.06);
-            color: var(--accent-gold);
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+        }
+        .status-preparing {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--accent-gold);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+        .status-shipped {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--cyber-blue);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+        .status-post {
+            background: rgba(168, 85, 247, 0.1);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+        }
+        .status-received {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
         }
 
         .copy-btn {
@@ -388,6 +392,14 @@
             transition: color 0.2s;
         }
         .copy-btn:hover { color: var(--cyber-blue); }
+        
+        .whatsapp-share-btn {
+            margin-left: 8px;
+            color: #25d366;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .whatsapp-share-btn:hover { transform: scale(1.2); }
 
         .post-link {
             display: flex;
@@ -490,11 +502,6 @@
             <div class="step" id="step4"><div class="dot">4</div><span>Təhvil aldı</span></div>
         </div>
 
-        <div class="countdown-box" id="countdownBox">
-            <div>🎁 Təhvil verilməyə qalan təxmini vaxt:</div>
-            <div class="countdown-timer" id="countdownTimer">00g 00s 00d</div>
-        </div>
-
         <h3><i class="fa-solid fa-box-open" style="color: var(--accent-gold);"></i> <span id="resName">Müştəri Adı</span></h3>
         
         <div class="result-line">
@@ -503,13 +510,14 @@
         </div>
         <div class="result-line">
             <strong>Statusu:</strong>
-            <span id="resStatus" class="status-badge">-</span>
+            <span id="resStatus">-</span>
         </div>
         <div class="result-line" id="trackTextAlani" style="display: none;">
             <strong>Poçt Kodu:</strong>
             <div>
                 <span id="resTrackCode">-</span>
                 <i class="fa-regular fa-copy copy-btn" onclick="copyTrackCode()" title="Kopyala"></i>
+                <i class="fa-brands fa-whatsapp whatsapp-share-btn" onclick="shareTrackCodeWhatsApp()" title="WhatsApp ilə özünə göndər"></i>
             </div>
         </div>
         
@@ -527,12 +535,10 @@
 </a>
 
 <script>
-    // ☀️ GECƏ / GÜNDÜZ REJİMİ FUNKSİYASI
     function toggleTheme() {
         const body = document.body;
         const icon = document.getElementById('theme-icon');
         body.classList.toggle('light-theme');
-        
         if(body.classList.contains('light-theme')) {
             icon.className = "fa-solid fa-sun";
             localStorage.setItem('theme', 'light');
@@ -541,10 +547,8 @@
             localStorage.setItem('theme', 'dark');
         }
     }
-    // Keçmiş seçimi yadda saxla
     if(localStorage.getItem('theme') === 'light') toggleTheme();
 
-    // ✨ CANLI FON Ulduzları
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let stars = [];
@@ -573,7 +577,6 @@
     }
     animateStars();
 
-    // 🎉 ULTRA SÜRƏTLİ JAVASCRIPT KONFETİ (ATƏŞFƏŞANLIQ) SİSTEMİ
     const confCanvas = document.getElementById('confetti-canvas');
     const confCtx = confCanvas.getContext('2d');
     let confetis = [];
@@ -595,7 +598,7 @@
             let alive = false;
             confetis.forEach(c => {
                 c.tiltAngle += c.tiltAngleIncremental; c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2; c.x += Math.sin(c.tiltAngle);
-                ctx.body; confCtx.beginPath(); confCtx.lineWidth = c.r; confCtx.strokeStyle = c.color;
+                confCtx.beginPath(); confCtx.lineWidth = c.r; confCtx.strokeStyle = c.color;
                 confCtx.moveTo(c.x + c.tilt + c.r/2, c.y); confCtx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r/2);
                 confCtx.stroke();
                 if (c.y <= confCanvas.height) alive = true;
@@ -630,47 +633,57 @@
     phoneInput.addEventListener('input', function() { clearBtn.style.display = this.value.trim().length > 0 ? 'block' : 'none'; });
     function clearInput() { phoneInput.value = ''; clearBtn.style.display = 'none'; phoneInput.focus(); }
     function temizleNo(no) { let temiz = no.toString().replace(/\D/g, ''); return temiz.length >= 9 ? temiz.slice(-9) : temiz; }
-    function copyTrackCode() { const code = document.getElementById('resTrackCode').innerText; navigator.clipboard.writeText(code).then(() => { alert('Poçt kodu kopyalandı: ' + code); }); }
-
-    function updateTimeline(statusText) {
-        const p = document.getElementById('timelineProgress');
-        const s1 = document.getElementById('step1'); const s2 = document.getElementById('step2'); const s3 = document.getElementById('step3'); const s4 = document.getElementById('step4');
-        [s1, s2, s3, s4].forEach(s => s.classList.remove('active')); p.style.width = "0%";
-        const txt = statusText.toLowerCase();
-
-        if (txt.includes("hazırlanır") || txt.includes("sifariş alındı")) { s1.classList.add('active'); p.style.width = "12.5%"; }
-        else if (txt.includes("yolda") || txt.includes("kuryer") || txt.includes("göndərildi")) { s1.classList.add('active'); s2.classList.add('active'); p.style.width = "50%"; }
-        else if (txt.includes("poçt") || txt.includes("filial") || txt.includes("məntəqə")) { s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); p.style.width = "75%"; }
-        else if (txt.includes("çatdı") || txt.includes("təhvil") || txt.includes("çatdırıldı") || txt.includes("aldı")) { 
-            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); s4.classList.add('active'); p.style.width = "100%"; 
-            runConfetti(); // 🎉 Təhvil alıb, atəşfəşanlığı başlat!
-        } else { s1.classList.add('active'); p.style.width = "12.5%"; }
+    
+    function copyTrackCode() { 
+        const code = document.getElementById('resTrackCode').innerText; 
+        navigator.clipboard.writeText(code).then(() => { alert('Poçt kodu kopyalandı: ' + code); }); 
     }
 
-    // ⏳ GERİ SAYIM SAYĞACI SİSTEMİ
-    let countdownInterval;
-    function startCountdown() {
-        clearInterval(countdownInterval);
-        const timerElement = document.getElementById('countdownTimer');
-        const box = document.getElementById('countdownBox');
-        box.style.display = 'block';
+    function shareTrackCodeWhatsApp() {
+        const code = document.getElementById('resTrackCode').innerText;
+        const text = encodeURIComponent(`Mera Store Poçt Kodum: ${code}`);
+        window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
 
-        // Müştəriyə özəl dinamik real görüntülü 2 günlük xəyali vaxt yaradırıq
-        let targetDate = new Date();
-        targetDate.setDate(targetDate.getDate() + 2);
+    // 🌟 DİNAMİK STATUS VƏ RENGLƏNDİRMƏ SİSTEMİ
+    function updateTimelineAndBadge(statusText) {
+        const p = document.getElementById('timelineProgress');
+        const s1 = document.getElementById('step1'); const s2 = document.getElementById('step2'); const s3 = document.getElementById('step3'); const s4 = document.getElementById('step4');
+        const badge = document.getElementById('resStatus');
+        
+        [s1, s2, s3, s4].forEach(s => s.classList.remove('active')); 
+        p.style.width = "0%";
+        
+        // Klasları tam təmizləyirik ki, köhnə rəng qalmasın
+        badge.className = "status-badge"; 
 
-        function updateTimer() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-            if (distance < 0) { timerElement.innerText = "Bağlamanız çatmalıdır!"; clearInterval(countdownInterval); return; }
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            timerElement.innerText = `${days}g ${hours}s ${minutes}d ${seconds}sn`;
+        const txt = statusText.toLowerCase();
+
+        if (txt.includes("hazırlanır") || txt.includes("sifariş alındı")) { 
+            s1.classList.add('active'); 
+            p.style.width = "12.5%";
+            badge.classList.add('status-preparing');
+        } 
+        else if (txt.includes("yolda") || txt.includes("kuryer") || txt.includes("göndərildi")) { 
+            s1.classList.add('active'); s2.classList.add('active'); 
+            p.style.width = "50%"; 
+            badge.classList.add('status-shipped');
+        } 
+        else if (txt.includes("poçt") || txt.includes("filial") || txt.includes("məntəqə")) { 
+            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); 
+            p.style.width = "75%"; 
+            badge.classList.add('status-post');
+        } 
+        else if (txt.includes("çatdı") || txt.includes("təhvil") || txt.includes("çatdırıldı") || txt.includes("aldı")) { 
+            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); s4.classList.add('active'); 
+            p.style.width = "100%"; 
+            badge.classList.add('status-received');
+            runConfetti(); 
+        } else { 
+            s1.classList.add('active'); 
+            p.style.width = "12.5%"; 
+            badge.classList.add('status-preparing');
         }
-        updateTimer();
-        countdownInterval = setInterval(updateTimer, 1000);
     }
 
     function checkStatus() {
@@ -681,7 +694,6 @@
         if (!inputVal) return;
         btnText.style.opacity = '0.5'; btnIcon.style.display = 'none'; btnSpinner.style.display = 'block';
         resultCard.style.display = 'none'; errorMsg.style.display = 'none';
-        document.getElementById('countdownBox').style.display = 'none';
 
         quoteLoader.innerText = meraQuotes[Math.floor(Math.random() * meraQuotes.length)]; quoteLoader.style.display = 'block';
         const klaviaturadanYazilan = temizleNo(inputVal); const startTime = Date.now();
@@ -701,20 +713,17 @@
                     if (found && targetRow) {
                         document.getElementById('resName').innerText = targetRow.c[1] ? targetRow.c[1].v : 'Hörmətli Müştəri';
                         document.getElementById('resProduct').innerText = targetRow.c[2] ? targetRow.c[2].v : '-';
+                        
                         const cədvəlStatusu = targetRow.c[4] ? targetRow.c[4].v : '📦 Hazırlanır';
                         document.getElementById('resStatus').innerText = cədvəlStatusu;
 
-                        updateTimeline(cədvəlStatusu);
-                        
-                        // Əgər status təhvil alınmayıbsa, sayğacı işə sal
-                        if(!cədvəlStatusu.toLowerCase().includes("aldı") && !cədvəlStatusu.toLowerCase().includes("təhvil")) {
-                            startCountdown();
-                        }
+                        // Həm timeline, həm də dinamik klas rəngləri eyni anda yenilənir
+                        updateTimelineAndBadge(cədvəlStatusu);
 
                         if (targetRow.c[3] && targetRow.c[3].v) {
                             const trackCode = targetRow.c[3].v.toString().trim();
                             if (resTrackCode) resTrackCode.innerText = trackCode; if (trackTextAlani) trackTextAlani.style.display = 'flex';
-                            if (poctAlani) poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}" target="_blank" class="post-link"><i class="fa-solid fa-truck-fast"></i> AzerPost Canlı İzlə</a>`;
+                            if (poctAlani) poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}" target="_blank" class="post-link"><i class="fa-solid fa-truck-fast"></i> Saytda Canlı İzlə</a>`;
                         } else { if (trackTextAlani) trackTextAlani.style.display = 'none'; if (poctAlani) poctAlani.innerHTML = ''; }
                         resultCard.style.display = 'block';
                     } else { errorMsg.style.display = 'block'; }
