@@ -331,106 +331,36 @@ function azerpostCanliFetch(poctKodu) {
     const statusBadge = document.getElementById('resStatus');
     const poctAlani = document.getElementById('poctAlani');
     
-    // Default olaraq cədvəldəki ilkin mətni saxlayırıq
-    statusBadge.innerText = "📦 Sistemdə / Hazırlanır";
+    statusBadge.innerHTML = "🔄 Canlı status oxunur...";
     statusBadge.style.color = "var(--accent-gold)";
-    statusBadge.style.background = "rgba(212, 175, 55, 0.08)";
-    statusBadge.style.borderColor = "rgba(212, 175, 55, 0.2)";
 
-    // Alt hissədə Azərpoçtun təhlükəsizlik divarını müştərinin IP-si ilə sındıran düymə
-    if (poctAlani) {
-        poctAlani.innerHTML = `
-            <div style="margin-top: 15px; padding: 15px; background: rgba(255, 255, 255, 0.02); border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center;">
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">📍 Bağlamanız poçtdadır. Azərpoçtdan ən son canlı məlumatı çəkin:</p>
-                <button id="canliYoxlaBtn" onclick="canliSorguAt('${poctKodu}')" style="background: #10b981; color: #000; font-size: 13px; font-weight: 700; padding: 10px 15px; border-radius: 10px; width: auto; margin: 0 auto; display: inline-flex; gap: 6px;">
-                    <i class="fa-solid fa-rotate"></i> Canlı Statusu Yenilə
-                </button>
-            </div>
-        `;
-    }
-}
+    // 🚨 BURA ADDIM 1-DƏ GOOGLE-DAN ALDIĞIN WEB APP URL-SİNİ YAPIŞDIR!
+    const googleScriptUrl = "https://script.google.com/macros/s/AKfycbyZz9y6_BMxXapHkJufyQw1GapAoVjI-2uUCAVSxC9N-oKwyTAibDCGB771lT2iPR0Jbw/exec" + poctKodu;
 
-// 🔥 AZƏRPOÇTU REAl İNSAN REJİMİ İLƏ PARÇALAYAN ƏSAS FUNKSİYA
-function canliSorguAt(poctKodu) {
-    const btn = document.getElementById('canliYoxlaBtn');
-    const statusBadge = document.getElementById('resStatus');
-    
-    if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Oxunur...`;
-        btn.style.background = "#4b5563";
-        btn.style.color = "#fff";
-    }
-
-    const realUrl = "https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=" + poctKodu;
-    const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(realUrl);
-
-    fetch(proxyUrl)
-        .then(res => {
-            if (res.ok) return res.json();
-            throw new Error('Bağlantı kəsildi');
-        })
+    fetch(googleScriptUrl)
+        .then(res => res.json())
         .then(data => {
-            const html = data.contents;
-            if (html && html.includes('</td>')) {
-                const rows = html.split('<tr>');
-                let sonSatir = "";
-
-                for (let j = rows.length - 1; j >= 0; j--) {
-                    if (rows[j].includes('<td>') && (rows[j].includes('Çatdırılıb') || rows[j].includes('şöbəsinə') || rows[j].includes('olunub') || rows[j].includes('mərkəzinə') || rows[j].includes('mübadilə'))) {
-                        sonSatir = rows[j];
-                        break;
-                    }
-                }
-
-                if (sonSatir !== "") {
-                    const columns = sonSatir.split('<td>');
-                    if (columns.length >= 4) {
-                        let statusMetni = columns[3].split('</td>')[0].replace(/<[^>]*>/g, '').trim();
-                        let menteqeMetni = columns[4] ? columns[4].split('</td>')[0].replace(/<[^>]*>/g, '').trim() : "";
-
-                        if (statusMetni.toLowerCase().includes("çatdırılıb") || statusMetni.toLowerCase().includes("catdirilib")) {
-                            statusBadge.innerText = "🎉 Çatdırılıb (Təhvil verildi)";
-                            statusBadge.style.color = "var(--success-green)";
-                            statusBadge.style.background = "rgba(16, 185, 129, 0.08)";
-                            statusBadge.style.borderColor = "rgba(16, 185, 129, 0.15)";
-                        } else {
-                            statusBadge.innerText = menteqeMetni ? `${statusMetni} (${menteqeMetni})` : statusMetni;
-                            statusBadge.style.color = "var(--text-main)";
-                            statusBadge.style.background = "rgba(255, 255, 255, 0.05)";
-                            statusBadge.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                        }
-                        
-                        if (btn) {
-                            btn.innerHTML = `<i class="fa-solid fa-check"></i> Yeniləndi`;
-                            btn.style.background = "rgba(16, 185, 129, 0.2)";
-                            btn.style.color = "var(--success-green)";
-                        }
-                        return;
-                    }
+            if (data && data.status) {
+                statusBadge.innerText = data.status;
+                
+                // Əgər çatdırılıbsa yaşıl rəng et
+                if (data.status.includes("Çatdırılıb")) {
+                    statusBadge.style.color = "var(--success-green)";
+                    statusBadge.style.background = "rgba(16, 185, 129, 0.08)";
+                    statusBadge.style.borderColor = "rgba(16, 185, 129, 0.15)";
+                } else {
+                    statusBadge.style.color = "var(--text-main)";
+                    statusBadge.style.background = "rgba(255, 255, 255, 0.05)";
+                    statusBadge.style.borderColor = "rgba(255, 255, 255, 0.1)";
                 }
             }
-            
-            statusBadge.innerText = "📦 Hazırlanır / Poçta veriləcək";
-            if (btn) sıfırlaBtn(btn);
+            // Əlavə qırmızı düymə sahəsini gizlədirik, çünki artıq birbaşa avtomatik oxunur
+            if (poctAlani) poctAlani.innerHTML = '';
         })
-        .catch(() => {
-            statusBadge.innerText = "⚠️ Əl ilə yoxlama tələb olunur";
-            if (btn) {
-                btn.removeAttribute('disabled');
-                btn.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Saytda Aç`;
-                btn.style.background = "#ef4444";
-                btn.style.color = "#fff";
-                btn.onclick = () => window.open(realUrl, '_blank');
-            }
+        .catch(err => {
+            console.error(err);
+            statusBadge.innerText = "📦 Sistemdə / Hazırlanır";
         });
-}
-
-function sıfırlaBtn(btn) {
-    btn.removeAttribute('disabled');
-    btn.innerHTML = `<i class="fa-solid fa-rotate"></i> Canlı Statusu Yenilə`;
-    btn.style.background = "#10b981";
-    btn.style.color = "#000";
 }
 
     function checkStatus() {
