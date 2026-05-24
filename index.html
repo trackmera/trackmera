@@ -202,6 +202,7 @@
             border-radius: 20px;
             font-size: 12px;
             border: 1px solid rgba(212, 175, 55, 0.15);
+            transition: all 0.3s ease;
         }
 
         .post-link {
@@ -318,8 +319,8 @@
     const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
     const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
 
-    // 🚨 BURA GOOGLE APPS SCRIPT-DƏ "DAĞIT" (DEPLOY) EDƏNDƏ ALDIĞIN UZUN LİNKİ YAPIŞDIR!
-    const GOOGLE_WEB_APP_URL = "BURADA_SƏNİN_GOOGLE_SCRIPT_URL_UN_OLMALIDIR";
+    // 🚨 DIQQƏT: BURAYA GOOGLE APPS SCRIPT-DƏN ("DAĞIT" EDƏNDƏ) ALDIĞIN LİNKİ YAPIŞDIR!
+    const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyZz9y6_BMxXapHkJufyQw1GapAoVjI-2uUCAVSxC9N-oKwyTAibDCGB771lT2iPR0Jbw/exec";
 
     document.getElementById('phoneInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') checkStatus();
@@ -330,12 +331,12 @@
         return temiz.length >= 9 ? temiz.slice(-9) : temiz; 
     }
 
-    // 🔥 GOOGLE ÜZƏRİNDƏN AZƏRPOÇTU BLOKLANMADAN CANLI OXUYAN MOTOR
+    // 🔥 GOOGLE ÜZƏRİNDƏN AZƏRPOÇTU PARÇALAYAN MAŞIN
     function azerpostCanliFetch(poctKodu) {
         const statusBadge = document.getElementById('resStatus');
         
         if (!GOOGLE_WEB_APP_URL || GOOGLE_WEB_APP_URL.includes("BURADA_SƏNİN")) {
-            console.warn("Apps Script URL təyin edilməyib, Sheets statusu göstərilir.");
+            console.warn("Apps Script URL yoxdur. Canlı rejim gözləmədə.");
             return;
         }
 
@@ -347,13 +348,13 @@
                 if (data && data.status) {
                     statusBadge.innerText = data.status;
                     
-                    // Əgər bağlama çatdırılıbsa yaşıl dizayna keçirik
+                    // Əgər bağlama çatdırılıbsa yaşıl dizayn
                     if (data.status.includes("Çatdırılıb") || data.status.includes("Təhvil")) {
                         statusBadge.style.color = "var(--success-green)";
                         statusBadge.style.background = "rgba(16, 185, 129, 0.08)";
                         statusBadge.style.borderColor = "rgba(16, 185, 129, 0.15)";
                     } else {
-                        // Digər canlı poçt statusları üçün standart qızılı rəng
+                        // Digər yolda olan statuslar üçün qızılı rəng
                         statusBadge.style.color = "var(--accent-gold)";
                         statusBadge.style.background = "rgba(212, 175, 55, 0.08)";
                         statusBadge.style.borderColor = "rgba(212, 175, 55, 0.2)";
@@ -361,8 +362,7 @@
                 }
             })
             .catch(err => {
-                console.error("Canlı poçt statusu çəkilərkən xəta:", err);
-                // Xəta olarsa Sheets-dəki ilkin status ekranda qalır
+                console.error("Canlı poçt xətası:", err);
             });
     }
 
@@ -402,54 +402,5 @@
                         document.getElementById('resName').innerText = row.c[1] ? row.c[1].v : 'Hörmətli Müştəri';
                         document.getElementById('resProduct').innerText = row.c[2] ? row.c[2].v : '-';
                         
-                        // İlk olaraq Sheets-də yazılan statusu ekrana vururuq
-                        const ilkStatus = row.c[4] ? row.c[4].v : '📦 Sistemdə / Hazırlanır';
-                        document.getElementById('resStatus').innerText = ilkStatus;
-                        
-                        // Rəngi standart formaya salırıq
-                        document.getElementById('resStatus').style.color = "var(--accent-gold)";
-                        document.getElementById('resStatus').style.background = "rgba(212, 175, 55, 0.08)";
-                        document.getElementById('resStatus').style.borderColor = "rgba(212, 175, 55, 0.2)";
-
-                        if (row.c[3] && row.c[3].v) {
-                            const trackCode = row.c[3].v.toString().trim();
-                            if (resTrackCode) resTrackCode.innerText = trackCode;
-                            if (trackTextAlani) trackTextAlani.style.display = 'flex';
-                            
-                            if (poctAlani) {
-                                poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}" target="_blank" class="post-link"><i class="fa-solid fa-truck-ramp-box"></i> Azərpoçt Saytında Aç</a>`;
-                            }
-                            
-                            // 🚀 CANLI AZƏRPOÇT METRİKASI BURADA İŞƏ DÜŞÜR
-                            azerpostCanliFetch(trackCode);
-                        } else {
-                            if (trackTextAlani) trackTextAlani.style.display = 'none';
-                            if (poctAlani) poctAlani.innerHTML = '';
-                        }
-                        
-                        resultCard.style.display = 'block';
-                        errorMsg.style.display = 'none';
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found) {
-                    resultCard.style.display = 'none';
-                    errorMsg.style.display = 'block';
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                alert('Sistemdə xəta baş verdi.');
-            })
-            .finally(() => {
-                btnText.style.opacity = '1';
-                btnIcon.style.display = 'block';
-                btnSpinner.style.display = 'none';
-            });
-    }
-</script>
-
-</body>
-</html>
+                        // İlkin olaraq cədvəldəki yazını yükləyirik və canlı animasiya veririk
+                        document.getElementById('resStatus').innerText =
