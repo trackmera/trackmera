@@ -253,7 +253,7 @@
 
         @keyframes pulseGlow { from { transform: scale(0.9); box-shadow: 0 0 8px #00f0ff; } to { transform: scale(1.1); box-shadow: 0 0 18px #00f0ff; } }
 
-        /* ✍️ ÖZƏL BREND "M.S." İMZA BLOKU */
+        /* ✍️ YENİLƏNMİŞ DƏQİQ M.S. LOQO-İMZA BLOKU */
         .signature-container {
             margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.06);
             body.light-theme & { border-top-color: rgba(0,0,0,0.06); }
@@ -266,16 +266,15 @@
         .signature-sub {
             font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); font-weight: 600; margin-bottom: 10px;
         }
-        /* M.S. üçün xüsusi kalorofik premium SVG çərçivəsi */
-        .signature-svg { width: 140px; height: 75px; margin: 0 auto; display: block; }
+        .signature-svg { width: 150px; height: 85px; margin: 0 auto; display: block; }
         .signature-path {
             stroke: var(--accent-gold); stroke-width: 2.5; fill: none;
             stroke-linecap: round; stroke-linejoin: round;
-            stroke-dasharray: 800; stroke-dashoffset: 800;
+            stroke-dasharray: 1000; stroke-dashoffset: 1000;
         }
         /* Sifariş tapılanda calı əl yazısı animasiyası */
         .result-card.animated-signature .signature-path {
-            animation: drawMeraSignature 4s cubic-bezier(0.3, 0.1, 0.3, 1) forwards;
+            animation: drawMeraSignature 3.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
         }
         @keyframes drawMeraSignature { to { stroke-dashoffset: 0; } }
 
@@ -379,7 +378,7 @@
             <div class="signature-text">Thank you for choosing us</div>
             <div class="signature-sub">Mera Store Team</div>
             <svg class="signature-svg" viewBox="0 0 200 100">
-                <path class="signature-path" d="M 25,75 C 22,50 30,15 42,22 C 55,30 60,65 68,68 C 75,70 85,35 92,25 C 98,18 105,30 102,48 C 98,72 128,75 135,62 C 142,50 120,40 132,28 C 145,15 158,35 150,55 C 142,75 110,88 70,88 C 45,88 5,82 55,75 C 95,68 155,58 185,55" />
+                <path class="signature-path" d="M 25,70 C 25,40 32,20 45,20 C 58,20 62,60 68,65 C 74,70 82,35 88,25 C 94,15 102,25 98,45 C 94,65 110,65 120,45 C 126,25 142,20 145,35 C 148,50 128,65 135,72 C 142,79 160,65 165,55 M 35,82 C 75,82 125,75 180,68" />
             </svg>
         </div>
 
@@ -399,7 +398,6 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     let audio = document.getElementById('bg-music');
     let audioBtn = document.getElementById('audio-toggle');
