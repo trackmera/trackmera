@@ -1,0 +1,602 @@
+```html
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MERA STORE - Sifariş İzləmə Sistemi</title>
+    
+    <!-- Leaflet.js CSS (Yeni stabil xəritə kitabxanası) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- FontAwesome İkonlar üçün -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Sənin Orijinal Premium Tünd və Qızılı Dizaynın */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19; /* Tünd göy/qara fon */
+            color: #ffffff;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Mobil telefon konteyneri dizaynı */
+        .phone-wrapper {
+            width: 100%;
+            max-width: 410px;
+            background-color: #111827; /* Bir az daha açıq tünd fon */
+            border-radius: 30px;
+            padding: 25px 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            border: 1px solid #1f2937;
+            position: relative;
+        }
+
+        /* Loqo və Başlıq */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .logo-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1d4ed8;
+            color: white;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.4);
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .header h1 span {
+            color: #f59e0b; /* Qızılı rəng */
+        }
+
+        .header p {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 5px;
+        }
+
+        /* Daxiletmə Sahəsi */
+        .input-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 16px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            background-color: #0b0f19;
+            border: 1px solid #374151;
+            border-radius: 14px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+        }
+
+        /* Qızılı "Sifarişi Tap" düyməsi */
+        .btn-search {
+            width: 100%;
+            padding: 14px;
+            background-color: #eab308; /* Tam qızılı-sarı */
+            color: #0b0f19;
+            font-weight: 700;
+            font-size: 15px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+            margin-bottom: 25px;
+        }
+
+        .btn-search:hover {
+            background-color: #ca8a04;
+            transform: translateY(-1px);
+        }
+
+        /* Sifariş Detalları Kartı */
+        .order-card {
+            background-color: #0b0f19;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #1f2937;
+            margin-bottom: 20px;
+            display: none; /* Sifariş tapılana qədər gizli qalacaq */
+        }
+
+        /* Addım-addım status bar */
+        .status-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        .status-line {
+            position: absolute;
+            top: 12px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background-color: #1f2937;
+            z-index: 1;
+        }
+
+        .status-progress {
+            position: absolute;
+            top: 12px;
+            left: 20px;
+            height: 3px;
+            background-color: #eab308;
+            z-index: 1;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: #1f2937;
+            color: #9ca3af;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            border: 2px solid #111827;
+        }
+
+        .step.active .step-num {
+            background-color: #eab308;
+            color: #0b0f19;
+            box-shadow: 0 0 10px rgba(234, 179, 8, 0.5);
+        }
+
+        .step-text {
+            font-size: 9px;
+            color: #9ca3af;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .step.active .step-text {
+            color: #ffffff;
+        }
+
+        /* Müştəri məlumat sətirləri */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .info-label {
+            color: #9ca3af;
+        }
+
+        .info-val {
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .status-badge {
+            background-color: #a855f7; /* Bənövşəyi status nişanı */
+            color: white;
+            padding: 2px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+        }
+
+        /* Sənin məlumat pəncərəsi (Qutusu) */
+        .info-box {
+            background-color: rgba(234, 179, 8, 0.05);
+            border-left: 3px solid #eab308;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #d1d5db;
+            margin-top: 15px;
+        }
+
+        /* INTEGRASIYA OLUNAN YENI XƏRİTƏ SAHƏSİ */
+        #map-container {
+            margin-top: 20px;
+            display: none; /* Sifariş tapılana qədər gizli qalacaq */
+        }
+
+        #map {
+            width: 100%;
+            height: 220px;
+            border-radius: 16px;
+            border: 1px solid #1f2937;
+        }
+
+        /* Qaranlıq xəritə üçün dizayn tənzimləmələri */
+        .leaflet-container {
+            background: #0b0f19 !important;
+        }
+
+        /* İmza və Təşəkkür hissəsi */
+        .thanks-section {
+            text-align: center;
+            margin-top: 25px;
+            border-top: 1px solid #1f2937;
+            padding-top: 20px;
+        }
+
+        .thanks-title {
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            color: #ca8a04;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .signature {
+            font-family: 'Brush Script MT', cursive, sans-serif;
+            font-size: 24px;
+            color: #eab308;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        /* WhatsApp Düyməsi */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #25d366;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            cursor: pointer;
+            z-index: 1000;
+            transition: 0.3s;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.08);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-wrapper">
+        <!-- Loqo və Başlıq -->
+        <div class="header">
+            <div class="logo-box">
+                <i class="fa-solid fa-map-location-dot"></i>
+            </div>
+            <h1>Mera <span>Store</span></h1>
+            <p>Sifariş statusunuzu görmək üçün qeydiyyat nömrənizi daxil edin.</p>
+        </div>
+
+        <!-- Sifariş Axtarış Hissəsi -->
+        <div class="input-group">
+            <i class="fa-solid fa-phone"></i>
+            <input type="text" id="orderSearchInput" placeholder="Məs: 707804334">
+        </div>
+        <button class="btn-search" onclick="findOrder()">Sifarişi Tap <i class="fa-solid fa-magnifying-glass"></i></button>
+
+        <!-- Sifariş Tapıldıqda Çıxan Kart -->
+        <div class="order-card" id="orderCard">
+            <!-- Addım status bar -->
+            <div class="status-steps">
+                <div class="status-line"></div>
+                <div class="status-progress" id="statusProgress"></div>
+                
+                <div class="step" id="step1">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Hazırlanır</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-num">2</div>
+                    <div class="step-text">Yoldadır</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Poçtda</div>
+                </div>
+                <div class="step" id="step4">
+                    <div class="step-num">4</div>
+                    <div class="step-text">Təhvil aldı</div>
+                </div>
+            </div>
+
+            <!-- Müştəri və Məhsul Məlumatları -->
+            <div class="info-row">
+                <span class="info-label">👤 Alıcı:</span>
+                <span class="info-val" id="custName">--</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">📦 Məhsul:</span>
+                <span class="info-val" id="custProduct">--</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">⚡ Status:</span>
+                <span class="status-badge" id="custStatus">--</span>
+            </div>
+
+            <!-- Şərhlər Qutusu -->
+            <div class="info-box" id="custNote">
+                Məlumat yüklənir...
+            </div>
+        </div>
+
+        <!-- YENİ İNTEGRASİYA EDİLƏN CANLI POÇT XƏRİTƏSİ -->
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
+
+        <!-- İmza və Təşəkkür -->
+        <div class="thanks-section">
+            <div class="thanks-title">Thank you for choosing us</div>
+            <div class="text-[10px] text-gray-500 tracking-wider">MERA STORE TEAM</div>
+            <div class="signature">Mera Store</div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Sabit Düyməsi -->
+    <a href="https://wa.me/994500000000" target="_blank" class="whatsapp-btn">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Leaflet.js JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // 1. Azərbaycanın rayonlarının və Bakı kəndlərinin dəqiq koordinat bazası
+        const azerbaycanBazasi = {
+            "merdekan": { ad: "Mərdəkan", lat: 40.4922, lng: 50.1383 },
+            "suvelan": { ad: "Şüvəlan", lat: 40.4950, lng: 50.2039 },
+            "bilgeh": { ad: "Bilgəh", lat: 40.5817, lng: 50.1656 },
+            "mastaga": { ad: "Maştağa", lat: 40.5283, lng: 50.0108 },
+            "nardaran": { ad: "Nardaran", lat: 40.5614, lng: 50.0108 },
+            "hovsan": { ad: "Hövsan", lat: 40.3725, lng: 50.0814 },
+            "bine": { ad: "Binə", lat: 40.4131, lng: 50.0856 },
+            "zabrat": { ad: "Zabrat", lat: 40.4858, lng: 49.9547 },
+            "sabuncu": { ad: "Sabunçu", lat: 40.4283, lng: 49.9500 },
+            "ramana": { ad: "Ramanı", lat: 40.4619, lng: 49.9881 },
+            "novxani": { ad: "Novxanı", lat: 40.5311, lng: 49.7758 },
+            "masazir": { ad: "Masazır", lat: 40.4897, lng: 49.7542 },
+            "lokbatan": { ad: "Lökbatan", lat: 40.3253, lng: 49.7364 },
+            "buzovna": { ad: "Buzovna", lat: 40.5294, lng: 50.1206 },
+            "qala": { ad: "Qala", lat: 40.4431, lng: 50.1689 },
+            "bileceri": { ad: "Biləcəri", lat: 40.4464, lng: 49.8047 },
+            "az1020": { ad: "Salyan (AZ1020)", lat: 39.5960, lng: 48.9841 },
+            "salyan": { ad: "Salyan", lat: 39.5960, lng: 48.9841 },
+            "az1000": { ad: "Bakı (Mərkəz)", lat: 40.4093, lng: 49.8671 },
+            "baki": { ad: "Bakı", lat: 40.4093, lng: 49.8671 },
+            "baku": { ad: "Bakı", lat: 40.4093, lng: 49.8671 },
+            "az9000": { ad: "Gəncə", lat: 40.6828, lng: 46.3606 },
+            "gence": { ad: "Gəncə", lat: 40.6828, lng: 46.3606 },
+            "az4200": { ad: "Lənkəran", lat: 38.7543, lng: 48.8502 },
+            "lenkeran": { ad: "Lənkəran", lat: 38.7543, lng: 48.8502 },
+            "az5500": { ad: "Şəki", lat: 41.1919, lng: 47.1706 },
+            "seki": { ad: "Şəki", lat: 41.1919, lng: 47.1706 },
+            "az5600": { ad: "Şamaxı", lat: 40.6319, lng: 48.6414 },
+            "samaxi": { ad: "Şamaxı", lat: 40.6319, lng: 48.6414 }
+        };
+
+        // Sabit Mərkəzi Anbar (Bakı) koordinatı
+        const bakiAnbar = { lat: 40.4093, lng: 49.8671, ad: "Mərkəzi Anbar (Bakı)" };
+
+        // 2. Google Sheets Test Verilənləri (Sheets-dən gələn dataların simulyasiyası)
+        // Sheets-i bağlayanda bu verilənlər birbaşa sheets vərəqindən oxunacaq
+        const sifarislərBaza = {
+            "707804334": {
+                ad: "Əziz Hacıyev",
+                mehsul: "Pandora Ulduz",
+                status: "Poçtda", // Hazırlanır, Yoldadır, Poçtda, Təhvil aldı
+                f_sutunu: "Salyan", // Salyan və ya AZ1020 yazılacaq ünvan
+                qeyd: "Bağlamanız təhlükəsiz şəkildə təyin olunmuş poçt filialına çatdı. Şəxsiyyət vəsiqənizlə yaxınlaşıb götürə bilərsiniz. 📦"
+            },
+            "505555555": {
+                ad: "Emin Bağırov",
+                mehsul: "Zərif Qolbaq",
+                status: "Yoldadır",
+                f_sutunu: "Mərdəkan",
+                qeyd: "Sifarişiniz kuryer tərəfindən Mərkəzi Anbardan təhvil alındı, hədəf poçt şöbəsinə doğru hərəkətdədir. 🚚"
+            }
+        };
+
+        // 3. Xəritənin təməl qurulması
+        let map = null;
+        let musteriMarker = null;
+        let kuryerXetti = null;
+
+        function initMap() {
+            if (map !== null) return; // Əgər xəritə artıq qurulubsa, yenidən qurmasın
+
+            map = L.map('map', {
+                zoomControl: false,
+                scrollWheelZoom: true
+            }).setView([bakiAnbar.lat, bakiAnbar.lng], 9);
+
+            // Sənin premium tünd saytına uyğun xüsusi tünd xəritə örtüyü (CartoDB Dark Matter)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; Mera Store',
+                maxZoom: 20
+            }).addTo(map);
+
+            // Xüsusi estetik marker dizaynları
+            const createSvgMarker = (color) => {
+                return L.divIcon({
+                    html: `<svg class="w-8 h-8 filter drop-shadow-md" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 21C16 16.8 18 13 18 10C18 6.13401 14.866 3 12 3C9.13401 3 6 6.13401 6 10C6 13 8 16.8 12 21Z" fill="${color}" stroke="#fff" stroke-width="1"/>
+                            <circle cx="12" cy="10" r="3.5" fill="#fff"/>
+                           </svg>`,
+                    className: "",
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 28]
+                });
+            };
+
+            // Mərkəzi anbar Bakı (Qırmızı sabit nöqtə)
+            L.marker([bakiAnbar.lat, bakiAnbar.lng], { icon: createSvgMarker('#ef4444') }).addTo(map)
+                .bindPopup(`<b style="color:#000;">Mərkəzi Anbar (Bakı)</b>`);
+        }
+
+        // 4. Sifarişi axtarıb tapmaq üçün əsas funksiya
+        function findOrder() {
+            const inputNo = document.getElementById("orderSearchInput").value.trim();
+            const order = sifarislərBaza[inputNo];
+
+            if (order) {
+                // Sifariş Kartını göstər
+                document.getElementById("orderCard").style.display = "block";
+                document.getElementById("map-container").style.display = "block";
+                
+                // Xəritəni dərhal işə sal
+                initMap();
+
+                // Müştəri məlumatlarını karta yazdırırıq
+                document.getElementById("custName").innerText = order.ad;
+                document.getElementById("custProduct").innerText = order.mehsul;
+                document.getElementById("custStatus").innerText = order.status;
+                document.getElementById("custNote").innerText = order.qeyd;
+
+                // Status sətirinin addım-addım tənzimlənməsi
+                updateStatusProgress(order.status);
+
+                // XƏRİTƏNİ HƏRƏKƏT ETDİRMƏK VƏ F SÜTUNUNU İŞARƏLƏMƏK
+                let locKey = order.f_sutunu.trim().toLowerCase();
+                // Hərflərin normalizasiyası
+                locKey = locKey.replace(/ə/g, 'e').replace(/ş/g, 's').replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ı/g, 'i');
+
+                if (azerbaycanBazasi[locKey]) {
+                    const targetLoc = azerbaycanBazasi[locKey];
+
+                    // Əvvəlki köhnə müştəri marker və marşrutlarını silirik
+                    if (musteriMarker) map.removeLayer(musteriMarker);
+                    if (kuryerXetti) map.removeLayer(kuryerXetti);
+
+                    // Yeni hədəf poçt markerini əlavə edirik (Qızılı/Sarı rəngdə)
+                    const createSvgMarker = (color) => {
+                        return L.divIcon({
+                            html: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:28px;height:28px;">
+                                    <path d="M12 21C16 16.8 18 13 18 10C18 6.13401 14.866 3 12 3C9.13401 3 6 6.13401 6 10C6 13 8 16.8 12 21Z" fill="${color}" stroke="#fff" stroke-width="1"/>
+                                    <circle cx="12" cy="10" r="3.5" fill="#fff"/>
+                                   </svg>`,
+                            className: "",
+                            iconSize: [28, 28],
+                            iconAnchor: [14, 28]
+                        });
+                    };
+
+                    musteriMarker = L.marker([targetLoc.lat, targetLoc.lng], { icon: createSvgMarker('#eab308') }).addTo(map)
+                        .bindPopup(`<b style="color:#000;">Poçt: ${targetLoc.ad}</b>`)
+                        .openPopup();
+
+                    // Əgər status "Yoldadır" və ya "Poçtda" olarsa Bakıdan hədəfə yol (marşrut) çəkir
+                    if (order.status === "Yoldadır" || order.status === "Poçtda") {
+                        const pathCoords = [
+                            [bakiAnbar.lat, bakiAnbar.lng],
+                            [targetLoc.lat, targetLoc.lng]
+                        ];
+
+                        kuryerXetti = L.polyline(pathCoords, {
+                            color: '#eab308', // Qızılı rəngli marşrut xətti
+                            weight: 3,
+                            dashArray: '5, 8'
+                        }).addTo(map);
+
+                        // Xəritəni hər iki nöqtəni sığdıracaq şəkildə böyüdür
+                        const bounds = L.latLngBounds(pathCoords);
+                        map.fitBounds(bounds, { padding: [30, 30] });
+                    } else {
+                        // Əgər digər statuslardırsa birbaşa hədəf nöqtəyə fokal fokuslanır
+                        map.setView([targetLoc.lat, targetLoc.lng], 12);
+                    }
+                }
+            } else {
+                alert("Daxil edilən nömrəyə uyğun aktiv sifariş tapılmadı!");
+            }
+        }
+
+        // 5. Addım barın statusa uyğun qızılı rənglə dolması funksiyası
+        function updateStatusProgress(status) {
+            const steps = ["Hazırlanır", "Yoldadır", "Poçtda", "Təhvil aldı"];
+            const statusIdx = steps.indexOf(status);
+
+            // Bütün addımların təmizlənməsi
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`step${i}`).classList.remove("active");
+            }
+
+            // Aktiv status addımlarının rənglənməsi
+            for (let i = 0; i <= statusIdx; i++) {
+                document.getElementById(`step${i+1}`).classList.add("active");
+            }
+
+            // Qızılı xəttin irəliləmə faizi
+            const progressWidths = [0, 33, 66, 100];
+            document.getElementById("statusProgress").style.width = `${progressWidths[statusIdx]}%`;
+        }
+    </script>
+</body>
+</html>
+
+```
