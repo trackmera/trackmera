@@ -563,31 +563,35 @@
         "günəşli": [40.3883, 49.9917], "gunesli": [40.3883, 49.9917], "keşlə": [40.4025, 49.9058], "kesle": [40.4025, 49.9058]
     };
 
-    function getCoords(destinationName, postalCode) {
-        // İlk növbədə poçt kodunu axtar
-        if (postalCode) {
-            const cleanPost = postalCode.toString().trim().toLowerCase();
-            if (AZ_COORDINATES[cleanPost]) {
-                return AZ_COORDINATES[cleanPost];
-            }
-        }
-
-        // Tapılmasa, ünvan adına görə axtar
-        if (!destinationName) return AZ_COORDINATES["bakı"];
+function getCoords(destinationName, postalCode) {
+    // 1. İLK NÖVBƏDƏ RAYON ADINA GÖRƏ AXTAR (F SÜTUNU)
+    if (destinationName) {
         const cleanName = destinationName.toString().trim().toLowerCase();
         
+        // Əgər AZ_COORDINATES-də birbaşa "xətai", "yasamal" kimi varsa götürür
         if (AZ_COORDINATES[cleanName]) {
             return AZ_COORDINATES[cleanName];
         }
         
+        // Əgər cədvəldə "Xətai rayonu" yazılıbsa, daxilindən "xətai" sözünü tapır
         for (let key in AZ_COORDINATES) {
             if (cleanName.includes(key) || key.includes(cleanName)) {
                 return AZ_COORDINATES[key];
             }
         }
-        
-        return AZ_COORDINATES["bakı"];
     }
+
+    // 2. RAYON ADI TAPILMASA VƏ YA BOŞ OLSA, POÇT KODUNA BAX (D SÜTUNU)
+    if (postalCode) {
+        const cleanPost = postalCode.toString().trim().toLowerCase();
+        if (AZ_COORDINATES[cleanPost]) {
+            return AZ_COORDINATES[cleanPost];
+        }
+    }
+    
+    // Heç biri tapılmasa Bakı mərkəzini göstərir
+    return AZ_COORDINATES["bakı"];
+}
 
     function initRealBakuMap(destRegionName, postalCode, isPostalStatus) {
         const mapContainer = document.getElementById('liveMap');
