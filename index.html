@@ -564,16 +564,16 @@
     };
 
 function getCoords(destinationName, postalCode) {
-    // 1. İLK NÖVBƏDƏ RAYON ADINA GÖRƏ AXTAR (F SÜTUNU)
+    // 1. İlk növbədə RAYON ADINA (destinationName) görə axtarır
     if (destinationName) {
         const cleanName = destinationName.toString().trim().toLowerCase();
         
-        // Əgər AZ_COORDINATES-də birbaşa "xətai", "yasamal" kimi varsa götürür
+        // Əgər AZ_COORDINATES içində birbaşa tapılsa (məsələn: "xətai")
         if (AZ_COORDINATES[cleanName]) {
             return AZ_COORDINATES[cleanName];
         }
         
-        // Əgər cədvəldə "Xətai rayonu" yazılıbsa, daxilindən "xətai" sözünü tapır
+        // Əgər daxilində qismən uyğunluq varsa (məsələn: "Xətai rayonu" yazılıbsa)
         for (let key in AZ_COORDINATES) {
             if (cleanName.includes(key) || key.includes(cleanName)) {
                 return AZ_COORDINATES[key];
@@ -581,7 +581,7 @@ function getCoords(destinationName, postalCode) {
         }
     }
 
-    // 2. RAYON ADI TAPILMASA VƏ YA BOŞ OLSA, POÇT KODUNA BAX (D SÜTUNU)
+    // 2. Rayon adı tapılmasa, köhnə qaydada poçt koduna keçid edir
     if (postalCode) {
         const cleanPost = postalCode.toString().trim().toLowerCase();
         if (AZ_COORDINATES[cleanPost]) {
@@ -589,7 +589,7 @@ function getCoords(destinationName, postalCode) {
         }
     }
     
-    // Heç biri tapılmasa Bakı mərkəzini göstərir
+    // Heç biri tapılmasa Bakı mərkəzini açır
     return AZ_COORDINATES["bakı"];
 }
 
@@ -663,20 +663,21 @@ function getCoords(destinationName, postalCode) {
     }
 
     function updateTimelineAndBadge(statusText, destRegionName, postalCode) {
-        const p = document.getElementById('timelineProgress');
-        const s1 = document.getElementById('step1'); const s2 = document.getElementById('step2'); const s3 = document.getElementById('step3'); const s4 = document.getElementById('step4');
-        const badge = document.getElementById('resStatus'); const tipText = document.getElementById('meraTipText');
-        const mapWrapper = document.getElementById('mapWrapper');
-        const sigContainer = document.getElementById('sigContainer');
-        const rCard = document.getElementById('resultCard');
-        const mapHeaderTitle = document.getElementById('mapHeaderTitle');
-        
-        [s1, s2, s3, s4].forEach(s => s.classList.remove('active')); p.style.width = "0%"; badge.className = "status-badge"; 
-        mapWrapper.style.display = 'none'; sigContainer.style.display = 'none'; rCard.classList.remove('animated-signature');
-        if(mapTimer) clearInterval(mapTimer);
+    const statusBadge = document.getElementById('resStatus');
+    const statusDesc = document.getElementById('meraTipText');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    const step4 = document.getElementById('step4');
+    const progress = document.getElementById('timelineProgress');
 
-        const txt = statusText.toLowerCase();
-        const displayLocation = destRegionName ? destRegionName.trim() : (postalCode ? postalCode.toUpperCase() : "ünvanınız");
+    // Bütün aktiv sinifləri təmizləyirik
+    [step1, step2, step3, step4].forEach(s => { if(s) s.classList.remove('active'); });
+
+    const txt = statusText.toLowerCase();
+    
+    // BURANI DƏYİŞDİK: Birinci növbədə f sütunundakı rayon adını (destRegionName) yoxlayır
+    const displayLocation = destRegionName ? destRegionName.trim() : (postalCode ? postalCode.toUpperCase() : "ünvanınız");
 
         if (txt.includes("hazırlanır") || txt.includes("sifariş alındı")) { 
             s1.classList.add('active'); p.style.width = "12.5%"; badge.classList.add('status-preparing');
