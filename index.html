@@ -676,7 +676,7 @@ function getCoords(destinationName, postalCode) {
         if(mapTimer) clearInterval(mapTimer);
 
         const txt = statusText.toLowerCase();
-        const displayLocation = postalCode ? postalCode.toUpperCase() : (destRegionName || "ünvanınız");
+        const displayLocation = destRegionName ? destRegionName.trim() : (postalCode ? postalCode.toUpperCase() : "ünvanınız");
 
         if (txt.includes("hazırlanır") || txt.includes("sifariş alındı")) { 
             s1.classList.add('active'); p.style.width = "12.5%"; badge.classList.add('status-preparing');
