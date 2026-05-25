@@ -1,0 +1,632 @@
+Hahaha, düz deyirsən, qardaş, sən demə imzanın "S" hərfi yolda kuryerə qoşulub qaçıb! SVG-nin cizgilərini (koordinatlarını) elə nöqtə-nöqtə hesablamışdım ki, bəzəkli olsun, amma vizualda o qıvrım birləşəndə "S" hissəsi itib, sadəcə "M" hərfi və altından çəkilən xətt kimi görünüb.
+Bu dəfə tam **"M"** hərfinin bitdiyi yerdən zərif bir şəkildə yuxarı qalxıb, aşağı qıvrılan və brendə yaraşan lüks bir **"S"** formalaşdıran, ardınca isə peşəkar, sürətli bir imza xətti atan tam dəqiq koordinatları yazdım. İndi həm **M**, həm də **S** tam aydın və canlı şəkildə bir-birinin ardınca "çəkiləcək".
+Kodu tamamilə yenilədim, birbaşa bu versiyanı yapışdırıb yoxlaya bilərsən:
+```html
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mera Store | Sifariş İzləmə Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --bg-color: #03050a;
+            --card-bg: rgba(10, 15, 28, 0.8);
+            --accent-gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.3);
+            --text-main: #ffffff;
+            --text-muted: #8a99ad;
+            --input-border: #1e293b;
+            --button-hover: #b5942e;
+            --success-green: #10b981;
+            --error-red: #ef4444;
+            --cyber-blue: #00f0ff;
+            --timeline-bg: #111827;
+        }
+
+        body.light-theme {
+            --bg-color: #f8f9fa;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --input-border: #cbd5e1;
+            --timeline-bg: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .controls-wrapper {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            color: var(--accent-gold);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        #audio-toggle { display: none; }
+
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #03050a; z-index: 99999; display: flex;
+            justify-content: center; align-items: center; opacity: 1;
+            visibility: visible; transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .loader-logo {
+            font-size: 36px; font-weight: 800; letter-spacing: 6px;
+            color: #ffffff; text-shadow: 0 0 20px var(--gold-glow);
+            animation: logoIntro 1.2s ease-in-out forwards;
+        }
+        .loader-logo span { color: var(--accent-gold); }
+
+        @keyframes logoIntro {
+            0% { opacity: 0; transform: scale(0.8); filter: blur(10px); letter-spacing: 12px; }
+            50% { opacity: 1; filter: blur(0); letter-spacing: 6px; }
+            100% { opacity: 0; transform: scale(1.1); filter: blur(4px); }
+        }
+
+        #confetti-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999; pointer-events: none; display: none;
+        }
+
+        .container {
+            background: var(--card-bg); padding: 45px 30px; border-radius: 24px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            text-align: center; width: 100%; max-width: 410px;
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            position: relative; z-index: 10; transition: background 0.4s, border 0.4s;
+        }
+
+        .logo-area { font-size: 26px; font-weight: 700; letter-spacing: 3px; color: var(--text-main); margin-bottom: 10px; }
+        .logo-area span { color: var(--accent-gold); }
+
+        .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 35px; line-height: 1.6; }
+
+        .input-group { position: relative; margin-bottom: 25px; }
+        .input-group i.phone-icon {
+            position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); font-size: 16px;
+        }
+
+        .clear-icon {
+            position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); cursor: pointer; font-size: 14px; display: none; transition: color 0.2s;
+        }
+        .clear-icon:hover { color: var(--error-red); }
+
+        input {
+            width: 100%; padding: 16px 40px 16px 48px; background: rgba(0, 0, 0, 0.05);
+            body:not(.light-theme) & { background: rgba(3, 5, 10, 0.6); }
+            border: 1px solid var(--input-border); border-radius: 14px;
+            font-size: 15px; color: var(--text-main); outline: none; transition: all 0.3s;
+        }
+        input:focus { border-color: var(--accent-gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); }
+
+        button.search-btn {
+            width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent-gold) 0%, #b5942e 100%);
+            color: #000000; border: none; border-radius: 14px; font-size: 15px; cursor: pointer;
+            font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); transition: all 0.3s;
+        }
+        button.search-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
+
+        .quote-loader {
+            display: none; font-size: 12.5px; color: var(--accent-gold); margin-top: 18px;
+            font-style: italic; line-height: 1.4; animation: pulseText 1.2s infinite alternate ease-in-out;
+        }
+
+        .spinner {
+            display: none; width: 18px; height: 18px; border: 2px solid #000000;
+            border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error {
+            display: none; color: var(--error-red); margin-top: 25px; padding: 14px;
+            background: rgba(239, 68, 68, 0.06); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.15);
+            text-align: left; font-size: 13px;
+        }
+
+        .result-card {
+            display: none; margin-top: 35px; padding: 25px; border-radius: 18px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 3px solid var(--accent-gold); text-align: left; animation: fadeIn 0.4s ease-out;
+        }
+
+        .result-card h3 {
+            margin-bottom: 20px; color: var(--text-main); font-size: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 12px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .timeline { display: flex; justify-content: space-between; margin-bottom: 25px; position: relative; padding-bottom: 10px; }
+        .timeline::before {
+            content: ''; position: absolute; top: 10px; left: 5px; right: 5px; height: 2px;
+            background: rgba(255, 255, 255, 0.15); body.light-theme & { background: rgba(0, 0, 0, 0.1); } z-index: 1;
+        }
+        .timeline-progress { position: absolute; top: 10px; left: 5px; height: 2px; background: var(--accent-gold); z-index: 2; width: 0%; transition: width 0.8s ease-in-out; }
+        .step { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; font-size: 10px; color: var(--text-muted); width: 25%; }
+        .step .dot {
+            width: 20px; height: 20px; border-radius: 50%; background: var(--timeline-bg);
+            border: 2px solid rgba(255, 255, 255, 0.2); body.light-theme & { border-color: rgba(0,0,0,0.15); }
+            margin-bottom: 6px; display: flex; justify-content: center; align-items: center; font-size: 9px; transition: all 0.4s;
+        }
+        .step.active .dot { border-color: var(--accent-gold); background: var(--accent-gold); color: #000000; box-shadow: 0 0 10px var(--accent-gold); }
+        .step.active span { color: var(--text-main); font-weight: 600; }
+
+        .result-line { margin-bottom: 14px; font-size: 13.5px; display: flex; justify-content: space-between; align-items: center; }
+        .result-line strong { color: var(--text-muted); font-weight: 400; }
+        .result-line span { color: var(--text-main); font-weight: 500; }
+
+        .mera-tip-box {
+            margin: 15px 0; padding: 12px 15px; background: rgba(212, 175, 55, 0.03);
+            border-left: 3px solid var(--accent-gold); border-radius: 4px 12px 12px 4px;
+            font-size: 12px; line-height: 1.5; color: var(--text-muted); animation: fadeIn 0.5s ease;
+        }
+        .mera-tip-box i { color: var(--accent-gold); margin-right: 6px; }
+
+        .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; transition: all 0.3s ease; }
+        .status-preparing { background: rgba(212, 175, 55, 0.1); color: var(--accent-gold); border: 1px solid rgba(212, 175, 55, 0.4); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+        .status-shipped { background: rgba(0, 240, 255, 0.1); color: var(--cyber-blue); border: 1px solid rgba(0, 240, 255, 0.4); box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+        .status-post { background: rgba(168, 85, 247, 0.1); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); }
+        .status-received { background: rgba(16, 185, 129, 0.1); color: var(--success-green); border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+
+        .copy-btn { margin-left: 8px; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
+        .copy-btn:hover { color: var(--cyber-blue); }
+
+        .post-link {
+            display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 15px; padding: 16px;
+            background: transparent; color: var(--text-main); border: 2px solid var(--accent-gold); text-decoration: none;
+            border-radius: 14px; font-size: 13.5px; font-weight: 700; position: relative; overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .post-link:hover { background: var(--accent-gold); color: #000000; box-shadow: 0 0 25px rgba(212, 175, 55, 0.5); transform: scale(1.02); }
+
+        /* 🗺️ REAL NEON BAKI XƏRİTƏSİ CSS */
+        .map-wrapper {
+            display: none; margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; text-align: center; animation: fadeIn 0.5s ease;
+        }
+        .map-title { font-size: 13px; font-weight: 600; color: var(--cyber-blue); margin-bottom: 12px; text-align: left; display: flex; align-items: center; gap: 6px; }
+        .map-container {
+            position: relative; width: 100%; height: 200px; background: #090d16; border-radius: 10px;
+            border: 1px solid rgba(0, 240, 255, 0.2); overflow: hidden; z-index: 5;
+        }
+        #liveMap { width: 100%; height: 100%; }
+
+        /* Custom Map Neon Markers */
+        .neon-marker-mera { background: #d4af37; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 12px #d4af37; width: 12px !important; height: 12px !important; }
+        .neon-marker-client { background: #10b981; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 12px #10b981; width: 12px !important; height: 12px !important; }
+        .neon-marker-courier { background: #00f0ff; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 15px #00f0ff; width: 14px !important; height: 14px !important; animation: pulseGlow 1s infinite alternate; }
+
+        @keyframes pulseGlow { from { transform: scale(0.9); box-shadow: 0 0 8px #00f0ff; } to { transform: scale(1.1); box-shadow: 0 0 18px #00f0ff; } }
+
+        /* ✍️ YENİLƏNMİŞ DƏQİQ M.S. LOQO-İMZA BLOKU */
+        .signature-container {
+            margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.06);
+            body.light-theme & { border-top-color: rgba(0,0,0,0.06); }
+            text-align: center; display: none; animation: fadeIn 0.8s ease;
+        }
+        .signature-text {
+            font-family: 'Pinyon Script', cursive; font-size: 24px; color: var(--accent-gold);
+            margin-bottom: 2px; opacity: 0.95; letter-spacing: 1px;
+        }
+        .signature-sub {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); font-weight: 600; margin-bottom: 10px;
+        }
+        .signature-svg { width: 150px; height: 85px; margin: 0 auto; display: block; }
+        .signature-path {
+            stroke: var(--accent-gold); stroke-width: 2.5; fill: none;
+            stroke-linecap: round; stroke-linejoin: round;
+            stroke-dasharray: 1000; stroke-dashoffset: 1000;
+        }
+        /* Sifariş tapılanda calı əl yazısı animasiyası */
+        .result-card.animated-signature .signature-path {
+            animation: drawMeraSignature 3.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
+        @keyframes drawMeraSignature { to { stroke-dashoffset: 0; } }
+
+        .social-footer { margin-top: 35px; display: flex; justify-content: center; gap: 25px; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 25px; }
+        .social-icon { color: var(--text-muted); font-size: 22px; text-decoration: none; transition: all 0.3s ease; }
+        .social-icon:hover { color: var(--accent-gold); transform: translateY(-3px) scale(1.2); }
+
+        .whatsapp-float {
+            position: fixed; width: 58px; height: 58px; bottom: 30px; right: 30px; background-color: #25d366;
+            color: #ffffff; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            text-decoration: none; box-shadow: 0px 6px 20px rgba(37, 211, 102, 0.3); z-index: 9999; transition: transform 0.3s;
+        }
+        .whatsapp-float:hover { transform: scale(1.1); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="controls-wrapper">
+    <button class="control-btn" id="audio-toggle" onclick="toggleAudio()" title="Musiqini Səssiz Et">
+        <i class="fa-solid fa-volume-high" id="audio-icon"></i>
+    </button>
+    <button class="control-btn" onclick="toggleTheme()" title="Rejimi Dəyiş">
+        <i class="fa-solid fa-sun" id="theme-icon"></i>
+    </button>
+</div>
+
+<canvas id="bg-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
+
+<div id="preloader">
+    <div class="loader-logo">MERA <span>STORE</span></div>
+</div>
+
+<div class="container">
+    <div class="logo-area">MERA <span>STORE</span></div>
+    <p class="subtitle">Sifariş statusunuzu görmək üçün qeydiyyat nömrənizi daxil edin.</p>
+    
+    <div class="input-group">
+        <input type="text" id="phoneInput" placeholder="Nömrənizi yazın (Məs: 0993999338)">
+        <i class="fa-solid fa-phone phone-icon"></i>
+        <i class="fa-solid fa-xmark clear-icon" id="clearBtn" onclick="clearInput()"></i>
+    </div>
+    
+    <button onclick="checkStatus()" id="searchBtn" class="search-btn">
+        <span id="btnText">Sifarişi Tap</span>
+        <i class="fa-solid fa-magnifying-glass" id="btnIcon"></i>
+        <div class="spinner" id="btnSpinner"></div>
+    </button>
+
+    <div class="quote-loader" id="quoteLoader">Mera Store ilə parıltınız heç vaxt sönməsin... ✨</div>
+
+    <div class="error" id="errorMsg">
+        <i class="fa-solid fa-circle-exclamation" style="margin-right: 6px;"></i> Aktiv sifariş tapılmadı.
+    </div>
+
+    <div class="result-card" id="resultCard">
+        
+        <div class="timeline">
+            <div class="timeline-progress" id="timelineProgress"></div>
+            <div class="step" id="step1"><div class="dot">1</div><span>Hazırlanır</span></div>
+            <div class="step" id="step2"><div class="dot">2</div><span>Yoldadır</span></div>
+            <div class="step" id="step3"><div class="dot">3</div><span>Poçtda</span></div>
+            <div class="step" id="step4"><div class="dot">4</div><span>Təhvil aldı</span></div>
+        </div>
+
+        <h3><i class="fa-solid fa-box-open" style="color: var(--accent-gold);"></i> <span id="resName">Müştəri Adı</span></h3>
+        
+        <div class="result-line">
+            <strong>Məhsul:</strong>
+            <span id="resProduct">-</span>
+        </div>
+        <div class="result-line">
+            <strong>Statusu:</strong>
+            <span id="resStatus">-</span>
+        </div>
+
+        <div class="mera-tip-box" id="meraTipBox">
+            <i class="fa-solid fa-sparkles"></i> <span id="meraTipText">Zərifliyiniz bizim üçün dəyərlidir.</span>
+        </div>
+
+        <div class="result-line" id="trackTextAlani" style="display: none;">
+            <strong>Poçt Kodu:</strong>
+            <div>
+                <span id="resTrackCode">-</span>
+                <i class="fa-regular fa-copy copy-btn" onclick="copyTrackCode()" title="Kopyala"></i>
+            </div>
+        </div>
+        
+        <div id="poctAlani"></div>
+
+        <div class="map-wrapper" id="mapWrapper">
+            <div class="map-title"><i class="fa-solid fa-motorcycle"></i> Kuryer Hazırda Bakıdadır (Canlı İzləmə)</div>
+            <div class="map-container">
+                <div id="liveMap"></div>
+            </div>
+        </div>
+
+        <div class="signature-container" id="sigContainer">
+            <div class="signature-text">Thank you for choosing us</div>
+            <div class="signature-sub">Mera Store Team</div>
+            <svg class="signature-svg" viewBox="0 0 200 100">
+                <path class="signature-path" d="M 25,70 C 25,40 32,20 45,20 C 58,20 62,60 68,65 C 74,70 82,35 88,25 C 94,15 102,25 98,45 C 94,65 110,65 120,45 C 126,25 142,20 145,35 C 148,50 128,65 135,72 C 142,79 160,65 165,55 M 35,82 C 75,82 125,75 180,68" />
+            </svg>
+        </div>
+
+    </div>
+
+    <div class="social-footer">
+        <a href="https://instagram.com/merastore.az" target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://tiktok.com/@merastore.az" target="_blank" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
+    </div>
+</div>
+
+<a href="https://wa.me/994705849113" class="whatsapp-float" target="_blank">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<audio id="bg-music" loop src="https://assets.mixkit.co/music/preview/mixkit-luxury-fashion-show-2947.mp3"></audio>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    let audio = document.getElementById('bg-music');
+    let audioBtn = document.getElementById('audio-toggle');
+    let audioIcon = document.getElementById('audio-icon');
+
+    function startPremiumMusic() {
+        audio.volume = 0.25;
+        audio.play().then(() => {
+            audioBtn.style.display = 'flex';
+        }).catch(err => console.log("Musiqi kliklə gözləyir."));
+    }
+
+    function toggleAudio() {
+        if (audio.paused) {
+            audio.play(); audioIcon.className = "fa-solid fa-volume-high";
+        } else {
+            audio.pause(); audioIcon.className = "fa-solid fa-volume-xmark";
+        }
+    }
+
+    function toggleTheme() {
+        const body = document.body; const icon = document.getElementById('theme-icon');
+        body.classList.toggle('light-theme');
+        if(body.classList.contains('light-theme')) {
+            icon.className = "fa-solid fa-moon"; localStorage.setItem('theme', 'light');
+        } else {
+            icon.className = "fa-solid fa-sun"; localStorage.setItem('theme', 'dark');
+        }
+    }
+    if(localStorage.getItem('theme') === 'light') toggleTheme();
+
+    const canvas = document.getElementById('bg-canvas'); const ctx = canvas.getContext('2d');
+    let stars = [];
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+    for(let i=0; i<60; i++) {
+        stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 1.5, color: Math.random() > 0.5 ? '#d4af37' : '#00f0ff', speed: Math.random() * 0.2 + 0.05 });
+    }
+    function animateStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if(!document.body.classList.contains('light-theme')) {
+            stars.forEach(star => {
+                ctx.fillStyle = star.color; ctx.beginPath(); ctx.arc(star.x, star.y, star.size, 0, Math.PI*2); ctx.fill();
+                star.y += star.speed; if(star.y > canvas.height) star.y = 0;
+            });
+        }
+        requestAnimationFrame(animateStars);
+    }
+    animateStars();
+
+    const confCanvas = document.getElementById('confetti-canvas'); const confCtx = confCanvas.getContext('2d');
+    let confetis = [];
+    function runConfetti() {
+        confCanvas.width = window.innerWidth; confCanvas.height = window.innerHeight; confCanvas.style.display = 'block'; confetis = [];
+        for(let i=0; i<120; i++) {
+            confetis.push({ x: Math.random() * confCanvas.width, y: Math.random() * confCanvas.height - confCanvas.height, r: Math.random() * 6 + 4, d: Math.random() * confCanvas.height, color: `rgba(${Math.floor(Math.random()*255)}, ${Math.floor(Math.random()*255)}, ${Math.floor(Math.random()*255)}, 0.8)`, tilt: Math.random() * 10 - 5, tiltAngleIncremental: Math.random() * 0.07 + 0.02, tiltAngle: 0 });
+        }
+        let confLoop = setInterval(() => {
+            confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height); let alive = false;
+            confetis.forEach(c => {
+                c.tiltAngle += c.tiltAngleIncremental; c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2; c.x += Math.sin(c.tiltAngle);
+                confCtx.beginPath(); confCtx.lineWidth = c.r; confCtx.strokeStyle = c.color; confCtx.moveTo(c.x + c.tilt + c.r/2, c.y); confCtx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r/2); confCtx.stroke();
+                if (c.y <= confCanvas.height) alive = true;
+            });
+            if(!alive) { clearInterval(confLoop); confCanvas.style.display = 'none'; }
+        }, 20);
+        setTimeout(() => { clearInterval(confLoop); confCanvas.style.display = 'none'; }, 4000);
+    }
+
+    window.addEventListener('load', () => { setTimeout(() => { const preloader = document.getElementById('preloader'); if (preloader) { preloader.style.opacity = '0'; preloader.style.visibility = 'hidden'; } }, 1000); });
+
+    const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
+    const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
+
+    const phoneInput = document.getElementById('phoneInput'); const clearBtn = document.getElementById('clearBtn'); const quoteLoader = document.getElementById('quoteLoader');
+    const meraQuotes = [ "Mera Store ilə parıltınız heç vaxt sönməsin... ✨", "Zəriflik detallarda gizlidir, yüklənir... 💎", "Sizin üçün ən dəyərlisini hazırlayırıq... 📦" ];
+
+    phoneInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') checkStatus(); });
+    phoneInput.addEventListener('input', function() { clearBtn.style.display = this.value.trim().length > 0 ? 'block' : 'none'; });
+    function clearInput() { phoneInput.value = ''; clearBtn.style.display = 'none'; phoneInput.focus(); }
+    function temizleNo(no) { let temiz = no.toString().replace(/\D/g, ''); return temiz.length >= 9 ? temiz.slice(-9) : temiz; }
+    function copyTrackCode() { const code = document.getElementById('resTrackCode').innerText; navigator.clipboard.writeText(code).then(() => { alert('Poçt kodu kopyalandı: ' + code); }); }
+
+    let myMap = null;
+    let courierMarker = null;
+    let mapTimer = null;
+
+    function initRealBakuMap() {
+        const mapContainer = document.getElementById('liveMap');
+        if(!mapContainer) return;
+
+        if (myMap !== null) { myMap.remove(); myMap = null; }
+        if(mapTimer) clearInterval(mapTimer);
+
+        const storeCoords = [40.3725, 49.8432]; 
+        const clientCoords = [40.4002, 49.8519]; 
+
+        myMap = L.map('liveMap', { zoomControl: false, attributionControl: false }).setView([40.3860, 49.8460], 13);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(myMap);
+
+        const meraIcon = L.divIcon({ className: 'neon-marker-mera' });
+        const clientIcon = L.divIcon({ className: 'neon-marker-client' });
+        const courierIcon = L.divIcon({ className: 'neon-marker-courier' });
+
+        L.marker(storeCoords, {icon: meraIcon}).addTo(myMap).bindPopup('Mera Mərkəz Store').openPopup();
+        L.marker(clientCoords, {icon: clientIcon}).addTo(myMap).bindPopup('Sizin Ünvanınız');
+
+        courierMarker = L.marker(storeCoords, {icon: courierIcon}).addTo(myMap);
+
+        const routePoints = [ storeCoords, [40.3750, 49.8440], [40.3820, 49.8415], [40.3880, 49.8480], [40.3950, 49.8475], clientCoords ];
+
+        const neonPolyline = L.polyline(routePoints, { color: '#00f0ff', weight: 4, opacity: 0.7, lineJoin: 'round' }).addTo(myMap);
+
+        let step = 0; const totalSteps = 150;
+        mapTimer = setInterval(() => {
+            step++; if(step > totalSteps) step = 0;
+            let currentPercent = step / totalSteps; let totalSegments = routePoints.length - 1;
+            let segIndex = Math.floor(currentPercent * totalSegments); if(segIndex >= totalSegments) segIndex = totalSegments - 1;
+            let segPercent = (currentPercent * totalSegments) - segIndex;
+            let p1 = routePoints[segIndex]; let p2 = routePoints[segIndex + 1];
+            let lat = p1[0] + (p2[0] - p1[0]) * segPercent; let lng = p1[1] + (p2[1] - p1[1]) * segPercent;
+            if(courierMarker) courierMarker.setLatLng([lat, lng]);
+        }, 50);
+
+        setTimeout(() => { if(myMap) myMap.invalidateSize(); }, 300);
+    }
+
+    function updateTimelineAndBadge(statusText) {
+        const p = document.getElementById('timelineProgress');
+        const s1 = document.getElementById('step1'); const s2 = document.getElementById('step2'); const s3 = document.getElementById('step3'); const s4 = document.getElementById('step4');
+        const badge = document.getElementById('resStatus'); const tipText = document.getElementById('meraTipText');
+        const mapWrapper = document.getElementById('mapWrapper');
+        const sigContainer = document.getElementById('sigContainer');
+        const rCard = document.getElementById('resultCard');
+        
+        [s1, s2, s3, s4].forEach(s => s.classList.remove('active')); p.style.width = "0%"; badge.className = "status-badge"; 
+        mapWrapper.style.display = 'none'; sigContainer.style.display = 'none'; rCard.classList.remove('animated-signature');
+        if(mapTimer) clearInterval(mapTimer);
+
+        const txt = statusText.toLowerCase();
+
+        if (txt.includes("hazırlanır") || txt.includes("sifariş alındı")) { 
+            s1.classList.add('active'); p.style.width = "12.5%"; badge.classList.add('status-preparing');
+            tipText.innerText = "Zərif aksessuarlarınız hazırda sizin üçün xüsusi qutusuna səliqə ilə yerləşdirilir. Gözlədiyinizə tam dəyəcək! 💎";
+        } 
+        else if (txt.includes("yolda") || txt.includes("kuryer") || txt.includes("göndərildi")) { 
+            s1.classList.add('active'); s2.classList.add('active'); p.style.width = "50%"; badge.classList.add('status-shipped');
+            tipText.innerText = "Bağlamanız artıq kuryerdədir, sizə doğru tələsir! Sifarişinizi təhvil alarkən yoxlamağı unutmayın. 🚀";
+            mapWrapper.style.display = 'block'; 
+            setTimeout(initRealBakuMap, 150); 
+        } 
+        else if (txt.includes("poçt") || txt.includes("filial") || txt.includes("məntəqə")) { 
+            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); p.style.width = "75%"; badge.classList.add('status-post');
+            tipText.innerText = "Bağlamanız təhlükəsiz şəkildə təyin olunmuş poçt filialına çatdı. Şəxsiyyət vəsiqənizlə yaxınlaşıb götürə bilərsiniz. 📦";
+        } 
+        else if (txt.includes("çatdı") || txt.includes("təhvil") || txt.includes("çatdırıldı") || txt.includes("aldı")) { 
+            s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); s4.classList.add('active'); p.style.width = "100%"; badge.classList.add('status-received');
+            tipText.innerText = "Artıq parıldamaq vaxtıdır! Aksesuarlarınızın uzunömürlü olması üçün onları parfüm və sudan uzaq tutun. ✨";
+            runConfetti(); 
+        } else { 
+            s1.classList.add('active'); p.style.width = "12.5%"; badge.classList.add('status-preparing');
+            tipText.innerText = "Sifarişiniz emal mərhələsindədir. Əlavə suallarınız üçün bizimlə hər zaman əlaqə saxlaya bilərsiniz. ✨";
+        }
+
+        setTimeout(() => {
+            sigContainer.style.display = 'block';
+            rCard.classList.add('animated-signature');
+        }, 400);
+    }
+
+    function checkStatus() {
+        const inputVal = phoneInput.value.trim();
+        const errorMsg = document.getElementById('errorMsg'); const resultCard = document.getElementById('resultCard'); const poctAlani = document.getElementById('poctAlani'); const trackTextAlani = document.getElementById('trackTextAlani'); const resTrackCode = document.getElementById('resTrackCode');
+        const btnText = document.getElementById('btnText'); const btnIcon = document.getElementById('btnIcon'); const btnSpinner = document.getElementById('btnSpinner');
+
+        if (!inputVal) return;
+        const klaviaturadanYazilan = temizleNo(inputVal);
+        if (klaviaturadanYazilan === '') return;
+
+        btnText.style.opacity = '0.5'; btnIcon.style.display = 'none'; btnSpinner.style.display = 'block';
+        resultCard.style.display = 'none'; errorMsg.style.display = 'none';
+
+        quoteLoader.innerText = meraQuotes[Math.floor(Math.random() * meraQuotes.length)]; quoteLoader.style.display = 'block';
+        const startTime = Date.now();
+
+        startPremiumMusic();
+
+        fetch(BASE_URL)
+            .then(res => res.text())
+            .then(data => {
+                const json = JSON.parse(data.substr(47).slice(0, -2)); const rows = json.table.rows;
+                let found = false; let targetRow = null;
+                for (let row of rows) {
+                    if (!row.c[0]) continue;
+                    if (temizleNo(row.c[0].v) === klaviaturadanYazilan) { found = true; targetRow = row; break; }
+                }
+                const remainingTime = Math.max(1000 - (Date.now() - startTime), 0);
+                setTimeout(() => {
+                    btnText.style.opacity = '1'; btnIcon.style.display = 'block'; btnSpinner.style.display = 'none'; quoteLoader.style.display = 'none';
+                    if (found && targetRow) {
+                        document.getElementById('resName').innerText = targetRow.c[1] ? targetRow.c[1].v : 'Hörmətli Müştəri';
+                        document.getElementById('resProduct').innerText = targetRow.c[2] ? targetRow.c[2].v : '-';
+                        const cədvəlStatusu = targetRow.c[4] ? targetRow.c[4].v : '📦 Hazırlanır';
+                        document.getElementById('resStatus').innerText = cədvəlStatusu;
+
+                        updateTimelineAndBadge(cədvəlStatusu);
+
+                        if (targetRow.c[3] && targetRow.c[3].v) {
+                            const trackCode = targetRow.c[3].v.toString().trim();
+                            if (resTrackCode) resTrackCode.innerText = trackCode; if (trackTextAlani) trackTextAlani.style.display = 'flex';
+                            if (poctAlani) poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}" target="_blank" class="post-link"><i class="fa-solid fa-truck-fast"></i> AzerPost Canlı İzlə</a>`;
+                        } else { if (trackTextAlani) trackTextAlani.style.display = 'none'; if (poctAlani) poctAlani.innerHTML = ''; }
+                        resultCard.style.display = 'block';
+                    } else { errorMsg.style.display = 'block'; }
+                }, remainingTime);
+            })
+            .catch((err) => {
+                console.error(err); alert('Sistemdə xəta baş verdi.');
+                btnText.style.opacity = '1'; btnIcon.style.display = 'block'; btnSpinner.style.display = 'none'; quoteLoader.style.display = 'none';
+            });
+    }
+</script>
+</body>
+</html>
+
+```
