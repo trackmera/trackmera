@@ -687,7 +687,7 @@ function getCoords(destinationName, postalCode) {
             tipText.innerText = `Bağlamanız Bakı poçtundan çıxıb, hazırda ${displayLocation} istiqamətində yoldadır! 🚀`;
             
             if (mapHeaderTitle) {
-                mapHeaderTitle.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Bakı Anbarı <i class="fa-solid fa-arrow-right-long" style="font-size: 11px; margin: 0 4px; color: var(--accent-gold);"></i> ${displayLocation}`;
+                mapHeaderTitle.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Bakı Poçtu <i class="fa-solid fa-arrow-right-long" style="font-size: 11px; margin: 0 4px; color: var(--accent-gold);"></i> ${displayLocation}`;
             }
             mapWrapper.style.display = 'block'; 
             setTimeout(() => { initRealBakuMap(destRegionName, postalCode, false); }, 150); 
