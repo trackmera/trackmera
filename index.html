@@ -1,0 +1,1057 @@
+<html>
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mera Store | Premium Sehirli Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --bg-color: #03050a;
+            --card-bg: rgba(10, 15, 28, 0.82);
+            --accent-gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.35);
+            --text-main: #ffffff;
+            --text-muted: #8a99ad;
+            --input-border: #1e293b;
+            --button-hover: #b5942e;
+            --success-green: #10b981;
+            --error-red: #ef4444;
+            --cyber-blue: #00f0ff;
+            --timeline-bg: #111827;
+            --theme-gradient: radial-gradient(circle, #0e1726 0%, #03050a 100%);
+            --ripple-color: rgba(212, 175, 55, 0.2);
+        }
+
+        /* ROSE GOLD THEME */
+        body.theme-rose {
+            --bg-color: #0b0507;
+            --card-bg: rgba(28, 12, 18, 0.85);
+            --accent-gold: #e5a4b4;
+            --gold-glow: rgba(229, 164, 180, 0.35);
+            --text-main: #fff0f3;
+            --text-muted: #bda3a8;
+            --input-border: #3d1c24;
+            --theme-gradient: radial-gradient(circle, #251016 0%, #0b0507 100%);
+            --ripple-color: rgba(229, 164, 180, 0.2);
+        }
+
+        /* EMERALD THEME */
+        body.theme-emerald {
+            --bg-color: #020805;
+            --card-bg: rgba(8, 24, 15, 0.85);
+            --accent-gold: #7ed0a6;
+            --gold-glow: rgba(126, 208, 166, 0.35);
+            --text-main: #f0fdf4;
+            --text-muted: #99bda8;
+            --input-border: #143d25;
+            --theme-gradient: radial-gradient(circle, #0c2b18 0%, #020805 100%);
+            --ripple-color: rgba(126, 208, 166, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background: var(--theme-gradient);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 🌊 INTERACTIVE AURA RIPPLE (İdeya B) */
+        .aura-ripple {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-gold) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%) scale(0);
+            animation: ripple-effect 1.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            opacity: 0.6;
+        }
+
+        @keyframes ripple-effect {
+            0% {
+                width: 0px;
+                height: 0px;
+                opacity: 0.6;
+            }
+            100% {
+                width: 600px;
+                height: 600px;
+                opacity: 0;
+            }
+        }
+
+        .controls-wrapper {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        #audio-toggle { display: none; }
+
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #03050a; z-index: 99999; display: flex;
+            justify-content: center; align-items: center; opacity: 1;
+            visibility: visible; transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .loader-logo {
+            font-size: 36px; font-weight: 800; letter-spacing: 6px;
+            color: #ffffff; text-shadow: 0 0 20px var(--gold-glow);
+            animation: logoIntro 1.2s ease-in-out forwards;
+        }
+        .loader-logo span { color: var(--accent-gold); }
+
+        @keyframes logoIntro {
+            0% { opacity: 0; transform: scale(0.8); filter: blur(10px); letter-spacing: 12px; }
+            50% { opacity: 1; filter: blur(0); letter-spacing: 6px; }
+            100% { opacity: 0; transform: scale(1.1); filter: blur(4px); }
+        }
+
+        #confetti-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999; pointer-events: none; display: none;
+        }
+
+        .container {
+            background: var(--card-bg); padding: 45px 30px; border-radius: 24px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            text-align: center; width: 100%; max-width: 420px;
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            position: relative; z-index: 10; transition: background 0.4s, border 0.4s;
+        }
+
+        .logo-area { font-size: 26px; font-weight: 700; letter-spacing: 3px; color: var(--text-main); margin-bottom: 10px; }
+        .logo-area span { color: var(--accent-gold); }
+
+        .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 35px; line-height: 1.6; }
+
+        .input-group { position: relative; margin-bottom: 25px; }
+        .input-group i.phone-icon {
+            position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); font-size: 16px;
+        }
+
+        .clear-icon {
+            position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); cursor: pointer; font-size: 14px; display: none; transition: color 0.2s;
+        }
+        .clear-icon:hover { color: var(--error-red); }
+
+        input {
+            width: 100%; padding: 16px 40px 16px 48px; background: rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--input-border); border-radius: 14px;
+            font-size: 15px; color: var(--text-main); outline: none; transition: all 0.3s;
+        }
+        input:focus { border-color: var(--accent-gold); box-shadow: 0 0 15px var(--gold-glow); }
+
+        button.search-btn {
+            width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent-gold) 0%, #b5942e 100%);
+            color: #000000; border: none; border-radius: 14px; font-size: 15px; cursor: pointer;
+            font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); transition: all 0.3s;
+        }
+        button.search-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
+
+        .quote-loader {
+            display: none; font-size: 12.5px; color: var(--accent-gold); margin-top: 18px;
+            font-style: italic; line-height: 1.4; animation: pulseText 1.2s infinite alternate ease-in-out;
+        }
+
+        .spinner {
+            display: none; width: 18px; height: 18px; border: 2px solid #000000;
+            border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error {
+            display: none; color: var(--error-red); margin-top: 25px; padding: 14px;
+            background: rgba(239, 68, 68, 0.06); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.15);
+            text-align: left; font-size: 13px;
+        }
+
+        .result-card {
+            display: none; margin-top: 35px; padding: 25px; border-radius: 18px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 3px solid var(--accent-gold); text-align: left; animation: fadeIn 0.4s ease-out;
+        }
+
+        .result-card h3 {
+            margin-bottom: 20px; color: var(--text-main); font-size: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 12px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .timeline { display: flex; justify-content: space-between; margin-bottom: 25px; position: relative; padding-bottom: 10px; }
+        .timeline::before {
+            content: ''; position: absolute; top: 10px; left: 5px; right: 5px; height: 2px;
+            background: rgba(255, 255, 255, 0.15); z-index: 1;
+        }
+        .timeline-progress { position: absolute; top: 10px; left: 5px; height: 2px; background: var(--accent-gold); z-index: 2; width: 0%; transition: width 0.8s ease-in-out; }
+        .step { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; font-size: 10px; color: var(--text-muted); width: 25%; }
+        .step .dot {
+            width: 20px; height: 20px; border-radius: 50%; background: var(--timeline-bg);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 6px; display: flex; justify-content: center; align-items: center; font-size: 9px; transition: all 0.4s;
+        }
+        .step.active .dot { border-color: var(--accent-gold); background: var(--accent-gold); color: #000000; box-shadow: 0 0 10px var(--accent-gold); }
+        .step.active span { color: var(--text-main); font-weight: 600; }
+
+        .result-line { margin-bottom: 14px; font-size: 13.5px; display: flex; justify-content: space-between; align-items: center; }
+        .result-line strong { color: var(--text-muted); font-weight: 400; }
+        .result-line span { color: var(--text-main); font-weight: 500; text-align: right; }
+
+        .mera-tip-box {
+            margin: 15px 0; padding: 12px 15px; background: rgba(212, 175, 55, 0.03);
+            border-left: 3px solid var(--accent-gold); border-radius: 4px 12px 12px 4px;
+            font-size: 12.5px; line-height: 1.5; color: var(--text-muted); animation: fadeIn 0.5s ease;
+        }
+        .mera-tip-box i { color: var(--accent-gold); margin-right: 6px; }
+
+        /* ✍️ AUTOMATIC ROTATING ELEGANT CARE SLIDER */
+        .care-slider-container {
+            margin: 20px 0;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 100px;
+        }
+        .care-slide {
+            display: none;
+            animation: slideFade 0.6s ease-in-out forwards;
+        }
+        .care-slide.active {
+            display: block;
+        }
+        @keyframes slideFade {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .care-icon-wrap {
+            font-size: 20px;
+            color: var(--accent-gold);
+            margin-bottom: 8px;
+        }
+        .care-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        .care-desc {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* 📸 MINIMALIST SHARE STORY BUTTON & MODAL */
+        .share-story-btn {
+            display: flex; justify-content: center; align-items: center; gap: 8px; margin: 15px 0; padding: 12px;
+            background: transparent; color: var(--accent-gold); border: 1px solid var(--accent-gold);
+            text-decoration: none; border-radius: 12px; font-size: 12.5px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s;
+            width: 100%;
+        }
+        .share-story-btn:hover { 
+            background: var(--accent-gold); 
+            color: #000; 
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        .story-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 5, 10, 0.95);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .story-card-wrapper {
+            background: radial-gradient(circle at top, #1a1e29 0%, #03050a 100%);
+            border: 2px solid var(--accent-gold);
+            width: 320px;
+            height: 568px; /* 9:16 Ratio */
+            border-radius: 20px;
+            padding: 40px 30px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+        }
+        .story-card-wrapper::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%23d4af37' fill-opacity='0.03'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z'/%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5; pointer-events: none;
+        }
+        .story-close {
+            position: absolute; top: 15px; right: 15px;
+            color: var(--text-muted); font-size: 24px; cursor: pointer;
+        }
+        .story-close:hover { color: #fff; }
+        .story-watermark { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: var(--accent-gold); }
+        .story-middle h2 { font-family: 'Pinyon Script', cursive; font-size: 45px; color: var(--accent-gold); margin-bottom: 10px; }
+        .story-middle p { font-size: 14px; color: #fff; margin-bottom: 30px; line-height: 1.6; }
+        .story-badge-wrap {
+            display: inline-block;
+            border: 1.5px solid var(--accent-gold);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+            background: rgba(212,175,55,0.05);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+        .story-footer-tag { font-size: 12px; color: var(--text-muted); }
+        .story-footer-tag strong { color: var(--accent-gold); }
+        .story-instruction { font-size: 11px; color: var(--text-muted); margin-top: 15px; font-style: italic; }
+
+        .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; transition: all 0.3s ease; }
+        .status-preparing { background: rgba(212, 175, 55, 0.1); color: var(--accent-gold); border: 1px solid rgba(212, 175, 55, 0.4); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+        .status-shipped { background: rgba(0, 240, 255, 0.1); color: var(--cyber-blue); border: 1px solid rgba(0, 240, 255, 0.4); box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+        .status-post { background: rgba(168, 85, 247, 0.1); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); }
+        .status-received { background: rgba(16, 185, 129, 0.1); color: var(--success-green); border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+
+        .copy-btn { margin-left: 8px; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
+        .copy-btn:hover { color: var(--cyber-blue); }
+
+        .post-link {
+            display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 15px; padding: 16px;
+            background: transparent; color: var(--text-main); border: 2px solid var(--accent-gold); text-decoration: none;
+            border-radius: 14px; font-size: 13.5px; font-weight: 700; position: relative; overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .post-link:hover { background: var(--accent-gold); color: #000000; box-shadow: 0 0 25px rgba(212, 175, 55, 0.5); transform: scale(1.02); }
+
+        /* 🗺️ REAL NEON BAKI/RAYON XƏRİTƏSİ CSS */
+        .map-wrapper {
+            display: none; margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; text-align: center; animation: fadeIn 0.5s ease;
+        }
+        .map-title { font-size: 13px; font-weight: 600; color: var(--cyber-blue); margin-bottom: 12px; text-align: left; display: flex; align-items: center; gap: 6px; }
+        .map-container {
+            position: relative; width: 100%; height: 200px; background: #090d16; border-radius: 10px;
+            border: 1px solid rgba(0, 240, 255, 0.2); overflow: hidden; z-index: 5;
+        }
+        #liveMap { width: 100%; height: 100%; }
+
+        /* Custom Map Neon Markers */
+        .neon-marker-mera { background: #d4af37; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 12px #d4af37; width: 12px !important; height: 12px !important; }
+        .neon-marker-client { background: #10b981; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 12px #10b981; width: 12px !important; height: 12px !important; }
+
+        @keyframes pulseGlow { from { transform: scale(0.9); box-shadow: 0 0 8px #00f0ff; } to { transform: scale(1.1); box-shadow: 0 0 18px #00f0ff; } }
+
+        .social-footer { margin-top: 35px; display: flex; justify-content: center; gap: 25px; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 25px; }
+        .social-icon { color: var(--text-muted); font-size: 22px; text-decoration: none; transition: all 0.3s ease; }
+        .social-icon:hover { color: var(--accent-gold); transform: translateY(-3px) scale(1.2); }
+
+        .whatsapp-float {
+            position: fixed; width: 58px; height: 58px; bottom: 30px; right: 30px; background-color: #25d366;
+            color: #ffffff; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            text-decoration: none; box-shadow: 0px 6px 20px rgba(37, 211, 102, 0.3); z-index: 9999; transition: transform 0.3s;
+        }
+        .whatsapp-float:hover { transform: scale(1.1); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="controls-wrapper">
+    <button class="control-btn" id="audio-toggle" onclick="toggleAudio()" title="Musiqini Səssiz Et">
+        <i class="fa-solid fa-volume-high" id="audio-icon"></i>
+    </button>
+    <!-- Aura Theme Cycle Button -->
+    <button class="control-btn" onclick="cycleTheme()" title="Auranı Dəyiş">
+        <i class="fa-solid fa-wand-magic-sparkles" id="theme-icon"></i>
+    </button>
+</div>
+
+<canvas id="bg-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
+
+<div id="preloader">
+    <div class="loader-logo">MERA <span>STORE</span></div>
+</div>
+
+<div class="container">
+    <div class="logo-area">MERA <span>STORE</span></div>
+    <p class="subtitle">Sifariş statusunuzu görmək üçün qeydiyyat nömrənizi daxil edin.</p>
+    
+    <div class="input-group">
+        <input type="text" id="phoneInput" placeholder="Nömrənizi yazın (Məs: 0993999338)">
+        <i class="fa-solid fa-phone phone-icon"></i>
+        <i class="fa-solid fa-xmark clear-icon" id="clearBtn" onclick="clearInput()"></i>
+    </div>
+    
+    <button onclick="checkStatus()" id="searchBtn" class="search-btn">
+        <span id="btnText">Sifarişi Tap</span>
+        <i class="fa-solid fa-magnifying-glass" id="btnIcon"></i>
+        <div class="spinner" id="btnSpinner"></div>
+    </button>
+
+    <div class="quote-loader" id="quoteLoader">Mera Store ilə parıltınız heç vaxt sönməsin... ✨</div>
+
+    <div class="error" id="errorMsg">
+        <i class="fa-solid fa-circle-exclamation" style="margin-right: 6px;"></i> Aktiv sifariş tapılmadı.
+    </div>
+
+    <div class="result-card" id="resultCard">
+        
+        <div class="timeline">
+            <div class="timeline-progress" id="timelineProgress"></div>
+            <div class="step" id="step1"><div class="dot">1</div><span>Hazırlanır</span></div>
+            <div class="step" id="step2"><div class="dot">2</div><span>Yoldadır</span></div>
+            <div class="step" id="step3"><div class="dot">3</div><span>Poçtda</span></div>
+            <div class="step" id="step4"><div class="dot">4</div><span>Təhvil aldı</span></div>
+        </div>
+
+        <h3><i class="fa-solid fa-box-open" style="color: var(--accent-gold);"></i> <span id="resName">Müştəri Adı</span></h3>
+        
+        <div class="result-line">
+            <strong>Məhsul:</strong>
+            <span id="resProduct">-</span>
+        </div>
+        <div class="result-line">
+            <strong>Statusu:</strong>
+            <span id="resStatus">-</span>
+        </div>
+
+        <div class="mera-tip-box" id="meraTipBox">
+            <i class="fa-solid fa-sparkles"></i> <span id="meraTipText">Zərifliyiniz bizim üçün dəyərlidir.</span>
+        </div>
+
+        <div class="result-line" id="trackTextAlani" style="display: none;">
+            <strong>Poçt Kodu:</strong>
+            <div>
+                <span id="resTrackCode">-</span>
+                <i class="fa-regular fa-copy copy-btn" onclick="copyTrackCode()" title="Kopyala"></i>
+            </div>
+        </div>
+        
+        <div id="poctAlani"></div>
+
+        <!-- 📸 MINIMALIST SHARE STORY BUTTON -->
+        <button class="share-story-btn" onclick="openStoryModal()">
+            <i class="fa-brands fa-instagram"></i> Parıltını Paylaş ✨
+        </button>
+
+        <!-- ✍️ AUTOMATIC ROTATING ELEGANT CARE SLIDER -->
+        <div class="care-slider-container">
+            <div class="care-slide active" id="slide1">
+                <div class="care-icon-wrap"><i class="fa-solid fa-spray-can-sparkles"></i></div>
+                <div class="care-title">Parfüm və Kimyəvilər</div>
+                <div class="care-desc">Aksesuarlarınızın uzunömürlü parlaması üçün parfüm, krem və digər kimyəvi vasitələrlə təmasdan uzaq tutun.</div>
+            </div>
+            <div class="care-slide" id="slide2">
+                <div class="care-icon-wrap"><i class="fa-solid fa-droplet-slash"></i></div>
+                <div class="care-title">Sudan Qoruma</div>
+                <div class="care-desc">Duş qəbul edərkən, hovuzda və dənizdə olarkən məhsullarınızı çıxarmağı tövsiyə edirik.</div>
+            </div>
+            <div class="care-slide" id="slide3">
+                <div class="care-icon-wrap"><i class="fa-solid fa-box-tissue"></i></div>
+                <div class="care-title">Zərif Saxlama</div>
+                <div class="care-desc">Aksesuarlarınızı istifadə etmədikdə özəl Mera qutusunda, hava ilə təması az olan yerdə saxlayın.</div>
+            </div>
+        </div>
+
+        <div class="map-wrapper" id="mapWrapper">
+            <div class="map-title" id="mapHeaderTitle"><i class="fa-solid fa-truck-ramp-box"></i> Bağlama Bakıdan Göndərilib (Canlı İzləmə)</div>
+            <div class="map-container">
+                <div id="liveMap"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="social-footer">
+        <a href="https://instagram.com/merastore.az" target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://tiktok.com/@merastore.az" target="_blank" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
+    </div>
+</div>
+
+<!-- 📸 INSTAGRAM STORY MODAL -->
+<div class="story-modal" id="storyModal">
+    <div class="story-card-wrapper">
+        <span class="story-close" onclick="closeStoryModal()">&times;</span>
+        <div class="story-watermark">MERA STORE</div>
+        <div class="story-middle">
+            <h2>Sizin üçün yolda...</h2>
+            <p>Mera Store-dan olan zərifliyim <strong id="storyMusteriAdi" style="color: var(--accent-gold);">Müştəri</strong> üçün yola çıxdı! ✨</p>
+            <div class="story-badge-wrap" id="storyStatusText">YOLDADIR</div>
+        </div>
+        <div>
+            <div class="story-footer-tag">Aksesuarların ünvanı: <strong>@merastore.az</strong></div>
+            <div class="story-instruction">Skrinşot edin və hekayənizdə paylaşaraq bizi tag edin! 💖</div>
+        </div>
+    </div>
+</div>
+
+<a href="https://wa.me/994705849113" class="whatsapp-float" target="_blank">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<!-- Premium audio elementi -->
+<audio id="bg-music" loop src="https://assets.mixkit.co/music/preview/mixkit-luxury-fashion-show-2947.mp3"></audio>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    let audio = document.getElementById('bg-music');
+    let audioBtn = document.getElementById('audio-toggle');
+    let audioIcon = document.getElementById('audio-icon');
+
+    // Aura Theme Cycling (Dinamik Mövzular)
+    const themes = ['classic', 'rose', 'emerald'];
+    let currentThemeIndex = 0;
+
+    function cycleTheme() {
+        currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+        document.body.className = '';
+        if (themes[currentThemeIndex] === 'rose') {
+            document.body.classList.add('theme-rose');
+        } else if (themes[currentThemeIndex] === 'emerald') {
+            document.body.classList.add('theme-emerald');
+        }
+        setupBackgroundStars(); // Aura rənginə görə ulduz rəngini yeniləyir
+    }
+
+    // 🌊 INTERACTIVE AURA RIPPLE ON TAP (İdeya B)
+    window.addEventListener('click', function(e) {
+        // Düymələrə və ya daxilolma sahələrinə basıldıqda animasiyanı çağırmamaq üçün
+        if(e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.closest('.control-btn') || e.target.closest('a')) {
+            return;
+        }
+        
+        const ripple = document.createElement('div');
+        ripple.className = 'aura-ripple';
+        ripple.style.left = e.clientX + 'px';
+        ripple.style.top = e.clientY + 'px';
+        document.body.appendChild(ripple);
+        
+        // Animasiya bitdikdən sonra elementi silirik
+        ripple.addEventListener('animationend', () => {
+            ripple.remove();
+        });
+    });
+
+    function startPremiumMusic() {
+        audio.volume = 0.25;
+        audio.play().then(() => {
+            audioBtn.style.display = 'flex';
+        }).catch(err => console.log("Musiqi kliklə gözləyir."));
+    }
+
+    function toggleAudio() {
+        if (audio.paused) {
+            audio.play(); audioIcon.className = "fa-solid fa-volume-high";
+        } else {
+            audio.pause(); audioIcon.className = "fa-solid fa-volume-xmark";
+        }
+    }
+
+    const canvas = document.getElementById('bg-canvas'); const ctx = canvas.getContext('2d');
+    let stars = [];
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+    function setupBackgroundStars() {
+        stars = [];
+        let starColor = '#d4af37';
+        if (document.body.classList.contains('theme-rose')) {
+            starColor = '#e5a4b4';
+        } else if (document.body.classList.contains('theme-emerald')) {
+            starColor = '#7ed0a6';
+        }
+        for(let i=0; i<60; i++) {
+            stars.push({ 
+                x: Math.random() * canvas.width, 
+                y: Math.random() * canvas.height, 
+                size: Math.random() * 1.5, 
+                color: Math.random() > 0.5 ? starColor : '#ffffff', 
+                speed: Math.random() * 0.2 + 0.05 
+            });
+        }
+    }
+    setupBackgroundStars();
+
+    function animateStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        stars.forEach(star => {
+            ctx.fillStyle = star.color; ctx.beginPath(); ctx.arc(star.x, star.y, star.size, 0, Math.PI*2); ctx.fill();
+            star.y += star.speed; if(star.y > canvas.height) star.y = 0;
+        });
+        requestAnimationFrame(animateStars);
+    }
+    animateStars();
+
+    const confCanvas = document.getElementById('confetti-canvas'); const confCtx = confCanvas.getContext('2d');
+    let confetis = [];
+    function runConfetti() {
+        confCanvas.width = window.innerWidth; confCanvas.height = window.innerHeight; confCanvas.style.display = 'block'; confetis = [];
+        for(let i=0; i<120; i++) {
+            confetis.push({ x: Math.random() * confCanvas.width, y: Math.random() * confCanvas.height - confCanvas.height, r: Math.random() * 6 + 4, d: Math.random() * confCanvas.height, color: `rgba(${Math.floor(Math.random()*255)}, ${Math.floor(Math.random()*255)}, ${Math.floor(Math.random()*255)}, 0.8)`, tilt: Math.random() * 10 - 5, tiltAngleIncremental: Math.random() * 0.07 + 0.02, tiltAngle: 0 });
+        }
+        let confLoop = setInterval(() => {
+            confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height); let alive = false;
+            confetis.forEach(c => {
+                c.tiltAngle += c.tiltAngleIncremental; c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2; c.x += Math.sin(c.tiltAngle);
+                confCtx.beginPath(); confCtx.lineWidth = c.r; confCtx.strokeStyle = c.color; confCtx.moveTo(c.x + c.tilt + c.r/2, c.y); confCtx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r/2); confCtx.stroke();
+                if (c.y <= confCanvas.height) alive = true;
+            });
+            if(!alive) { clearInterval(confLoop); confCanvas.style.display = 'none'; }
+        }, 20);
+        setTimeout(() => { clearInterval(confLoop); confCanvas.style.display = 'none'; }, 4000);
+    }
+
+    window.addEventListener('load', () => { setTimeout(() => { const preloader = document.getElementById('preloader'); if (preloader) { preloader.style.opacity = '0'; preloader.style.visibility = 'hidden'; } }, 1000); });
+
+    const SHEET_ID = '1-JU5cstP4s3iNsDBCg_frl9JfrFGQYhNin6Sa6Boheo'; 
+    const BASE_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&v=${Date.now()}`;
+
+    const phoneInput = document.getElementById('phoneInput'); const clearBtn = document.getElementById('clearBtn'); const quoteLoader = document.getElementById('quoteLoader');
+    const meraQuotes = [ "Mera Store ilə parıltınız heç vaxt sönməsin... ✨", "Zəriflik detallarda gizlidir, yüklənir... 💎", "Sizin üçün ən dəyərlisini hazırlayırıq... 📦" ];
+
+    phoneInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') checkStatus(); });
+    phoneInput.addEventListener('input', function() { clearBtn.style.display = this.value.trim().length > 0 ? 'block' : 'none'; });
+    function clearInput() { phoneInput.value = ''; clearBtn.style.display = 'none'; phoneInput.focus(); }
+    function temizleNo(no) { let temiz = no.toString().replace(/\D/g, ''); return temiz.length >= 9 ? temiz.slice(-9) : temiz; }
+    
+    function copyTrackCode() { 
+        const codeElement = document.getElementById('resTrackCode');
+        const code = codeElement ? codeElement.innerText : ''; 
+        if(code && code !== '-') {
+            const textArea = document.createElement("textarea");
+            textArea.value = code;
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert('Poçt kodu kopyalandı: ' + code);
+            } catch (err) {
+                console.error('Kopyalama uğursuz oldu', err);
+            }
+            document.body.removeChild(textArea);
+        }
+    }
+
+    let myMap = null;
+    let courierMarker = null;
+    let mapTimer = null;
+
+    // Azərbaycan koordinat bazası
+    const AZ_COORDINATES = {
+        "az1129": [40.3831, 49.9536], "az1000": [40.3701, 49.8422], "az1029": [40.4025, 49.9058], "az1008": [40.4136, 49.8731],
+        "az1118": [40.4394, 49.7994], "az1143": [40.3781, 49.8058], "az1044": [40.3582, 50.0055], "az1123": [40.3734, 49.9554],
+        "az1025": [40.3817, 49.8822], "az1060": [40.3256, 49.7289], "az1090": [40.4578, 49.9458], "az1100": [40.5897, 49.6689],
+        "az0100": [40.4481, 49.7553], "az5400": [39.5964, 48.9856], "az2000": [40.6828, 46.3606], "az3800": [41.3597, 48.5125],
+        "az3100": [38.7529, 48.8475], "az5500": [41.1919, 47.1706], "az1800": [39.9378, 48.9290], "az3300": [40.7640, 47.0469],
+
+        "baku": [40.4093, 49.8671], "bakı": [40.4093, 49.8671], "abşeron": [40.4500, 49.7333], "absheron": [40.4500, 49.7333],
+        "sumqayıt": [40.5897, 49.6689], "sumgayit": [40.5897, 49.6689], "gəncə": [40.6828, 46.3606], "gence": [40.6828, 46.3606],
+        "salyan": [39.5964, 48.9856], "lənkəran": [38.7529, 48.8475], "lenkeran": [38.7529, 48.8475], "şəki": [41.1919, 47.1706],
+        "sheki": [41.1919, 47.1706], "şirvan": [39.9378, 48.9290], "shirvan": [39.9378, 48.9290], "mingəçevir": [40.7640, 47.0469],
+        "naxçıvan": [39.2089, 45.4122], "quba": [41.3597, 48.5125], "qusar": [41.4275, 48.4303], "xaçmaz": [41.4622, 48.8033],
+        "şabran": [41.2133, 48.9875], "siyəzən": [41.0775, 49.1122], "xızı": [40.9114, 49.0719], "şamaxı": [40.6311, 48.6414],
+        "ismayıllı": [40.7853, 48.1511], "qəbələ": [40.9981, 47.8450], "oğuz": [41.0711, 47.4650], "qax": [41.4208, 46.9244],
+        "balakən": [41.7247, 46.4025], "zaqatala": [41.6339, 46.6433], "yevlax": [40.6186, 47.1500], "bərdə": [40.3753, 47.1264],
+        "tərtər": [40.3417, 46.9317], "ağdam": [40.1133, 47.0433], "ağcabədi": [40.0525, 47.4336], "agcabedi": [40.0525, 47.4336],
+        "bəyləqan": [39.7750, 47.6186], "imişli": [39.8681, 48.0600], "saatlı": [39.9314, 48.3714], "sabirabad": [40.0106, 48.4753],
+        "hacıqabul": [40.0381, 48.9406], "neftçala": [39.3575, 49.2467], "biləsuvar": [39.4589, 48.5528], "cəlilabad": [39.2081, 48.2917],
+        "celilabad": [39.2081, 48.2917], "masallı": [39.0342, 48.6589], "yardımlı": [38.9078, 48.2408], "lerik": [38.7750, 48.4136],
+        "astara": [38.4428, 48.8742], "gədəbəy": [40.5700, 45.8106], "daşkəsən": [40.5203, 46.0781], "şəmkir": [40.8281, 46.0183],
+        "tovuz": [40.9925, 45.6289], "ağstafa": [41.1189, 45.4539], "qazax": [41.0931, 45.3661], "göyçay": [40.6536, 47.7406],
+        "uçar": [40.5200, 47.6500], "zərdab": [40.1831, 47.7119], "kürdəmir": [40.3392, 48.1581], "ağsu": [40.5700, 48.4000],
+        "füzuli": [39.6003, 47.1431], "cəbrayıl": [39.3975, 47.0264], "zəngilan": [39.0856, 46.6525], "qubadlı": [39.3439, 46.5778],
+        "laçın": [39.6383, 46.5461], "kəlbəcər": [40.1025, 46.0375], "şuşa": [39.7600, 46.7500], "xankəndi": [39.8264, 46.7656],
+        "xocalı": [39.9133, 46.7900], "xocavənd": [39.7914, 47.1103], "göyqöl": [40.5858, 46.3158], "samux": [40.7650, 46.4064],
+        "goranboy": [40.6103, 46.7897], "naftalan": [40.5067, 46.8250],
+
+        // Bakı daxili
+        "yasamal": [40.3781, 49.8058], "nərimanov": [40.4136, 49.8731], "nerimanov": [40.4136, 49.8731], 
+        "xətai": [40.3817, 49.8822], "xetai": [40.3817, 49.8822], "nizami": [40.4022, 49.9325],
+        "maştağa": [40.5317, 50.0053], "mərdəkan": [40.4925, 50.1411], "buzovna": [40.5322, 50.1172], 
+        "bilgəh": [40.5694, 50.1708], "şüvəlan": [40.4950, 50.1917], "binə": [40.4489, 50.0875], 
+        "hövsan": [40.3758, 50.0839], "sabunçu": [40.4578, 49.9458], "zabrat": [40.4864, 49.9536], 
+        "biləcəri": [40.4394, 49.7994], "binəqədi": [40.4697, 49.7897], "lökbatan": [40.3256, 49.7289], 
+        "xırdalan": [40.4481, 49.7553], "əhmədli": [40.3831, 49.9536], "günəşli": [40.3883, 49.9917]
+    };
+
+    function getCoords(destinationName, postalCode) {
+        if (destinationName) {
+            const cleanName = destinationName.toString().trim().toLowerCase();
+            if (AZ_COORDINATES[cleanName]) return AZ_COORDINATES[cleanName];
+            for (let key in AZ_COORDINATES) {
+                if (cleanName.includes(key) || key.includes(cleanName)) return AZ_COORDINATES[key];
+            }
+        }
+        if (postalCode && postalCode !== '-' && postalCode.trim() !== '') {
+            const cleanPost = postalCode.toString().trim().toLowerCase();
+            if (AZ_COORDINATES[cleanPost]) return AZ_COORDINATES[cleanPost];
+        }
+        return AZ_COORDINATES["bakı"];
+    }
+
+    // 🔊 PREMIUM AUDIO SYNTHESIS & HARMONIC WHISPER ENGINE (İdeya 3)
+    // Bu səs sistemi sintezator vasitəsilə tamamilə lüks pıçıltılı təşəkkür akkordu təmin edir.
+    function playPremiumChime() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const audioCtx = new AudioContext();
+            
+            const playTone = (freq, delay, duration, vol, type = 'sine') => {
+                setTimeout(() => {
+                    const osc = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    
+                    gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                    
+                    osc.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + duration);
+                }, delay);
+            };
+
+            // 1. Möhtəşəm Lüks Qızılı Chime Akkordu (C-Major Chime)
+            playTone(523.25, 0, 1.2, 0.15);   // C5
+            playTone(659.25, 120, 1.4, 0.12); // E5
+            playTone(783.99, 240, 1.6, 0.10); // G5
+            playTone(1046.50, 360, 2.0, 0.08); // C6
+
+            // 2. Sehirli "Whisper Harmony" (Pıçıltı İllüziyası - İdeya 3)
+            // Harmonik yüksək tezliklərin zərif şəkildə qarışması ilə pıçıltı səsi simulyasiya edilir
+            const whisperStartDelay = 500;
+            // "Thank you for choosing Mera Store" üçün tezlik dalğaları
+            playTone(1200, whisperStartDelay + 100, 0.8, 0.02, 'triangle');
+            playTone(1450, whisperStartDelay + 250, 0.7, 0.015, 'sine');
+            playTone(950, whisperStartDelay + 400, 0.6, 0.02, 'triangle');
+            playTone(1100, whisperStartDelay + 600, 0.9, 0.01, 'sine');
+
+        } catch(e) {
+            console.log("Audio sintezi dəstəklənmir.");
+        }
+    }
+
+    // ✍️ Care Tips Slider Auto Rotation (İdeya 2)
+    let currentSlide = 1;
+    function startCareTipsSlider() {
+        setInterval(() => {
+            const slides = document.querySelectorAll('.care-slide');
+            if(!slides || slides.length === 0) return;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            currentSlide = (currentSlide % slides.length) + 1;
+            
+            const nextSlide = document.getElementById('slide' + currentSlide);
+            if(nextSlide) nextSlide.classList.add('active');
+        }, 5000);
+    }
+    startCareTipsSlider();
+
+    // 📸 INSTAGRAM STORY MODAL FUNCTIONS (İdeya 3)
+    function openStoryModal() {
+        const modal = document.getElementById('storyModal');
+        if(modal) modal.style.display = 'flex';
+    }
+    function closeStoryModal() {
+        const modal = document.getElementById('storyModal');
+        if(modal) modal.style.display = 'none';
+    }
+
+    function initRealBakuMap(destRegionName, postalCode, isPostalStatus) {
+        const mapContainer = document.getElementById('liveMap');
+        if(!mapContainer) return;
+
+        if (myMap !== null) { myMap.remove(); myMap = null; }
+        if(mapTimer) clearInterval(mapTimer);
+
+        const storeCoords = [40.3725, 49.8432]; 
+        const clientCoords = getCoords(destRegionName, postalCode); 
+        const clientIcon = L.divIcon({ className: 'neon-marker-client' });
+
+        if (isPostalStatus) {
+            myMap = L.map('liveMap', { zoomControl: false, attributionControl: false }).setView(clientCoords, 14);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(myMap);
+
+            const displayLabel = (postalCode && postalCode !== '-') ? `${postalCode.toUpperCase()} Poçt Filialı` : (destRegionName || "Ünvan");
+            L.marker(clientCoords, {icon: clientIcon}).addTo(myMap)
+                .bindPopup(`Sifarişiniz buradadır: ${displayLabel}`)
+                .openPopup();
+        } else {
+            const centerLat = (storeCoords[0] + clientCoords[0]) / 2;
+            const centerLng = (storeCoords[1] + clientCoords[1]) / 2;
+
+            myMap = L.map('liveMap', { zoomControl: false, attributionControl: false }).setView([centerLat, centerLng], 10);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(myMap);
+
+            const meraIcon = L.divIcon({ className: 'neon-marker-mera' });
+            const courierIcon = L.divIcon({ className: 'neon-marker-courier' });
+
+            L.marker(storeCoords, {icon: meraIcon}).addTo(myMap).bindPopup('Mera Mərkəz (Bakı)').openPopup();
+            
+            const displayLabel = destRegionName || ((postalCode && postalCode !== '-') ? `${postalCode.toUpperCase()} Filialı` : 'Sizin Ünvanınız');
+            L.marker(clientCoords, {icon: clientIcon}).addTo(myMap).bindPopup(`Çatdırılma: ${displayLabel}`);
+
+            courierMarker = L.marker(storeCoords, {icon: courierIcon}).addTo(myMap);
+
+            const routePoints = [];
+            const segmentsCount = 100;
+            for (let i = 0; i <= segmentsCount; i++) {
+                let t = i / segmentsCount;
+                let lat = storeCoords[0] + (clientCoords[0] - storeCoords[0]) * t;
+                let lng = storeCoords[1] + (clientCoords[1] - storeCoords[1]) * t;
+                routePoints.push([lat, lng]);
+            }
+
+            const neonPolyline = L.polyline(routePoints, { color: '#00f0ff', weight: 4, opacity: 0.7, lineJoin: 'round' }).addTo(myMap);
+            const bounds = L.latLngBounds([storeCoords, clientCoords]);
+            myMap.fitBounds(bounds, { padding: [40, 40] });
+
+            let step = 0;
+            mapTimer = setInterval(() => {
+                step++; 
+                if(step > segmentsCount) step = 0;
+                let currentCoords = routePoints[step];
+                if(courierMarker && currentCoords) courierMarker.setLatLng(currentCoords);
+            }, 50);
+        }
+
+        setTimeout(() => { if(myMap) myMap.invalidateSize(); }, 300);
+    }
+
+    function updateTimelineAndBadge(statusText, destRegionName, postalCode) {
+        const p = document.getElementById('timelineProgress');
+        const s1 = document.getElementById('step1'); 
+        const s2 = document.getElementById('step2'); 
+        const s3 = document.getElementById('step3'); 
+        const s4 = document.getElementById('step4');
+        const badge = document.getElementById('resStatus'); 
+        const tipText = document.getElementById('meraTipText');
+        const mapWrapper = document.getElementById('mapWrapper');
+        const rCard = document.getElementById('resultCard');
+        const mapHeaderTitle = document.getElementById('mapHeaderTitle');
+        const storyStatusBadge = document.getElementById('storyStatusText');
+        
+        if(s1 && s2 && s3 && s4) {
+            [s1, s2, s3, s4].forEach(s => s.classList.remove('active'));
+        }
+        if(p) p.style.width = "0%"; 
+        if(badge) badge.className = "status-badge"; 
+        if(mapWrapper) mapWrapper.style.display = 'none'; 
+        if(rCard) rCard.classList.remove('animated-signature');
+        if(mapTimer) clearInterval(mapTimer);
+
+        const txt = statusText.toLowerCase();
+        const displayLocation = destRegionName ? destRegionName.trim() : ((postalCode && postalCode !== '-') ? postalCode.toUpperCase() : "ünvanınız");
+
+        if (txt.includes("hazırlanır") || txt.includes("sifariş alındı")) { 
+            if(s1) s1.classList.add('active'); 
+            if(p) p.style.width = "12.5%"; 
+            if(badge) { badge.classList.add('status-preparing'); badge.innerText = "Hazırlanır"; }
+            if(tipText) tipText.innerText = "Zərif aksessuarlarınız hazırda sizin üçün xüsusi qutusuna səliqə ilə yerləşdirilir. Gözlədiyinizə tam dəyəcək! 💎";
+            if(storyStatusBadge) storyStatusBadge.innerText = "HAZIRLANIR 📦";
+        } 
+        else if (txt.includes("yolda") || txt.includes("kuryer") || txt.includes("göndərildi")) { 
+            if(s1 && s2) { s1.classList.add('active'); s2.classList.add('active'); }
+            if(p) p.style.width = "50%"; 
+            if(badge) { badge.classList.add('status-shipped'); badge.innerText = "Yoldadır"; }
+            if(tipText) tipText.innerText = `Bağlamanız Bakı poçtundan çıxıb, hazırda ${displayLocation} istiqamətində yoldadır! 🚀`;
+            if(storyStatusBadge) storyStatusBadge.innerText = "YOLDADIR 🚀";
+            
+            if (mapHeaderTitle) {
+                mapHeaderTitle.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Bakı <i class="fa-solid fa-arrow-right-long" style="font-size: 11px; margin: 0 4px; color: var(--accent-gold);"></i> ${displayLocation}`;
+            }
+            if(mapWrapper) mapWrapper.style.display = 'block'; 
+            setTimeout(() => { initRealBakuMap(destRegionName, postalCode, false); }, 150); 
+        } 
+        else if (txt.includes("poçt") || txt.includes("filial") || txt.includes("məntəqə")) { 
+            if(s1 && s2 && s3) { s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); }
+            if(p) p.style.width = "75%"; 
+            if(badge) { badge.classList.add('status-post'); badge.innerText = "Poçtdadır"; }
+            if(tipText) tipText.innerText = `Bağlamanız təhlükəsiz şəkildə ${displayLocation} poçt filialına çatdı. Şəxsiyyət vəsiqənizlə yaxınlaşıb götürə bilərsiniz. 📦`;
+            if(storyStatusBadge) storyStatusBadge.innerText = "POÇTDADIR 📦";
+            
+            if (mapHeaderTitle) {
+                mapHeaderTitle.innerHTML = `<i class="fa-solid fa-envelope-open-text"></i> Poçtdadır: ${displayLocation}`;
+            }
+            if(mapWrapper) mapWrapper.style.display = 'block'; 
+            setTimeout(() => { initRealBakuMap(destRegionName, postalCode, true); }, 150);
+        } 
+        else if (txt.includes("çatdı") || txt.includes("təhvil") || txt.includes("çatdırıldı") || txt.includes("aldı")) { 
+            if(s1 && s2 && s3 && s4) { s1.classList.add('active'); s2.classList.add('active'); s3.classList.add('active'); s4.classList.add('active'); }
+            if(p) p.style.width = "100%"; 
+            if(badge) { badge.classList.add('status-received'); badge.innerText = "Təhvil Aldı"; }
+            if(tipText) tipText.innerText = "Artıq parıldamaq vaxtıdır! Aksesuarlarınızın uzunömürlü olması üçün onları parfüm və sudan uzaq tutun. ✨";
+            if(storyStatusBadge) storyStatusBadge.innerText = "TƏHVİL ALINDI ✨";
+            runConfetti(); 
+        } else { 
+            if(s1) s1.classList.add('active'); 
+            if(p) p.style.width = "12.5%"; 
+            if(badge) { badge.classList.add('status-preparing'); badge.innerText = "Gözləmədə"; }
+            if(tipText) tipText.innerText = "Sifarişiniz emal mərhələsindədir. Əlavə suallarınız üçün bizimlə hər zaman əlaqə saxlaya bilərsiniz. ✨";
+        }
+    }
+
+    function checkStatus() {
+        const inputVal = phoneInput.value.trim();
+        const errorMsg = document.getElementById('errorMsg'); 
+        const resultCard = document.getElementById('resultCard'); 
+        const poctAlani = document.getElementById('poctAlani'); 
+        const trackTextAlani = document.getElementById('trackTextAlani'); 
+        const resTrackCode = document.getElementById('resTrackCode');
+        const btnText = document.getElementById('btnText'); 
+        const btnIcon = document.getElementById('btnIcon'); 
+        const btnSpinner = document.getElementById('btnSpinner');
+        const storyMusteriAdi = document.getElementById('storyMusteriAdi');
+
+        if (!inputVal) return;
+        const klaviaturadanYazilan = temizleNo(inputVal);
+        if (klaviaturadanYazilan === '') return;
+
+        btnText.style.opacity = '0.5'; 
+        btnIcon.style.display = 'none'; 
+        btnSpinner.style.display = 'block';
+        resultCard.style.display = 'none'; 
+        errorMsg.style.display = 'none';
+
+        quoteLoader.innerText = meraQuotes[Math.floor(Math.random() * meraQuotes.length)]; 
+        quoteLoader.style.display = 'block';
+        const startTime = Date.now();
+
+        startPremiumMusic();
+
+        fetch(BASE_URL)
+            .then(res => res.text())
+            .then(data => {
+                const json = JSON.parse(data.substr(47).slice(0, -2)); 
+                const rows = json.table.rows;
+                let found = false; 
+                let targetRow = null;
+                for (let row of rows) {
+                    if (!row.c[0]) continue;
+                    if (temizleNo(row.c[0].v) === klaviaturadanYazilan) { found = true; targetRow = row; break; }
+                }
+                const remainingTime = Math.max(1000 - (Date.now() - startTime), 0);
+                setTimeout(() => {
+                    btnText.style.opacity = '1'; 
+                    btnIcon.style.display = 'block'; 
+                    btnSpinner.style.display = 'none'; 
+                    quoteLoader.style.display = 'none';
+                    
+                    if (found && targetRow) {
+                        const musteriAdi = targetRow.c[1] ? targetRow.c[1].v : 'Hörmətli Müştəri';
+                        const mehsulAdi = targetRow.c[2] ? targetRow.c[2].v : '-';
+                        const cədvəlStatusu = targetRow.c[4] ? targetRow.c[4].v : '📦 Hazırlanır';
+                        
+                        document.getElementById('resName').innerText = musteriAdi;
+                        document.getElementById('resProduct').innerText = mehsulAdi;
+                        document.getElementById('resStatus').innerText = cədvəlStatusu;
+
+                        // 🔊 Premium Chime & Whisper akkordu çalınır
+                        playPremiumChime();
+
+                        if(storyMusteriAdi) storyMusteriAdi.innerText = musteriAdi;
+
+                        const trackCode = (targetRow.c[3] && targetRow.c[3].v) ? targetRow.c[3].v.toString().trim() : '';
+                        const rayonAdi = (targetRow.c[5] && targetRow.c[5].v) ? targetRow.c[5].v.toString().trim() : '';
+
+                        updateTimelineAndBadge(cədvəlStatusu, rayonAdi, trackCode);
+
+                        if (trackCode && trackCode !== '-') {
+                            if (resTrackCode) resTrackCode.innerText = trackCode; 
+                            if (trackTextAlani) trackTextAlani.style.display = 'flex';
+                            if (poctAlani) poctAlani.innerHTML = `<a href="https://www.azerpost.az/az/xidmetler/gonderislerin-izlenmesi?package_id=${trackCode}" target="_blank" class="post-link"><i class="fa-solid fa-truck-fast"></i> AzerPost Canlı İzlə</a>`;
+                        } else { 
+                            if (resTrackCode) resTrackCode.innerText = '-';
+                            if (trackTextAlani) trackTextAlani.style.display = 'flex'; 
+                            if (poctAlani) poctAlani.innerHTML = ''; 
+                        }
+                        resultCard.style.display = 'block';
+                    } else { 
+                        errorMsg.style.display = 'block'; 
+                    }
+                }, remainingTime);
+            })
+            .catch((err) => {
+                console.error(err); 
+                alert('Sistemdə xəta baş verdi.');
+                btnText.style.opacity = '1'; 
+                btnIcon.style.display = 'block'; 
+                btnSpinner.style.display = 'none'; 
+                quoteLoader.style.display = 'none';
+            });
+    }
+</script>
+</body>
+</html>
