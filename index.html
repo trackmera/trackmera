@@ -250,7 +250,6 @@
         /* Custom Map Neon Markers */
         .neon-marker-mera { background: #d4af37; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 12px #d4af37; width: 12px !important; height: 12px !important; }
         .neon-marker-client { background: #10b981; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 12px #10b981; width: 12px !important; height: 12px !important; }
-        .neon-marker-courier { background: #00f0ff; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 15px #00f0ff; width: 14px !important; height: 14px !important; animation: pulseGlow 1s infinite alternate; }
 
         @keyframes pulseGlow { from { transform: scale(0.9); box-shadow: 0 0 8px #00f0ff; } to { transform: scale(1.1); box-shadow: 0 0 18px #00f0ff; } }
 
@@ -681,10 +680,10 @@
         } 
         else if (txt.includes("yolda") || txt.includes("kuryer") || txt.includes("göndərildi")) { 
             s1.classList.add('active'); s2.classList.add('active'); p.style.width = "50%"; badge.classList.add('status-shipped');
-            tipText.innerText = `Bağlamanız Bakı Anbarından çıxıb, hazırda ${displayLocation} istiqamətində yoldadır! 🚀`;
+            tipText.innerText = `Bağlamanız Bakı poçtundan çıxıb, hazırda ${displayLocation} istiqamətində yoldadır! 🚀`;
             
             if (mapHeaderTitle) {
-                mapHeaderTitle.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Canlı İzləmə: Bakı Anbarı <i class="fa-solid fa-arrow-right-long" style="font-size: 11px; margin: 0 4px; color: var(--accent-gold);"></i> ${displayLocation}`;
+                mapHeaderTitle.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Bakı Anbarı <i class="fa-solid fa-arrow-right-long" style="font-size: 11px; margin: 0 4px; color: var(--accent-gold);"></i> ${displayLocation}`;
             }
             mapWrapper.style.display = 'block'; 
             setTimeout(() => { initRealBakuMap(destRegionName, postalCode, false); }, 150); 
@@ -694,7 +693,7 @@
             tipText.innerText = `Bağlamanız təhlükəsiz şəkildə ${displayLocation} poçt filialına çatdı. Şəxsiyyət vəsiqənizlə yaxınlaşıb götürə bilərsiniz. 📦`;
             
             if (mapHeaderTitle) {
-                mapHeaderTitle.innerHTML = `<i class="fa-solid fa-envelope-open-text"></i> Poçt Daşınması: ${displayLocation}`;
+                mapHeaderTitle.innerHTML = `<i class="fa-solid fa-envelope-open-text"></i> Poçtdadır: ${displayLocation}`;
             }
             mapWrapper.style.display = 'block'; 
             setTimeout(() => { initRealBakuMap(destRegionName, postalCode, true); }, 150);
